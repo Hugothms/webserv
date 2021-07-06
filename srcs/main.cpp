@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/07/06 10:54:57 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/07/06 11:21:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 int main(int argc, char const *argv[])
 {
-	/* code */
+	(void) argc;
+	(void) argv;
 	return 0;
 }
