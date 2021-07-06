@@ -6,40 +6,39 @@
 #    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/06 10:49:48 by hthomas           #+#    #+#              #
-#    Updated: 2021/07/06 11:21:24 by hthomas          ###   ########.fr        #
+#    Updated: 2021/07/06 12:58:11 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .SUFFIXES:
 .SUFFIXES: .cpp .o
 
-NAME	=		webserv
+NAME		=	webserv
 
-SHELL	=		/bin/sh
-CXX		=		clang++
-RM		=		rm -f
+CXX			=	clang++
+RM			=	rm -f
 
 CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98
-LDFLAGS	=		#-fsanitize=thread -g3
-THREADFLAGS	=	#-pthread
+LDFLAGS		=	#-fsanitize	=thread -g3
 
-SRCSDIR	=		srcs/
-SRCS	=		main.cpp
+SRCSDIR		=	srcs/
+SRCS		=	main.cpp
 
-OBJSDIR	=		build/
-OBJS	=		$(addprefix $(OBJSDIR), $(SRCS:%.cpp=%.o))
+OBJSDIR		=	build/
+OBJS		=	$(addprefix $(OBJSDIR), $(SRCS:%.cpp=%.o))
 
-HEADER	=		$(SRCSDIR)$(NAME).hpp
+HEADER		=	$(SRCSDIR)$(NAME).hpp
 
+DEBUG		=	0
 
 all:	$(NAME)
 
+$(NAME):	$(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $@
+
 $(OBJSDIR)%.o:	$(SRCSDIR)%.cpp $(HEADER)
 	mkdir -p build
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@
-
-$(NAME):	$(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(THREADFLAGS) $(OBJS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -D DEBUG_ACTIVE=$(DEBUG) -c $< -o $@
 
 clean:
 	$(RM) $(OBJS)
@@ -56,4 +55,4 @@ test:	$(NAME)
 
 .PHONY:	all clean fclean re
 
-.SILENT:
+# .SILENT:
