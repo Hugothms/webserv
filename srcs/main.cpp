@@ -6,37 +6,68 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/07/06 11:41:55 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/07/09 17:00:52 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-int main(void)
+// Server side C/C++ program to demonstrate Socket programming
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <string.h>
+#define PORT 8080
+
+using namespace std;
+
+int main()
 {
-	fd_set rfds;
-	struct timeval tv;
-	int retval;
+    int server_fd, new_socket, valread;
+    struct sockaddr_in address;
+    int opt = 1;
+    int addrlen = sizeof(address);
+    char buffer[1024] = {0};
+    char hello[100] = "Hello from server";
 
-	/* Watch stdin (fd 0) to see when it has input. */
-	FD_ZERO(&rfds);
-	FD_SET(0, &rfds);
+    // Creating socket file descriptor
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+    {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
 
-	/* Wait up to five seconds. */
-	tv.tv_sec = 5;
-	tv.tv_usec = 0;
+    // Forcefully attaching socket to the port 8080
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+    {
+        perror("setsockopt");
+        exit(EXIT_FAILURE);
+    }
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons( PORT );
 
-	retval = select(1, &rfds, NULL, NULL, &tv);
-	/* Don't rely on the value of tv now! */
-
-	if (retval == -1)
-		perror("select()");
-	else if (retval)
-		printf("Data is available now.\n");
-		/* FD_ISSET(0, &rfds) will be true. */
-	else
-		printf("No data within five seconds.\n");
-
-	exit(EXIT_SUCCESS);
-	return 0;
+    // Forcefully attaching socket to the port 8080
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+    {
+        perror("bind failed");
+        exit(EXIT_FAILURE);
+    }
+    if (listen(server_fd, 3) < 0)
+    {
+        perror("listen");
+        exit(EXIT_FAILURE);
+    }
+    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0)
+    {
+        perror("accept");
+        exit(EXIT_FAILURE);
+    }
+    valread = read(new_socket, buffer, 1024);
+    printf("%s\n", buffer);
+    send(new_socket, hello, strlen(hello), 0);
+    printf("Hello message sent\n");
+    return 0;
 }

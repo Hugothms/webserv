@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 11:00:07 by hthomas           #+#    #+#             */
-/*   Updated: 2021/07/06 12:57:31 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/07/09 16:32:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@
 #endif
 
 # include <iostream>
-# include <cstring>
-# include <sys/socket.h>
+# include <string>
+# include <sys/types.h>
 # include <sys/select.h>
+# include <sys/socket.h>
 
 #endif
