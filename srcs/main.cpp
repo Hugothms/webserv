@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/07/09 17:11:41 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/07/09 17:27:11 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ int main()
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
-    char hello[100] = "Hello from server";
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
@@ -67,7 +66,12 @@ int main()
     }
     valread = read(new_socket, buffer, 1024);
     printf("%s\n", buffer);
-    send(new_socket, hello, strlen(hello), 0);
+
+
+
+	char hello[142] = "HTTP/1.1 200 OK\nContent-Length: 58\nContent-Type: text/html\nConnection: Closed\n\n<html>\n<body>\n<h1>Hello, World!</h1>\n</body>\n</html>\n";
+
+	send(new_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
     return 0;
 }
