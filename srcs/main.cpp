@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/07/09 17:27:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/07/09 17:47:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int main()
         perror("listen");
         exit(EXIT_FAILURE);
     }
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0)
+    if ((new_socket = accept(server_fd, (struct sockaddr*) &address, (socklen_t*)&addrlen)) < 0)
     {
         perror("accept");
         exit(EXIT_FAILURE);
@@ -67,9 +67,9 @@ int main()
     valread = read(new_socket, buffer, 1024);
     printf("%s\n", buffer);
 
+	// int nfds = poll(struct pollfd fds[], nfds_t nfds, int timeout);
 
-
-	char hello[142] = "HTTP/1.1 200 OK\nContent-Length: 58\nContent-Type: text/html\nConnection: Closed\n\n<html>\n<body>\n<h1>Hello, World!</h1>\n</body>\n</html>\n";
+	const char *hello = "HTTP/1.1 200 OK\nContent-Length: 52\nContent-Type: text/html\nConnection: Closed\n\n<html>\n<body>\n<h1>Hello, World!</h1>\n</body>\n</html>\n";
 
 	send(new_socket, hello, strlen(hello), 0);
     printf("Hello message sent\n");
