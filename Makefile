@@ -1,58 +1,52 @@
-# **************************************************************************** #
+#******************************************************************************#
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+         #
+#    By: edal--ce <edal--ce@sudent.42.fr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/07/06 10:49:48 by hthomas           #+#    #+#              #
-#    Updated: 2021/07/24 21:40:59 by edal--ce         ###   ########.fr        #
+#    Created: 2019/11/04 14:27:31 by edal--ce          #+#    #+#              #
+#    Updated: 2020/08/18 21:53:32 by edal--ce         ###   ########.fr        #
 #                                                                              #
-# **************************************************************************** #
-
-.SUFFIXES:
-.SUFFIXES: .cpp .o
+#******************************************************************************#
 
 NAME		=	webserv
 
-CXX			=	clang++
+DIRSRC		=	srcs
+OBJD		=	obj
+INCLUDE		=	incl
+
+SRC			=	main.cpp server.cpp
+
+OBJ			=	$(SRC:.cpp=.o)
+OBJS		=	$(OBJ:%=$(OBJD)/%)
+
+CFLAGS		= 	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror 
+
+CC			=	clang++
 RM			=	rm -f
+ECHO		=	echo
 
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98
-LDFLAGS		=	#-fsanitize	=thread -g3
+$(NAME)		:	$(LIB) $(OBJD) $(OBJS)
+				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME) 
 
-SRCSDIR		=	srcs/
-SRCS		=	main.cpp
+$(OBJD)		:
+				@mkdir $(OBJD)
 
-OBJSDIR		=	build/
-OBJS		=	$(addprefix $(OBJSDIR), $(SRCS:%.cpp=%.o))
-
-HEADER		=	$(SRCSDIR)$(NAME).hpp
-
-DEBUG		=	0
-
-all:	$(NAME)
-
-$(NAME):	$(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $@
-
-$(OBJSDIR)%.o:	$(SRCSDIR)%.cpp $(HEADER)
-	mkdir -p build
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -D DEBUG_ACTIVE=$(DEBUG) -c $< -o $@
-
-clean:
-	$(RM) $(OBJS)
+$(OBJD)/%.o	:	$(DIRSRC)/%.cpp
+				$(CC) -I ./$(INCLUDE) $(CFLAGS) -o $@ -c $<
 
 
-fclean:	clean
-	$(RM) $(NAME)
+all			:	$(NAME)
 
-re:		fclean
-	make all
+clean		:
+				$(RM) $(OBJS)
 
-test:	$(NAME)
-	./$^
+fclean		:	clean
+				$(RM) $(NAME)
 
-.PHONY:	all clean fclean re
+bonus		:	all
 
-# .SILENT:
+re			:	fclean all
+
+.PHONY		:	all clean re fclean

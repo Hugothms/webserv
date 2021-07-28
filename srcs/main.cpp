@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/07/09 17:47:32 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/07/28 15:57:21 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "webserv.hpp"
-
+// #include "webserv.hpp"
+#include "server.hpp"
 // Server side C/C++ program to demonstrate Socket programming
 #include <unistd.h>
 #include <stdio.h>
@@ -25,6 +25,12 @@ using namespace std;
 
 int main()
 {
+
+    Server serv; 
+    serv.s_listen();
+    return 0;
+    
+
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
     int opt = 1;
