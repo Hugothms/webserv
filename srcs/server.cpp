@@ -6,13 +6,13 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/07/28 16:20:40 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/07/28 16:26:57 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
 
 Server::~Server() {}
-Server::Server()
+Server::Server(unsigned int _port) : port(_port)
 {
 	// port = 8080;
 
@@ -37,7 +37,7 @@ Server::Server()
 	hint.sin_addr.s_addr = INADDR_ANY;
 	//We have to change big endian to little endian, so change 8080
 	//HTONS = Host To Network Short | NTOHS is the reverse
-	hint.sin_port = htons(8080);
+	hint.sin_port = htons(port);
 	
 	//Bind it ?
 	if (bind(listen_socket, ( struct sockaddr*) &hint, sizeof(hint)) < 0)
