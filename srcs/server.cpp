@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/07/28 16:26:57 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/07/28 16:31:25 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -14,10 +14,6 @@
 Server::~Server() {}
 Server::Server(unsigned int _port) : port(_port)
 {
-	// port = 8080;
-
-	
-	
 	int opt = 1;
 	//Creating a socket on IPv4 mode, using TCP/IP protocol
 	if ((listen_socket = socket(V4, TCP, IP)) == 0)
@@ -28,7 +24,7 @@ Server::Server(unsigned int _port) : port(_port)
 	if (setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR /*| SO_REUSEPORT*/, &opt, sizeof(opt)))
 	{
 		std::cerr << "setsockopt failed !\n";
-		exit(1);	
+		exit(2);	
 	}
 	//IPV4 mode, use sockaddr_in6 for V6
 	hint.sin_family = V4;
@@ -43,13 +39,13 @@ Server::Server(unsigned int _port) : port(_port)
 	if (bind(listen_socket, ( struct sockaddr*) &hint, sizeof(hint)) < 0)
 	{
 		std::cerr << "socket bind failed !\n";
-		exit(1);
+		exit(3);
 	}
 	//Set it to listen
 	if (listen(listen_socket, SOMAXCONN) == -1)
 	{
 		std::cerr << "Can't listen !\n";
-		exit(1);
+		exit(4);
 	}
 }
 
