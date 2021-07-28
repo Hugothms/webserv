@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/07/28 15:57:21 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/07/28 16:00:14 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@ using namespace std;
 int main()
 {
 
-    Server serv; 
-    serv.s_listen();
+    Server serv;
+    while (true)
+       serv.s_listen();
     return 0;
     
 
