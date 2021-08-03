@@ -47,8 +47,14 @@ clean		:
 fclean		:	clean
 				$(RM) $(NAME)
 
+
+
+
 bonus		:	all
 
 re			:	fclean all
 
-.PHONY		:	all clean re fclean
+run 		: re
+			./webserv
+
+.PHONY		:	all clean re fclean run

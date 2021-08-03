@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/03 16:30:25 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/03 17:32:31 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <vector>
 #include <iostream>
 #include <unistd.h>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,7 +30,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-// #include <.h>
+
 class Request
 {
 	private :
@@ -38,7 +39,6 @@ class Request
 		std::string user_agent;	//Info about the platform	
 		std::string accept;		//List of accepted stuff
 		int 		socket;
-
 	public :
 		Request();
 		Request(char *buffer, int size, int socket);
