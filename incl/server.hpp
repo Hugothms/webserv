@@ -6,19 +6,20 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/07/28 16:26:50 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/03 16:31:05 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
 #define SERVER_HPP
-// #include "webserv.hpp"
 
+#include "request.hpp"
+
+#include <vector>
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h> 
@@ -32,10 +33,11 @@
 class Server
 {
 	private :
-		int 				listen_socket;
-		int 				send_socket;
-		unsigned int 		port;
-		struct sockaddr_in 	hint;
+		int 					listen_socket;
+		int 					send_socket;
+		unsigned int 			port;
+		struct sockaddr_in 		hint;
+		std::vector<Request> 	requests;
 		// struct sockaddr_in 	hint;
 		// struct sockaddr_in addr;
 		// unsigned int port;

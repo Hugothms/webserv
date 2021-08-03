@@ -16,7 +16,9 @@ DIRSRC		=	srcs
 OBJD		=	obj
 INCLUDE		=	incl
 
-SRC			=	main.cpp server.cpp
+SRC			=	main.cpp	\
+				server.cpp	\
+				request.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
