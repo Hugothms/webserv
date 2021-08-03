@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/03 16:33:04 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/03 17:33:54 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -21,12 +21,12 @@ Request::Request(char *buffer, int size, int sock) : socket(sock)
 		type += buffer[i++];
 	}
 	++i;
-	std::cout << "Request type is " << type << std::endl;
+	// std::cout << "Request type is " << type << std::endl;
 	while (i < size && buffer[i] && buffer[i] != ' ')
 	{
 		target += buffer[i++];
 	}
-	std::cout << "Target is " << target << std::endl;
+	// std::cout << "Target is " << target << std::endl;
 	
 }
 
@@ -37,21 +37,34 @@ void Request::respond()
 		target += "index.html";
 	
 	filepath += target;
-	std::cout << "The path is "<< filepath << std::endl;
+	// std::cout << "The path is "<< filepath << std::endl;
 	std::ifstream myfile(filepath,std::ofstream::in);
+	// std::string response;
 	if (myfile)
 	{
 		std::cout << "Found file\n";
+
 	}
 	else
 	{
 		std::cout << "Did not\n";
 		myfile.open("website/404.hml");
 	}
-	std::string response((std::istreambuf_iterator<char>(myfile)),
+	std::stringstream response;
+
+	std::string file((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
-	 send(socket, response.c_str(), response.length(), 0);
-	 myfile.close();
+	response << "HTTP/1.1 200 OK\n";
+	response << "Content-Length: ";
+	response << file.length();
+	response << "\n";
+	response << "Content-Type: text/html\n";
+	response << "Connection: Closed\n";
+
+	response << file;
+	send(socket, response.str().c_str(), response.str().length(), 0);
+	std::cout << "SENDING " << response.str() << std::endl;
+	myfile.close();
 }
 
 Request::~Request() {}
