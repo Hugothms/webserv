@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/03 17:33:54 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 12:47:52 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -58,10 +58,12 @@ void Request::respond()
 	response << "Content-Length: ";
 	response << file.length();
 	response << "\n";
-	response << "Content-Type: text/html\n";
-	response << "Connection: Closed\n";
+	response << "Content-Type: text/html; charset=UTF-8\n";
+	response << "Connection: Closed\n\n";
 
 	response << file;
+	// send(socket, hello, strlen(hello), 0);
+
 	send(socket, response.str().c_str(), response.str().length(), 0);
 	std::cout << "SENDING " << response.str() << std::endl;
 	myfile.close();

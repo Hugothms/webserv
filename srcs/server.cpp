@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/03 16:30:47 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/03 17:50:00 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -71,7 +71,7 @@ void Server::s_listen()
 	// write(1, buffer, query_size);
 	// Response rep(requests.back());
 	query.respond();
-	send(send_socket, hello, strlen(hello), 0);
+	// send(send_socket, hello, strlen(hello), 0);
 	close(send_socket);
 
 	
