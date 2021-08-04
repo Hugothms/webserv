@@ -32,3 +32,5 @@
 *.app
 webserv
 .vscode/
+log
+err

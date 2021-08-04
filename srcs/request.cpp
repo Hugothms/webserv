@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 21:38:47 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 21:44:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -113,7 +113,7 @@ void Request::respond()
 	if (target.compare("/") == 0)
 		target += "index.html";
 	filepath += target;
-	std::ifstream myfile(filepath, std::ofstream::in);
+	std::ifstream myfile(filepath.c_str(), std::ofstream::in);
 	if (!myfile)
 	{
 		myfile.close();
