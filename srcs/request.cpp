@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 13:00:34 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 15:12:40 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -58,11 +58,31 @@ void Request::respond()
 	std::string file((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
 	response << "HTTP/1.1 200 OK\n";
+	response << "Server: webserv/0.01\n";
+	time_t now = time(0);
+   
+ 	tm *ltm = gmtime(&now);
+
+
+
+	response << "Date: " << dt;
+	
+	response << "\n";
+	response << "Content-Type: ";
+	if (target.find(".png", target.length() - 4) != std::string::npos)
+	{
+		std::cout << "THIS IS A PNG\n";
+		response << "image/png\n";
+	}
+	else
+	{
+		response << "text/html;";
+		response << " charset=UTF-8\n";
+	}
 	response << "Content-Length: ";
 	response << file.length();
-	response << "\n";
-	response << "Content-Type: text/html; charset=UTF-8\n";
-	response << "Connection: Closed\n\n";
+	
+	response << "\nConnection: Closed\n\n";
 
 	response << file;
 	// send(socket, hello, strlen(hello), 0);
