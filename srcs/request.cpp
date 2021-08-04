@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 21:44:43 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 22:14:58 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -17,17 +17,10 @@ Request::Request(char *buffer, int size, int sock) : socket(sock)
 {
 	int i = 0;
 	while (i < size && buffer[i] && buffer[i] != ' ')
-	{
 		type += buffer[i++];
-	}
 	++i;
-	// std::cout << "Request type is " << type << std::endl;
 	while (i < size && buffer[i] && buffer[i] != ' ')
-	{
-		target += buffer[i++];
-	}
-	// std::cout << "Target is " << target << std::endl;
-	
+		target += buffer[i++];	
 }
 
 std::string getdayofweek(int day)
@@ -105,6 +98,21 @@ std::string gettimestamp()
 	return (output.str());
 }
 
+std::string gettype(std::string str)
+{
+	std::string ret;
+	if (str.find(".png", str.length() - 4) != std::string::npos)
+		ret = "image/png";
+	else if (str.find(".jpg", str.length() - 4) != std::string::npos)
+		ret = "image/jpg";
+	else if (str.find(".png", str.length() - 4) != std::string::npos)
+		ret = "image/x-icon";
+	else if (str.find(".css", str.length() - 4) != std::string::npos)
+		ret = "text/css";	
+	else
+		ret = "text/html";
+	return ret;
+}
 
 
 void Request::respond()
@@ -122,26 +130,13 @@ void Request::respond()
 	
 	std::string file((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
+	
 	std::stringstream response;
 	response << "HTTP/1.1 200 OK\n";
-	
 	response << "Server: webserv/0.01\n";
-
 	response << "Date: " << gettimestamp();
-	
-	response << "Content-Type: ";
-	if (target.find(".png", target.length() - 4) != std::string::npos)
-		response << "image/png";
-	else if (target.find(".jpg", target.length() - 4) != std::string::npos)
-		response << "image/jpg";
-	else if (target.find(".png", target.length() - 4) != std::string::npos)
-		response << "image/x-icon";
-	else if (target.find(".css", target.length() - 4) != std::string::npos)
-		response << "text/css";	
-	else
-		response << "text/html";
-	response << "\nContent-Length: ";
-	response << file.length();	
+	response << "Content-Type: " << gettype(target);
+	response << "\nContent-Length: " << file.length();
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
