@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 20:18:22 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 21:38:47 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -105,61 +105,46 @@ std::string gettimestamp()
 	return (output.str());
 }
 
+
+
 void Request::respond()
 {
 	std::string filepath("website");
 	if (target.compare("/") == 0)
 		target += "index.html";
-	
 	filepath += target;
-	// std::cout << "The path is "<< filepath << std::endl;
-	std::ifstream myfile(filepath,std::ofstream::in);
-	// std::string response;
-	if (myfile)
+	std::ifstream myfile(filepath, std::ofstream::in);
+	if (!myfile)
 	{
-		std::cout << "Found file\n";
-
-	}
-	else
-	{
-		std::cout << "Did not\n";
 		myfile.close();
 		myfile.open("website/404.html", std::ofstream::in);
-		if (myfile == 0)
-			std::cout << "OHNO\n";
 	}
-	std::stringstream response;
-
+	
 	std::string file((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
+	std::stringstream response;
 	response << "HTTP/1.1 200 OK\n";
-	response << "Server: webserv/0.01\n";
 	
+	response << "Server: webserv/0.01\n";
 
 	response << "Date: " << gettimestamp();
 	
-	// response << "\n";
 	response << "Content-Type: ";
 	if (target.find(".png", target.length() - 4) != std::string::npos)
-	{
-		std::cout << "THIS IS A PNG\n";
-		response << "image/png\n";
-	}
+		response << "image/png";
+	else if (target.find(".jpg", target.length() - 4) != std::string::npos)
+		response << "image/jpg";
+	else if (target.find(".png", target.length() - 4) != std::string::npos)
+		response << "image/x-icon";
+	else if (target.find(".css", target.length() - 4) != std::string::npos)
+		response << "text/css";	
 	else
-	{
-		response << "text/html;";
-		response << " charset=UTF-8\n";
-	}
-	response << "Content-Length: ";
-	response << file.length();
-	
+		response << "text/html";
+	response << "\nContent-Length: ";
+	response << file.length();	
 	response << "\nConnection: Closed\n\n";
-
 	response << file;
-	// send(socket, hello, strlen(hello), 0);
-
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	// std::cout << "SENDING " << response.str() << std::endl;
 	myfile.close();
 }
 

@@ -2,6 +2,7 @@ body {
   /*margin: 25px;*/
   background-color: teal; 
   color: lightgrey;
+  border: 200px;
   /*font-family: arial, sans-serif;*/
   /*font-size: 14px;*/
 }
@@ -13,8 +14,9 @@ div {
 }
 /* Applies to all <h1>...</h1> elements. */
 h1 {
+
   font-size: 35px;
-  font-weight: normal;
+  font-weight: bold;
   margin-top: 5px;
 }
 
