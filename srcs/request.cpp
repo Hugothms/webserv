@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 12:54:43 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 13:00:34 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -68,7 +68,7 @@ void Request::respond()
 	// send(socket, hello, strlen(hello), 0);
 
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	std::cout << "SENDING " << response.str() << std::endl;
+	// std::cout << "SENDING " << response.str() << std::endl;
 	myfile.close();
 }
 
