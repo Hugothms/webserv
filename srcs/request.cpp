@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 15:12:40 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 20:18:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -28,6 +28,81 @@ Request::Request(char *buffer, int size, int sock) : socket(sock)
 	}
 	// std::cout << "Target is " << target << std::endl;
 	
+}
+
+std::string getdayofweek(int day)
+{
+	switch(day)
+	{
+		case 1:
+			return "Mon";
+		case 2:
+			return "Tue";
+		case 3:
+			return "Wed";
+		case 4:
+			return "Thu";
+		case 5:
+			return "Fri";
+		case 6:
+			return "Sat";
+		case 0:
+			return "Sun";
+		default :
+			return "UNDEFINED_DAY";
+	}
+}
+
+std::string getmonth(int month)
+{
+	switch(month)
+	{
+		case 0:
+			return "Jan";
+		case 1:
+			return "Feb";
+		case 2:
+			return "Mar";
+		case 3:
+			return "Apr";
+		case 4:
+			return "May";
+		case 5:
+			return "Jun";
+		case 6:
+			return "Jul";
+		case 7:
+			return "Aug";
+		case 8:
+			return "Sep";
+		case 9:
+			return "Oct";
+		case 10:
+			return "Now";
+		case 11:
+			return "Dec";
+		default :
+			return "UNDEFINED_MONTH";
+	}	
+}
+
+std::string gettimestamp()
+{
+	time_t now = time(0);
+ 	
+ 	tm *time = gmtime(&now);
+	std::stringstream output;
+	output << getdayofweek(time->tm_wday);
+	
+	if (time->tm_mday < 10)
+		output <<", 0" << time->tm_mday;
+	else
+		output <<", " << time->tm_mday;
+	output << " " << getmonth(time->tm_mon);
+	output << " " << time->tm_year + 1900 << " ";
+	output << time->tm_hour << ":" << time->tm_min << ":" 
+	<< time->tm_sec << " GMT\n";
+	return (output.str());
 }
 
 void Request::respond()
@@ -59,15 +134,11 @@ void Request::respond()
                  std::istreambuf_iterator<char>());
 	response << "HTTP/1.1 200 OK\n";
 	response << "Server: webserv/0.01\n";
-	time_t now = time(0);
-   
- 	tm *ltm = gmtime(&now);
-
-
-
-	response << "Date: " << dt;
 	
-	response << "\n";
+
+	response << "Date: " << gettimestamp();
+	
+	// response << "\n";
 	response << "Content-Type: ";
 	if (target.find(".png", target.length() - 4) != std::string::npos)
 	{
