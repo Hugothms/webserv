@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 12:47:52 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 12:54:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -48,7 +48,10 @@ void Request::respond()
 	else
 	{
 		std::cout << "Did not\n";
-		myfile.open("website/404.hml");
+		myfile.close();
+		myfile.open("website/404.html", std::ofstream::in);
+		if (myfile == 0)
+			std::cout << "OHNO\n";
 	}
 	std::stringstream response;
 
