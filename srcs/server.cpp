@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 21:41:30 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 22:19:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -14,7 +14,6 @@
 Server::~Server() {}
 Server::Server(unsigned int _port) : port(_port)
 {
-	// requests.reserve(10);
 	int opt = 1;
 
 	//Creating a socket on IPv4 mode, using TCP/IP protocol
@@ -66,14 +65,7 @@ void Server::s_listen()
 	char buffer[1024] ;
 	int query_size = read(send_socket, buffer, 1024);
 	Request query(buffer, 1024, send_socket); 
-	// requests.push_back(Request);
-	// std::cout << "READ DONE\n";
 	write(1, buffer, query_size);
-	// std::cin << kek;
-	// Response rep(requests.back());
 	query.respond();
-	// send(send_socket, hello, strlen(hello), 0);
-	close(send_socket);
-
-	
+	close(send_socket);	
 }
