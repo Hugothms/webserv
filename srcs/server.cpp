@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/03 17:50:00 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/04 13:01:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -68,7 +68,8 @@ void Server::s_listen()
 	Request query(buffer, 1024, send_socket); 
 	// requests.push_back(Request);
 	// std::cout << "READ DONE\n";
-	// write(1, buffer, query_size);
+	write(1, buffer, query_size);
+	// std::cin << kek;
 	// Response rep(requests.back());
 	query.respond();
 	// send(send_socket, hello, strlen(hello), 0);
