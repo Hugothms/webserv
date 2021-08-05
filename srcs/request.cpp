@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 22:21:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/05 02:38:21 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -108,7 +108,9 @@ std::string gettype(std::string str)
 	else if (str.find(".png", str.length() - 4) != std::string::npos)
 		ret = "image/x-icon";
 	else if (str.find(".css", str.length() - 4) != std::string::npos)
-		ret = "text/css";	
+		ret = "text/css";
+	else if (str.find(".js", str.length() - 3) != std::string::npos)
+		ret = "application/javascript";	
 	else
 		ret = "text/html";
 	return ret;
