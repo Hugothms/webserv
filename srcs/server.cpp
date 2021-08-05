@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/05 04:08:09 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/05 05:44:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -29,7 +29,6 @@ Server::Server(unsigned int _port) : port(_port)
 	}
 	//IPV4 mode, use sockaddr_in6 for V6
 	hint.sin_family = V4;
-	
 	//Bind to any IP ont the machine
 	hint.sin_addr.s_addr = INADDR_ANY;
 	//We have to change big endian to little endian, so change 8080
@@ -50,6 +49,8 @@ Server::Server(unsigned int _port) : port(_port)
 	}
 }
 //https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/
+
+//Need to use kqueue vs epoll
 void Server::s_listen()
 {
 	struct sockaddr_in client;
