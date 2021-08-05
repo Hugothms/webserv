@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 22:19:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/05 04:08:09 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -49,20 +49,23 @@ Server::Server(unsigned int _port) : port(_port)
 		exit(4);
 	}
 }
-
+//https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/
 void Server::s_listen()
 {
 	struct sockaddr_in client;
 	socklen_t client_size = sizeof(client);
-	send_socket = accept(listen_socket, 
-		(struct sockaddr*) &client, &client_size);
-	
+	//Accept functions give you a new file descriptor
+	send_socket = accept(listen_socket, (struct sockaddr*) &client, &client_size);
+	//Need to use either Poll Epoll or Select 
 	if (send_socket == -1)
 	{
 		std::cerr << "Can't client sock\n";
 		exit(-1);
 	}
+	
+
 	char buffer[1024] ;
+
 	int query_size = read(send_socket, buffer, 1024);
 	Request query(buffer, 1024, send_socket); 
 	write(1, buffer, query_size);
