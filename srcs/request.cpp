@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/05 02:38:21 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/17 16:44:06 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "request.hpp"
@@ -27,7 +27,7 @@ std::string getdayofweek(int day)
 {
 	switch(day)
 	{
-		case 1:
+		case 1: 
 			return "Mon";
 		case 2:
 			return "Tue";

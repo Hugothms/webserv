@@ -9,16 +9,20 @@
 #    Updated: 2020/08/18 21:53:32 by edal--ce         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
-
 NAME		=	webserv
 
 DIRSRC		=	srcs
 OBJD		=	obj
 INCLUDE		=	incl
 
-SRC			=	main.cpp	\
-				server.cpp	\
-				request.cpp
+INCLUDEF	=	$(INCLUDE)/includes.hpp 	\
+				$(INCLUDE)/request.hpp		\
+				$(INCLUDE)/server.hpp		\
+				$(INCLUDE)/webserv.hpp		
+
+SRC			=	main.cpp		\
+				server.cpp		\
+				request.cpp	
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
@@ -27,17 +31,20 @@ CFLAGS		= 	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror
 
 CC			=	clang++
 RM			=	rm -f
-ECHO		=	echo
 
-$(NAME)		:	$(LIB) $(OBJD) $(OBJS)
-				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME) 
+
+$(NAME)		:	$(LIB) $(OBJD) $(OBJS) $(INCLUDEF)
+				$(CC) -I ./$(INCLUDE) -I ./$(MLX_OS) $(LIB) $(CFLAGS) $(CFRAME) $(OBJS) -o $(NAME) 
 
 $(OBJD)		:
 				@mkdir $(OBJD)
 
 $(OBJD)/%.o	:	$(DIRSRC)/%.cpp
-				$(CC) -I ./$(INCLUDE) $(CFLAGS) -o $@ -c $<
+				$(CC) -I ./$(INCLUDE) -I ./$(INCLUDE) $(CFLAGS) -o $@ -c $<
 
+$(LIB)			:
+				$(MAKE) -C $(MLX_OS)
+				cp $(MLX_OS)/$(LIB) ./.
 
 all			:	$(NAME)
 
@@ -45,16 +52,14 @@ clean		:
 				$(RM) $(OBJS)
 
 fclean		:	clean
-				$(RM) $(NAME)
+				
+				$(RM) $(NAME) $(LIB)
 
-
-
+run 		: re
+			./webserv
 
 bonus		:	all
 
 re			:	fclean all
 
-run 		: re
-			./webserv
-
-.PHONY		:	all clean re fclean run
+.PHONY		:	all clean re fclean
