@@ -6,31 +6,14 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 19:56:36 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/17 16:38:16 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
 #define REQUEST_HPP
 
-// #include "server.hpp"
-
-
-#include <vector>
-#include <iostream>
-#include <unistd.h>
-#include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <ctime>
-#include <netinet/ip.h> 
-
-#include <string>
-#include <fstream>
-#include <iostream>
+#include "includes.hpp"
 
 class Request
 {
