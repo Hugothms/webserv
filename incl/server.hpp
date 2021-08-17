@@ -6,23 +6,14 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/04 19:52:48 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/17 16:38:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
 #include "request.hpp"
-
-#include <vector>
-#include <iostream>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/ip.h> 
+#include "includes.hpp"
 
 #define V4 AF_INET
 #define V6 AF_INET6
