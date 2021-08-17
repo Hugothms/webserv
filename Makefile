@@ -30,21 +30,17 @@ OBJS		=	$(OBJ:%=$(OBJD)/%)
 CFLAGS		= 	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror 
 
 CC			=	clang++
+
 RM			=	rm -f
 
-
-$(NAME)		:	$(LIB) $(OBJD) $(OBJS) $(INCLUDEF)
-				$(CC) -I ./$(INCLUDE) -I ./$(MLX_OS) $(LIB) $(CFLAGS) $(CFRAME) $(OBJS) -o $(NAME) 
+$(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
+				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME) 
 
 $(OBJD)		:
 				@mkdir $(OBJD)
 
 $(OBJD)/%.o	:	$(DIRSRC)/%.cpp
 				$(CC) -I ./$(INCLUDE) -I ./$(INCLUDE) $(CFLAGS) -o $@ -c $<
-
-$(LIB)			:
-				$(MAKE) -C $(MLX_OS)
-				cp $(MLX_OS)/$(LIB) ./.
 
 all			:	$(NAME)
 
