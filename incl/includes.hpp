@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/17 16:38:57 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/30 23:33:56 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@
 # include <ctime>
 //NETWORK INCLUDES
 # include <netinet/in.h>
+
+//NEW
+
+#include <arpa/inet.h>
+#include <sys/select.h>
 
 
 #endif

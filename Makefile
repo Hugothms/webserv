@@ -16,13 +16,13 @@ OBJD		=	obj
 INCLUDE		=	incl
 
 INCLUDEF	=	$(INCLUDE)/includes.hpp 	\
-				$(INCLUDE)/request.hpp		\
-				$(INCLUDE)/server.hpp		\
-				$(INCLUDE)/webserv.hpp		
+				$(INCLUDE)/server.hpp		
+# $(INCLUDE)/request.hpp						
+# $(INCLUDE)/webserv.hpp		
 
 SRC			=	main.cpp		\
 				server.cpp		\
-				request.cpp	
+# 				request.cpp	
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)

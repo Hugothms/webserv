@@ -6,13 +6,13 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/17 16:38:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/08/31 01:33:30 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "request.hpp"
+// #include "request.hpp"
 #include "includes.hpp"
 
 #define V4 AF_INET
@@ -20,15 +20,43 @@
 #define TCP SOCK_STREAM
 #define UDP SOCK_DGRAM
 #define IP 0
+#define MAX_BACKLOG 10
+#define MAX_CLIENTS 10
+
+#define DEBUG 1
 
 class Server
 {
 	private :
-		int 					listen_socket;
-		int 					send_socket;
-		unsigned int 			port;
-		struct sockaddr_in 		hint;
-		std::vector<Request> 	requests;
+		class Client
+  		{
+  			private :
+
+  			public :
+  				int 	socket;
+  				struct 	sockaddr_in addres;
+  				char 	*message;
+  				int 	len;
+  				Client()
+  				{
+  					socket = -1;
+  				}
+  		};
+
+		int 					_listen_sock;
+		int 					_reuse;
+		// int 					send_socket;
+		unsigned int 			_port;
+		struct sockaddr_in 		_addr;
+
+		fd_set					_read_fds;
+  		fd_set					_write_fds;
+  		fd_set					_except_fds;
+  		Client 					_clients[MAX_CLIENTS];
+  		
+  		
+  
+		// std::vector<Request> 	requests;
 		// struct sockaddr_in 	hint;
 		// struct sockaddr_in addr;
 		// unsigned int port;
@@ -36,6 +64,12 @@ class Server
  	public:
 		Server(unsigned int _port = 8080);
 		~Server();
+		int run();
 		void s_listen();
+		int setup();
+		int setup_fd_set();
+		int start_listen_socket();
+		int handle_new_connection();
+		int receive_from_peer();
 };
 #endif
