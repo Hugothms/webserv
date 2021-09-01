@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/09/01 16:25:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/01 16:32:11 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int main()
         }
         valread = read(new_socket, &buffer[0], 1024);
         buffer = buffer.substr(0, valread - 1);
-        std::cout << buffer << std::endl;
+        DEBUG("------ REQUEST ------" << endl << buffer);
 
         // int nfds = poll(struct pollfd fds[], nfds_t nfds, int timeout);
 
@@ -99,7 +99,7 @@ int main()
         else
             response = response + "HTTP/1.1 404 Not Found\nContent-Length: 119\nConnection: Closed\nContent-Type: text/html;\n\n<html lang=\"en\">\n<body>\n<h1>404 Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n</body>\n</html>";
         send(new_socket, &response[0], response.length(), 0);
-        std::cout << endl << "Response sent:" << endl << response << std::endl;
+        DEBUG(endl << "------ RESPONSE ------" << endl << response);
     }
 
     return 0;

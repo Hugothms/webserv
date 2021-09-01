@@ -6,7 +6,7 @@
 #    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/06 10:49:48 by hthomas           #+#    #+#              #
-#    Updated: 2021/07/06 12:58:11 by hthomas          ###   ########.fr        #
+#    Updated: 2021/09/01 16:29:13 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ OBJS		=	$(addprefix $(OBJSDIR), $(SRCS:%.cpp=%.o))
 
 HEADER		=	$(SRCSDIR)$(NAME).hpp
 
-DEBUG		=	0
+DEBUG		=	1
 
 all:	$(NAME)
 
