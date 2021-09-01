@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/09/01 16:32:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/01 16:35:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int main()
             response = response + get_content_file("website/hello.html");
         }
         else
-            response = response + "HTTP/1.1 404 Not Found\nContent-Length: 119\nConnection: Closed\nContent-Type: text/html;\n\n<html lang=\"en\">\n<body>\n<h1>404 Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n</body>\n</html>";
+            response = response + "HTTP/1.1 404 Not Found\nContent-Length: 126\nConnection: Closed\nContent-Type: text/html;\n\n<html lang=\"en\">\n<body>\n<h1>404 Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n</body>\n</html>\n";
         send(new_socket, &response[0], response.length(), 0);
         DEBUG(endl << "------ RESPONSE ------" << endl << response);
     }
