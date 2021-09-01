@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/09/01 16:44:30 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/01 16:51:27 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,10 @@
 
 // Server side C/C++ program to demonstrate Socket programming
 #include <unistd.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstring>
 #include <sys/socket.h>
-#include <stdlib.h>
 #include <netinet/in.h>
-#include <string.h>
 #define PORT 8080
 
 using namespace std;
