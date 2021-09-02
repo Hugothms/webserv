@@ -1,23 +1,27 @@
 body {
   /*margin: 25px;*/
-  background-color: teal; 
+  background-color: orange;
   color: lightgrey;
   border: 200px;
   /*font-family: arial, sans-serif;*/
   /*font-size: 14px;*/
 }
 div {
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
 }
 /* Applies to all <h1>...</h1> elements. */
 h1 {
-
   font-size: 35px;
   font-weight: bold;
   margin-top: 5px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Applies to all elements with <... class="someclass"> specified. */
