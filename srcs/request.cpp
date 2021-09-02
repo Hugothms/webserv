@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/17 16:44:06 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/02 16:15:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "server.hpp"
 #include "request.hpp"
 
 Request::Request(){}
@@ -20,14 +22,14 @@ Request::Request(char *buffer, int size, int sock) : socket(sock)
 		type += buffer[i++];
 	++i;
 	while (i < size && buffer[i] && buffer[i] != ' ')
-		target += buffer[i++];	
+		target += buffer[i++];
 }
 
 std::string getdayofweek(int day)
 {
 	switch(day)
 	{
-		case 1: 
+		case 1:
 			return "Mon";
 		case 2:
 			return "Tue";
@@ -76,25 +78,32 @@ std::string getmonth(int month)
 			return "Dec";
 		default :
 			return "UNDEFINED_MONTH";
-	}	
+	}
 }
 
 std::string gettimestamp()
 {
 	time_t now = time(0);
- 	
+
  	tm *time = gmtime(&now);
 	std::stringstream output;
 	output << getdayofweek(time->tm_wday);
-	
+
 	if (time->tm_mday < 10)
 		output <<", 0" << time->tm_mday;
 	else
 		output <<", " << time->tm_mday;
 	output << " " << getmonth(time->tm_mon);
 	output << " " << time->tm_year + 1900 << " ";
-	output << time->tm_hour << ":" << time->tm_min << ":" 
-	<< time->tm_sec << " GMT\n";
+	if (time->tm_hour < 10)
+		output << "0";
+	output << time->tm_hour << ":";
+	if (time->tm_min < 10)
+		output << "0";
+	output << time->tm_min << ":";
+	if (time->tm_sec < 10)
+		output << "0";
+	output << time->tm_sec << " GMT\n";
 	return (output.str());
 }
 
@@ -110,7 +119,7 @@ std::string gettype(std::string str)
 	else if (str.find(".css", str.length() - 4) != std::string::npos)
 		ret = "text/css";
 	else if (str.find(".js", str.length() - 3) != std::string::npos)
-		ret = "application/javascript";	
+		ret = "application/javascript";
 	else
 		ret = "text/html";
 	return ret;
@@ -125,7 +134,7 @@ void Request::respond()
 	filepath += target;
 	std::ifstream myfile(filepath.c_str(), std::ofstream::in);
 	std::stringstream response;
-	
+
 	if (!myfile)
 	{
 		myfile.close();
@@ -133,11 +142,11 @@ void Request::respond()
 		response << "HTTP/1.1 404 Not Found\n";
 	}
 	else
-		response << "HTTP/1.1 200 OK\n";	
-	
+		response << "HTTP/1.1 200 OK\n";
+
 	std::string file((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
-	
+
 
 	response << "Server: webserv/0.01\n";
 	response << "Date: " << gettimestamp();
@@ -146,6 +155,7 @@ void Request::respond()
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
+	std::cout << "------ RESPONSE ------\n" << response.str() << std::endl;
 	myfile.close();
 }
 
