@@ -6,7 +6,7 @@
 #    By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/09/08 14:55:54 by edal--ce         ###   ########.fr        #
+#    Updated: 2021/09/08 15:01:37 by edal--ce         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,8 +34,11 @@ CC			=	clang++
 
 RM			=	rm -rf
 
+D = 1
+
+
 $(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
-				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME) 
+				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME) -D DEBUG_ACTIVE=$(D)
 
 $(OBJD)		:
 				@mkdir $(OBJD)

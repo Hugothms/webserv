@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/08 14:56:29 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/08 14:58:13 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@
 #include <netinet/in.h>
 #define PORT 8080
 
-string get_content_file(string filename)
+std::string get_content_file(std::string filename)
 {
-    ifstream myfile;
+   std::ifstream myfile;
     myfile.open(filename);
-    string content("");
+    std::string content("");
     while (myfile)
         content = content + (char)myfile.get();
     myfile.close();
