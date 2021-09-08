@@ -6,16 +6,22 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/31 01:37:07 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/08 16:58:40 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
 
-Server::~Server() {}
-Server::Server(unsigned int port) : _port(port)
-{	
-	memset(&_addr, 0, sizeof(_addr));
+#define NO_SOCKET -1
 
+#define MAX_SEND_SIZE 10000
+Server::~Server() 
+{
+	delete _clients;
+}
+Server::Server(unsigned int port) : _port(port)
+{
+	memset(&_addr, 0, sizeof(_addr));
+	_clients = new Client[10];
 	_addr.sin_family = V4;
 	_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	_addr.sin_port = htons(_port);
@@ -67,57 +73,75 @@ int Server::handle_new_connection()
 	return -1;
 }
 
-void process_packet()
+void Server::process_packet(Client *client)
 {
-
+		// printf("Message: %s: \n", buff);
 }
 
-int Server::receive_from_peer(Client *peer, int (*message_handler)(message_t *))
+int Server::receive_from_peer(Client *peer)//, int (*message_handler)(Client *))
 {
-  printf("Ready for recv() from %s.\n", peer_get_addres_str(peer));
+
+  	printf("Ready for recv() from \n");
   
-  size_t len_to_receive;
-  ssize_t received_count;
-  size_t received_total = 0;
-  do 
-  {
+  	size_t len_to_receive = 0;
+  	size_t received_count = 0;
+  	size_t received_total = 0;
+
+  	char *rec_buff;
+  	do 
+  	{
     // Is completely received?
-    if (peer->current_receiving_byte >= sizeof(peer->receiving_buffer)) 
+    	if (peer->recv_bytes >= sizeof(peer->buffer)) 
+    	{
+      	process_packet(peer);
+      	printf("Received message from client.\n");
+
+      	// process_packet(&peer->receiving_buffer);
+      	peer->recv_bytes = 0;
+    	}
+    
+//     // // Count bytes to send.
+    	len_to_receive = sizeof(peer->buffer) - peer->recv_bytes;
+    	// if (len_to_receive > MAX_SEND_SIZE)
+     //  	len_to_receive = MAX_SEND_SIZE;
+    
+    printf("Let's try to recv() %zd bytes... ", len_to_receive);
+    received_count = recv(peer->socket, (char *)&peer->buffer + peer->recv_bytes, len_to_receive, MSG_DONTWAIT);
+    if (received_count < 0) 
     {
-      // process_packet(&peer->receiving_buffer);
-      process_packet(&peer->receiving_buffer);
-      peer->current_receiving_byte = 0;
+      // if (errno == EAGAIN || errno == EWOULDBLOCK) 
+      // {
+      //   printf("peer is not ready right now, try again later.\n");
+      // }
+      // else 
+      // {
+        printf("recv() from peer error\n");
+        return -1;
+      // }
     }
-    
-    // // Count bytes to send.
-    len_to_receive = sizeof(peer->receiving_buffer) - peer->current_receiving_byte;
-    if (len_to_receive > MAX_SEND_SIZE)
-      len_to_receive = MAX_SEND_SIZE;
-    
-    // printf("Let's try to recv() %zd bytes... ", len_to_receive);
-    // received_count = recv(peer->socket, (char *)&peer->receiving_buffer + peer->current_receiving_byte, len_to_receive, MSG_DONTWAIT);
-    // if (received_count < 0) {
-    //   if (errno == EAGAIN || errno == EWOULDBLOCK) {
-    //     printf("peer is not ready right now, try again later.\n");
-    //   }
-    //   else {
-    //     perror("recv() from peer error");
-    //     return -1;
-    //   }
-    // } 
+    else if (received_count == 0)
+    {
+			printf("recv() 0 bytes. Peer gracefully shutdown.\n");
+    }
+    else if (received_count > 0)
+    {
+    	  peer->recv_bytes += received_count;
+      	received_total += received_count;
+      	printf("recv() %zd bytes\n", received_count);
+    }
     // else if (received_count < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
     //   break;
     // }
-    // // If recv() returns 0, it means that peer gracefully shutdown. Shutdown client.
-    // else if (received_count == 0) {
-    //   printf("recv() 0 bytes. Peer gracefully shutdown.\n");
-    //   return -1;
-    // }
-    // else if (received_count > 0) {
-    //   peer->current_receiving_byte += received_count;
-    //   received_total += received_count;
-    //   printf("recv() %zd bytes\n", received_count);
-    // }
+//     // // If recv() returns 0, it means that peer gracefully shutdown. Shutdown client.
+    // if (received_count == 0) {
+//     //   printf("recv() 0 bytes. Peer gracefully shutdown.\n");
+//     //   return -1;
+//     // }
+//     // else if (received_count > 0) {
+//     //   peer->current_receiving_byte += received_count;
+//     //   received_total += received_count;
+//     //   printf("recv() %zd bytes\n", received_count);
+//     // }
   } while (received_count > 0);
   
   printf("Total recv()'ed %zu bytes.\n", received_total);
@@ -164,9 +188,10 @@ int Server::run()
 				{
 					if (_clients[i].socket != NO_SOCKET && FD_ISSET(_clients[i].socket, &_read_fds)) 
 					{
-						if (receive_from_peer(&_clients[i], &handle_received_message) != 0) 
+						if (receive_from_peer(&_clients[i]) != 0) 
 						{
-							close_client_connection(&_clients[i]);
+							std::cout << "==0\n" ;
+							// close_client_connection(&_clients[i]);
 							continue;
 						}
 					}	

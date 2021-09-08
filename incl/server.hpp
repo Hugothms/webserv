@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/31 01:33:30 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/08 16:58:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
@@ -36,10 +36,18 @@ class Server
   				int 	socket;
   				struct 	sockaddr_in addres;
   				char 	*message;
+  				char 	*buffer;
   				int 	len;
+  				size_t recv_bytes;
   				Client()
   				{
+  					buffer = new char[4097];
+  					recv_bytes = 0;
   					socket = -1;
+  				}
+  				~Client()
+  				{
+  					delete buffer;
   				}
   		};
 
@@ -52,7 +60,7 @@ class Server
 		fd_set					_read_fds;
   		fd_set					_write_fds;
   		fd_set					_except_fds;
-  		Client 					_clients[MAX_CLIENTS];
+  		Client 					*_clients;//[MAX_CLIENTS];
   		
   		
   
@@ -70,6 +78,8 @@ class Server
 		int setup_fd_set();
 		int start_listen_socket();
 		int handle_new_connection();
-		int receive_from_peer();
+		// int receive_from_peer();
+		int receive_from_peer(Client *peer);
+		void process_packet(Client *peer);
 };
 #endif
