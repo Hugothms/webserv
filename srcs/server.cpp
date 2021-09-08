@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/08 16:58:40 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/09 01:45:38 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -50,13 +50,14 @@ int Server::handle_new_connection()
 		return -1;
 	}
 	
+	// if (DEB)
 	char client_ipv4_str[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &client_addr.sin_addr, client_ipv4_str, INET_ADDRSTRLEN);
 	
 	printf("Incoming connection from %s:%d.\n", client_ipv4_str, client_addr.sin_port);
 	
-	int i;
-	for (i = 0; i < MAX_CLIENTS; ++i) 
+	
+	for (int i = 0; i < MAX_CLIENTS; ++i) 
 	{
 			if (_clients[i].socket == -1) 
 			{
@@ -78,6 +79,20 @@ void Server::process_packet(Client *client)
 		// printf("Message: %s: \n", buff);
 }
 
+void Server::close_client_connection(Client *client)
+{
+	close(client->socket);
+	client->socket = -1;
+	// dequeue_all(&client->send_buffer);
+	// client->current_sending_byte   = -1;
+	// client->current_receiving_byte = 0;
+}
+
+int Server::send_to_peer(Client* client)
+{
+
+}
+
 int Server::receive_from_peer(Client *peer)//, int (*message_handler)(Client *))
 {
 
@@ -93,30 +108,31 @@ int Server::receive_from_peer(Client *peer)//, int (*message_handler)(Client *))
     // Is completely received?
     	if (peer->recv_bytes >= sizeof(peer->buffer)) 
     	{
+    		write(2, "NOW HERE\n", 9);
       	process_packet(peer);
       	printf("Received message from client.\n");
-
+      	// close_client_connection(peer);
       	// process_packet(&peer->receiving_buffer);
       	peer->recv_bytes = 0;
     	}
+    	else
+    	{}
     
 //     // // Count bytes to send.
-    	len_to_receive = sizeof(peer->buffer) - peer->recv_bytes;
+    	// len_to_receive = sizeof(peer->buffer) - peer->recv_bytes;
+    	len_to_receive = 4097;
     	// if (len_to_receive > MAX_SEND_SIZE)
      //  	len_to_receive = MAX_SEND_SIZE;
     
     printf("Let's try to recv() %zd bytes... ", len_to_receive);
-    received_count = recv(peer->socket, (char *)&peer->buffer + peer->recv_bytes, len_to_receive, MSG_DONTWAIT);
+    memset(peer->buffer, 0, 4097);
+    received_count = recv(peer->socket, (char *)(peer->buffer + peer->recv_bytes), len_to_receive, MSG_DONTWAIT);
+    write(2,"RECEIVED: ", 10);
+    write(2,peer->buffer + peer->recv_bytes , len_to_receive);
     if (received_count < 0) 
     {
-      // if (errno == EAGAIN || errno == EWOULDBLOCK) 
-      // {
-      //   printf("peer is not ready right now, try again later.\n");
-      // }
-      // else 
-      // {
-        printf("recv() from peer error\n");
-        return -1;
+				printf("recv() from peer error\n");
+				return -1;
       // }
     }
     else if (received_count == 0)
@@ -127,6 +143,7 @@ int Server::receive_from_peer(Client *peer)//, int (*message_handler)(Client *))
     {
     	  peer->recv_bytes += received_count;
       	received_total += received_count;
+      	write(2, peer->buffer, received_count);
       	printf("recv() %zd bytes\n", received_count);
     }
     // else if (received_count < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
@@ -166,7 +183,6 @@ int Server::run()
 		switch(activity)
 		{
 			case -1 :
-				//Not here
 				std::cerr << "-1 ACTIVITY\n";
 				return -1;
 			case 0 :
@@ -177,7 +193,6 @@ int Server::run()
 				{
 					handle_new_connection();
 				}
-
 				if (FD_ISSET(_listen_sock, &_except_fds)) 
 				{
 					std::cerr << "Exception listen socket fd.\n";
@@ -188,13 +203,22 @@ int Server::run()
 				{
 					if (_clients[i].socket != NO_SOCKET && FD_ISSET(_clients[i].socket, &_read_fds)) 
 					{
-						if (receive_from_peer(&_clients[i]) != 0) 
+						if (receive_from_peer(&(_clients[i])) != 0) 
 						{
-							std::cout << "==0\n" ;
+							std::cout << "DONE RCV\n" ;
+							close_client_connection(&(_clients[i]));
 							// close_client_connection(&_clients[i]);
 							continue;
 						}
-					}	
+					}
+					if (_clients[i].socket != NO_SOCKET && FD_ISSET(_clients[i].socket, &_write_fds)) 
+					{
+						if (send_to_peer(&_clients[i]) != 0) 
+						{
+							close_client_connection(&_clients[i]);
+							continue;
+						}
+					}
 					// if (_clients[i].socket != NO_SOCKET && FD_ISSET(_clients[i].socket, &_write_fds)) 
 					// {
 					// 	if (send_to_peer(&_clients[i]) != 0) 
@@ -221,27 +245,27 @@ int Server::run()
 int Server::start_listen_socket()	//Prepares socket, CRITICAL
 {
 	int reuse = 1;
-
+	//Creating socket to allow network connection
 	if ((_listen_sock = socket(V4, TCP, IP)) == -1)
 	{
-		std::cerr << "SOCKET ERROR\n";
-		return -1;
+		std::cerr << "SOCKET ERROR : START_LISTEN_SOCK\n";
+		return (-1);
 	}	
 	if (setsockopt(_listen_sock, SOL_SOCKET, SO_REUSEADDR /*| SO_REUSEPORT*/, &reuse, sizeof(int)) != 0) 
 	{
-		std::cerr << "SOCKET ERROR\n";
+		std::cerr << "SOCKET ERROR : START_LISTEN_SOCK\n";
 		return -1;
 	}
 
 	if (bind(_listen_sock,(struct sockaddr*)(&_addr), sizeof(struct sockaddr)) != 0) 
 	{
-		std::cerr << "SOCKET ERROR\n";
+		std::cerr << "SOCKET ERROR : START_LISTEN_SOCK\n";
 		return -1;
 	}
 	// start accept client connections
 	if (listen(_listen_sock, MAX_BACKLOG) != 0) 
 	{
-	  	std::cerr << "SOCKET ERROR\n";
+	  std::cerr << "SOCKET ERROR : START_LISTEN_SOCK\n";
 		return -1;
 	}
 	if (DEBUG)

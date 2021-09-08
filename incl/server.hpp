@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/08 16:58:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/09 01:40:38 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
@@ -81,5 +81,7 @@ class Server
 		// int receive_from_peer();
 		int receive_from_peer(Client *peer);
 		void process_packet(Client *peer);
+		void close_client_connection(Client *client);
+		int send_to_peer(Client* client);
 };
 #endif
