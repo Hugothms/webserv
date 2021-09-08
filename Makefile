@@ -3,56 +3,60 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
+#    By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/07/06 10:49:48 by hthomas           #+#    #+#              #
-#    Updated: 2021/09/01 16:29:13 by hthomas          ###   ########.fr        #
+#    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
+#    Updated: 2021/09/08 14:55:54 by edal--ce         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.SUFFIXES:
-.SUFFIXES: .cpp .o
-
 NAME		=	webserv
 
-CXX			=	clang++
-RM			=	rm -f
+DIRSRC		=	srcs
+OBJD		=	obj
+INCLUDE		=	incl
 
-CXXFLAGS	=	-Wall -Wextra -Werror -std=c++98
-LDFLAGS		=	#-fsanitize	=thread -g3
+INCLUDEF	=	$(INCLUDE)/includes.hpp 	\
+				$(INCLUDE)/request.hpp		\
+				$(INCLUDE)/server.hpp		\
+				$(INCLUDE)/webserv.hpp		
 
-SRCSDIR		=	srcs/
-SRCS		=	main.cpp
+SRC			=	main.cpp		\
+				server.cpp		\
+				request.cpp	
 
-OBJSDIR		=	build/
-OBJS		=	$(addprefix $(OBJSDIR), $(SRCS:%.cpp=%.o))
+OBJ			=	$(SRC:.cpp=.o)
+OBJS		=	$(OBJ:%=$(OBJD)/%)
 
-HEADER		=	$(SRCSDIR)$(NAME).hpp
+CFLAGS		= 	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror 
 
-DEBUG		=	1
+CC			=	clang++
 
-all:	$(NAME)
+RM			=	rm -rf
 
-$(NAME):	$(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJS) -o $@
+$(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
+				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME) 
 
-$(OBJSDIR)%.o:	$(SRCSDIR)%.cpp $(HEADER)
-	mkdir -p build
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -D DEBUG_ACTIVE=$(DEBUG) -c $< -o $@
+$(OBJD)		:
+				@mkdir $(OBJD)
 
-clean:
-	$(RM) $(OBJS)
+$(OBJD)/%.o	:	$(DIRSRC)/%.cpp
+				$(CC) -I ./$(INCLUDE) -I ./$(INCLUDE) $(CFLAGS) -o $@ -c $<
 
+all			:	$(NAME)
 
-fclean:	clean
-	$(RM) $(NAME)
+clean		:
+				$(RM) $(OBJS)
 
-re:		fclean
-	make all
+fclean		:	clean
+				
+				$(RM) $(NAME) $(LIB)
 
-test:	$(NAME)
-	./$^
+run 		: re
+			./webserv
 
-.PHONY:	all clean fclean re
+bonus		:	all
 
-# .SILENT:
+re			:	fclean all
+
+.PHONY		:	all clean re fclean
