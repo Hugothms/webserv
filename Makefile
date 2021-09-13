@@ -51,7 +51,7 @@ fclean		:	clean
 				
 				$(RM) $(NAME) $(LIB)
 
-run 		: re
+run 		: all
 			./webserv
 
 bonus		:	all

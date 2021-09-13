@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/09/08 15:54:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/13 18:45:42 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,12 @@
 int main()
 {
    Server serv;
-   serv.start_listen_socket();
-   while (true)
-   {
+   // serv.start_listen_socket();
+   serv.setup();
+   // while (true)
+   // {
       serv.run();
       // serv.s_listen();
-   }
+   // }
    return 0;
 }

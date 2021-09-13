@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/09 01:40:38 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/13 18:43:50 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
@@ -41,7 +41,7 @@ class Server
   				size_t recv_bytes;
   				Client()
   				{
-  					buffer = new char[4097];
+  					buffer = new char[10000];
   					recv_bytes = 0;
   					socket = -1;
   				}
@@ -53,6 +53,7 @@ class Server
 
 		int 					_listen_sock;
 		int 					_reuse;
+		int 					server_socket;
 		// int 					send_socket;
 		unsigned int 			_port;
 		struct sockaddr_in 		_addr;
@@ -60,6 +61,8 @@ class Server
 		fd_set					_read_fds;
   		fd_set					_write_fds;
   		fd_set					_except_fds;
+
+  		// fd_set 					server_socket;
   		Client 					*_clients;//[MAX_CLIENTS];
   		
   		
@@ -74,6 +77,7 @@ class Server
 		~Server();
 		int run();
 		void s_listen();
+		int setup_server();
 		int setup();
 		int setup_fd_set();
 		int start_listen_socket();
