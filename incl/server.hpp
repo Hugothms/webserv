@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 11:43:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/16 14:40:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "webserv.hpp"
 #include "request.hpp"
 #include "includes.hpp"
+
+#define BUFFER_SIZE 1024
 
 #define V4 AF_INET
 #define V6 AF_INET6
