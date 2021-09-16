@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 11:19:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/16 11:37:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ std::string gettimestamp()
 {
 	time_t now = time(0);
 
- 	tm *time = gmtime(&now);
+	tm *time = gmtime(&now);
 	std::stringstream output;
 	output << getdayofweek(time->tm_wday);
 

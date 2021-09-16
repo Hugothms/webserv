@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 11:17:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/16 11:43:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,14 @@
 class Server
 {
 	private :
-		int 					listen_socket;
-		int 					send_socket;
-		unsigned int 			port;
-		struct sockaddr_in 		hint;
-		std::vector<Request> 	requests;
-		// struct sockaddr_in 	hint;
-		// struct sockaddr_in addr;
-		// unsigned int port;
+		int						listen_socket;
+		std::string				server_name; //Host header in HTTP request
+		int						send_socket;
+		unsigned int			port;
+		struct sockaddr_in		hint;
+		std::vector<Request>	requests;
 
- 	public:
+	public:
 		Server(unsigned int _port = 8080);
 		~Server();
 		void s_listen();
