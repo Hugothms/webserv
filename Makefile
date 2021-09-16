@@ -6,7 +6,7 @@
 #    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/09/16 11:20:25 by hthomas          ###   ########.fr        #
+#    Updated: 2021/09/16 11:37:12 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ DIRSRC		=	srcs
 OBJD		=	obj
 INCLUDE		=	incl
 
-INCLUDEF	=	$(INCLUDE)/includes.hpp 	\
+INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 				$(INCLUDE)/request.hpp		\
 				$(INCLUDE)/server.hpp		\
 				$(INCLUDE)/webserv.hpp
@@ -28,7 +28,7 @@ SRC			=	main.cpp		\
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
 
-CFLAGS		= 	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror
+CFLAGS		=	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror
 
 CC			=	clang++
 
@@ -55,8 +55,8 @@ fclean		:	clean
 
 				$(RM) $(NAME) $(LIB)
 
-run 		: re
-			./webserv
+run			:	re
+				./webserv
 
 bonus		:	all
 
