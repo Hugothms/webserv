@@ -6,13 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 11:06:20 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/16 11:17:07 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "webserv.hpp"
 #include "request.hpp"
 #include "includes.hpp"
 

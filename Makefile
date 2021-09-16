@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+         #
+#    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/09/08 15:01:37 by edal--ce         ###   ########.fr        #
+#    Updated: 2021/09/16 11:20:25 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,32 +19,32 @@ INCLUDE		=	incl
 INCLUDEF	=	$(INCLUDE)/includes.hpp 	\
 				$(INCLUDE)/request.hpp		\
 				$(INCLUDE)/server.hpp		\
-				$(INCLUDE)/webserv.hpp		
+				$(INCLUDE)/webserv.hpp
 
 SRC			=	main.cpp		\
 				server.cpp		\
-				request.cpp	
+				request.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
 
-CFLAGS		= 	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror 
+CFLAGS		= 	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror
 
 CC			=	clang++
 
 RM			=	rm -rf
 
-D = 1
+DEBUG		=	1
 
 
 $(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
-				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME) -D DEBUG_ACTIVE=$(D)
+				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME)
 
 $(OBJD)		:
 				@mkdir $(OBJD)
 
 $(OBJD)/%.o	:	$(DIRSRC)/%.cpp
-				$(CC) -I ./$(INCLUDE) -I ./$(INCLUDE) $(CFLAGS) -o $@ -c $<
+				$(CC) -I ./$(INCLUDE) $(CFLAGS) -D DEBUG_ACTIVE=$(DEBUG) -o $@ -c $<
 
 all			:	$(NAME)
 
@@ -52,7 +52,7 @@ clean		:
 				$(RM) $(OBJS)
 
 fclean		:	clean
-				
+
 				$(RM) $(NAME) $(LIB)
 
 run 		: re

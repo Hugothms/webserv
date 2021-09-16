@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 11:05:43 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/16 11:19:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ void Server::s_listen()
 	int query_size = read(send_socket, buffer, 1024);
 	Request query(buffer, 1024, send_socket);
 	// write(1, buffer, query_size);
-	std::cout << "------ REQUEST ------\n" << buffer << std::endl;;
+	DEBUG("-------- REQUEST --------");
+	DEBUG(buffer);
 	query.respond();
 	close(send_socket);
 }
