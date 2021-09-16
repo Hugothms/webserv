@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/08/17 16:38:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/16 11:06:20 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
@@ -32,10 +33,11 @@ class Server
 		// struct sockaddr_in 	hint;
 		// struct sockaddr_in addr;
 		// unsigned int port;
- 		// const char *hello = "HTTP/1.1 200 OK\nContent-Length: 52\nContent-Type: text/html\nConnection: Closed\n\n<html>\n<body>\n<h1>Hello, World!</h1>\n</body>\n</html>\n";
+
  	public:
 		Server(unsigned int _port = 8080);
 		~Server();
 		void s_listen();
 };
+
 #endif

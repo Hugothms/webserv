@@ -4,5 +4,5 @@ TODO LIST :
 	- Non blocking : Should be handeld by Select
 	- Config file : Define available options, parse the file and apply changes
 	- Implement CGI (PHP etc) using fork
-	- File upload/removal : POST / DELETE (+ get) 
+	- File upload/removal : POST / DELETE (+ get)
 	- Multiple port managment
