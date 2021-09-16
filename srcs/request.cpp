@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/08 15:02:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/16 11:19:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,8 +155,8 @@ void Request::respond()
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	// if (DEBUG)
-		// std::cout << "------ RESPONSE ------\n" << response.str() << std::endl;
+	// DEBUG("------- RESPONSE -------\n");
+	// DEBUG(response.str());
 	myfile.close();
 }
 
