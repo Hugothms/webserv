@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 11:37:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/16 15:31:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,20 @@ Request::Request(){}
 Request::Request(char *buffer, int size, int sock) : socket(sock)
 {
 	int i = 0;
+	// if (str.substr(0, str.find(' ')) == "GET")
+	// 	type = GET;
 	while (i < size && buffer[i] && buffer[i] != ' ')
 		type += buffer[i++];
 	++i;
 	while (i < size && buffer[i] && buffer[i] != ' ')
 		target += buffer[i++];
+	//todo: Continue parsing here
+
+
+	DEBUG("\n******** PARSED ********");
+	DEBUG("type:" << type);
+	DEBUG("target:" << target);
+	DEBUG("");
 }
 
 std::string getdayofweek(int day)
