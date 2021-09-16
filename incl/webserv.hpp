@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 13:34:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/16 13:51:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,13 @@
 #  define DEBUG(x)
 # endif
 
+class Server;
+
+class Webserv
+{
+	private:
+		std::vector<Server>	servers;
+
+};
 
 #endif
