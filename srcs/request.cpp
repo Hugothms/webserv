@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 01:02:44 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 01:12:06 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,25 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	std::string header;
 	while (index < size && buffer[index])
 	{
-		DEBUG(index);
+		DEBUG("index:" << index);
 		DEBUG("str[index]:" << str[index]);
 		if ((header = function(str, ': ', &index)).empty())
 			break ;
-		DEBUG("header:" << header);
-		index++;
-		if (header == "Host")
-			host = function(str, '\n', &index);
-		DEBUG("host:" << host);
-		if (header == "Accept")
-			accept = function(str, '\n', &index);
 		// index++;
+		header = header.substr(0, header.length() - 1);
+		DEBUG("HEADER:" << header);
+		if (header == "Host")
+		{
+			host = function(str, '\n', &index);
+			DEBUG("host:" << host);
+		}
+		if (header == "Accept")
+		{
+			accept = function(str, '\n', &index);
+			DEBUG("accept:" << accept);
+		}
+		DEBUG("");
+		index++;
 		// sleep(1);
 	}
 	//todo: Continue parsing here
