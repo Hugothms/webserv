@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 15:31:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 01:02:44 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,54 @@
 
 Request::Request(){}
 
-Request::Request(char *buffer, int size, int sock) : socket(sock)
+std::string function(std::string str, char c, size_t *index)
 {
-	int i = 0;
-	// if (str.substr(0, str.find(' ')) == "GET")
-	// 	type = GET;
-	while (i < size && buffer[i] && buffer[i] != ' ')
-		type += buffer[i++];
-	++i;
-	while (i < size && buffer[i] && buffer[i] != ' ')
-		target += buffer[i++];
+	size_t length = str.find(c, *index) - *index;
+	std::string res;
+	if (length == std::string::npos)
+	{
+		DEBUG("\"" << c << "\" NOT FOUND IN STRING");
+		return res;
+	}
+	res = str.substr(*index , length);
+	*index += length + 1;
+	return res;
+}
+
+Request::Request(char *buffer, size_t size, int sock) : socket(sock)
+{
+	size_t index = 0;
+	std::string str(buffer, size);
+	type = function(str, ' ', &index);
+	target = function(str, ' ', &index);
+	while (index < size && buffer[index] && buffer[index] != '\n')
+		index++;
+	index++;
+	std::string header;
+	while (index < size && buffer[index])
+	{
+		DEBUG(index);
+		DEBUG("str[index]:" << str[index]);
+		if ((header = function(str, ': ', &index)).empty())
+			break ;
+		DEBUG("header:" << header);
+		index++;
+		if (header == "Host")
+			host = function(str, '\n', &index);
+		DEBUG("host:" << host);
+		if (header == "Accept")
+			accept = function(str, '\n', &index);
+		// index++;
+		// sleep(1);
+	}
 	//todo: Continue parsing here
 
 
 	DEBUG("\n******** PARSED ********");
 	DEBUG("type:" << type);
 	DEBUG("target:" << target);
+	DEBUG("host:" << host);
+	DEBUG("accept:" << accept);
 	DEBUG("");
 }
 

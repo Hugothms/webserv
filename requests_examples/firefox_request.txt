@@ -1,6 +1,6 @@
 GET / HTTP/1.1
 Host: localhost:8080
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:91.0) Gecko/20100101 Firefox/91.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:92.0) Gecko/20100101 Firefox/92.0
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
 Accept-Language: en-US,en;q=0.5
 Accept-Encoding: gzip, deflate
@@ -12,3 +12,6 @@ Sec-Fetch-Mode: navigate
 Sec-Fetch-Site: none
 Sec-Fetch-User: ?1
 Sec-GPC: 1
+Cache-Control: max-age=0
+
+H�4m��4m@�4m��4m���%���C�@� ���%�����ؔ����P���p�4m@���L�h4(��x}���ګ%����4m���4ms���֫V����4m@���B���`�H��4m�Y�)D��4m�ի�`�H��4m�|�CLě�@�Mŝ�-(J:�n!�5� �4mӁ2�G�ފ�҈~+:�X

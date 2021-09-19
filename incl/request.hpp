@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/17 17:09:39 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 00:41:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Request
 
 	public :
 		Request();
-		Request(char *buffer, int size, int socket=80);
+		Request(char *buffer, size_t size, int socket=80);
 		~Request();
 		void respond(void);
 };
