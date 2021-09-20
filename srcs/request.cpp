@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 12:09:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:33:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 		index++;
 	index++;
 	std::string header;
-	while (index < size && buffer[index])
+	while (index < size && buffer[index]) // headers parsing loop
 	{
 		// DEBUG("index:" << index);
 		// DEBUG("str[index]:" << str[index]);
@@ -49,20 +49,27 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 		DEBUG("HEADER:" << header);
 		if (header == "Host")
 		{
-			host = get_str_before_char(str, '\n', &index);
+			host = get_str_before_char(str, ':', &index);
 			DEBUG("host:" << host);
+			socket = atoi(get_str_before_char(str, '\n', &index).c_str());
+			DEBUG("socket:" << socket);
 		}
 		else if (header == "Accept")
 		{
 			accept = get_str_before_char(str, '\n', &index);
 			DEBUG("accept:" << accept);
 		}
-		else
+		else if (!header.empty())
+		{
 			std::string trash = get_str_before_char(str, '\n', &index);
-
+			DEBUG("UNKNOWN HEADER");
+			// break ;
+		}
+		else
+			break ;
 		DEBUG("");
 		// index++;
-		// sleep(1);
+		sleep(1);
 	}
 	//todo: Continue parsing here
 

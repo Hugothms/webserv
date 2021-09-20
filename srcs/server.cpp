@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 14:43:01 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:31:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,9 @@ void Server::s_listen()
 	char buffer[BUFFER_SIZE];
 
 	int query_size = read(send_socket, buffer, BUFFER_SIZE);
-	Request query(buffer, BUFFER_SIZE, send_socket);
 	DEBUG("-------- REQUEST --------");
 	DEBUG(buffer);
+	Request query(buffer, query_size, send_socket);
 	query.respond();
 	close(send_socket);
 }
