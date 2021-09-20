@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 12:46:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:48:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	std::string str(buffer, size);
 	type = get_str_before_char(str, " ", &index);
 	target = get_str_before_char(str, " ", &index);
-	while (index < size && buffer[index] && buffer[index] != '\n')
-		index++;
-	index++;
+	get_str_before_char(str, "\n", &index);
 	std::string header;
 	while (index < size && buffer[index]) // headers parsing loop
 	{
