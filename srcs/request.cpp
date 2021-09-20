@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 15:44:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 15:45:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,14 +88,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	DEBUG("accept:" << accept);
 	DEBUG("accept_language:" << accept_language);
 	DEBUG("accept_encoding:" << accept_encoding);
-	DEBUG("dnt:" << dnt);
 	DEBUG("connection:" << connection);
-	DEBUG("upgrade_insecure_requests:" << upgrade_insecure_requests);
-	DEBUG("sec_fetch_dest:" << sec_fetch_dest);
-	DEBUG("sec_fetch_mode:" << sec_fetch_mode);
-	DEBUG("sec_fetch_site:" << sec_fetch_site);
-	DEBUG("sec_fetch_user:" << sec_fetch_user);
-	DEBUG("sec_gpc:" << sec_gpc);
 	DEBUG("cache_control:" << cache_control);
 	DEBUG("");
 }
