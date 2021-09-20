@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 13:54:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 15:29:16 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,35 +48,31 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 			host = get_str_before_char(request, ":", &index);
 			socket = atoi(get_str_before_char(request, "\n", &index).c_str());
 		}
+		else if (header == "User-Agent")
+			user_agent = get_str_before_char(request, "\n", &index);
 		else if (header == "Accept")
 			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else // ignore unkonwn headers
+		else if (header == "Accept-Language")
+			accept_language = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept-Encoding")
+			accept_encoding = get_str_before_char(request, "\n", &index);
+		else if (header == "Connection")
+			connection = get_str_before_char(request, "\n", &index);
+		else if (header == "Upgrade-Insecure-Requests")
+			upgrade_insecure_requests = get_str_before_char(request, "\n", &index);
+		else if (header == "Sec-Fetch-Dest")
+			sec_fetch_dest = get_str_before_char(request, "\n", &index);
+		else if (header == "Sec-Fetch-Mode")
+			sec_fetch_mode = get_str_before_char(request, "\n", &index);
+		else if (header == "Sec-Fetch-Site")
+			sec_fetch_site = get_str_before_char(request, "\n", &index);
+		else if (header == "Sec-Fetch-User")
+			sec_fetch_user = get_str_before_char(request, "\n", &index);
+		else if (header == "Sec-GPC")
+			sec_gpc = get_str_before_char(request, "\n", &index);
+		else if (header == "Cache-Control")
+			cache_control = get_str_before_char(request, "\n", &index);
+		else // ignore/skip unkonwn headers
 			std::string trash = get_str_before_char(request, "\n", &index);
 		// todo: Continue parsing of header here
 	}
@@ -88,6 +84,17 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	DEBUG("target:" << target);
 	DEBUG("host:" << host);
 	DEBUG("accept:" << accept);
+	DEBUG("accept_language:" << accept_language);
+	DEBUG("accept_encoding:" << accept_encoding);
+	DEBUG("dnt:" << dnt);
+	DEBUG("connection:" << connection);
+	DEBUG("upgrade_insecure_requests:" << upgrade_insecure_requests);
+	DEBUG("sec_fetch_dest:" << sec_fetch_dest);
+	DEBUG("sec_fetch_mode:" << sec_fetch_mode);
+	DEBUG("sec_fetch_site:" << sec_fetch_site);
+	DEBUG("sec_fetch_user:" << sec_fetch_user);
+	DEBUG("sec_gpc:" << sec_gpc);
+	DEBUG("cache_control:" << cache_control);
 	DEBUG("");
 }
 
