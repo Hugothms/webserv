@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 13:32:30 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 13:52:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,25 +32,26 @@ std::string get_str_before_char(std::string str, std::string c, size_t *index)
 Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 {
 	size_t index = 0;
-	std::string str(buffer, size);
-	type = get_str_before_char(str, " ", &index);
-	target = get_str_before_char(str, " ", &index);
-	get_str_before_char(str, "\n", &index);
+	std::string request(buffer, size);
+	type = get_str_before_char(request, " ", &index);
+	target = get_str_before_char(request, " ", &index);
+	get_str_before_char(request, "\n", &index);
 	std::string header;
-	while (index < size && buffer[index]) // headers parsing loop
+	while (index < size && request[index]) // headers parsing loop
 	{
-		if ((header = get_str_before_char(str, ": ", &index))[1] == '\n')
+		header = get_str_before_char(request, ": ", &index);
+		if (header[1] == '\n')
 			break ; // case header is empty
 		index++;
 		if (header == "Host")
 		{
-			host = get_str_before_char(str, ":", &index);
-			socket = atoi(get_str_before_char(str, "\n", &index).c_str());
+			host = get_str_before_char(request, ":", &index);
+			socket = atoi(get_str_before_char(request, "\n", &index).c_str());
 		}
 		else if (header == "Accept")
-			accept = get_str_before_char(str, "\n", &index);
+			accept = get_str_before_char(request, "\n", &index);
 		else // ignore unkonwn headers
-			std::string trash = get_str_before_char(str, "\n", &index);
+			std::string trash = get_str_before_char(request, "\n", &index);
 		// todo: Continue parsing of header here
 	}
 	// todo: Continue parsing of body here
