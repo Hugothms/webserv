@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 12:56:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 13:32:30 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	std::string header;
 	while (index < size && buffer[index]) // headers parsing loop
 	{
-		// DEBUG("index:" << index);
-		// DEBUG("str[index]:" << str[index]);
 		if ((header = get_str_before_char(str, ": ", &index))[1] == '\n')
 			break ; // case header is empty
 		index++;
@@ -51,10 +49,11 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 		}
 		else if (header == "Accept")
 			accept = get_str_before_char(str, "\n", &index);
-		else
+		else // ignore unkonwn headers
 			std::string trash = get_str_before_char(str, "\n", &index);
+		// todo: Continue parsing of header here
 	}
-	//todo: Continue parsing here
+	// todo: Continue parsing of body here
 
 
 	DEBUG("\n******** PARSED ********");
