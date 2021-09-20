@@ -1,7 +1,7 @@
 TODO LIST :
-	- Implement CGI (PHP etc) using fork
-	- File upload/removal : POST / DELETE (+ get)
-	- Multiple port managment
+- Implement CGI (PHP etc) using fork
+- File upload/removal : POST / DELETE (+ get)
+- Multiple port managment
 
 	Enzo:
 		- Select, Kqueue, Epoll : Select, how it works and how to implement it

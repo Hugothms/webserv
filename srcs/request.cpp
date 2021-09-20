@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 13:52:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 13:54:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,32 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 			host = get_str_before_char(request, ":", &index);
 			socket = atoi(get_str_before_char(request, "\n", &index).c_str());
 		}
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
+		else if (header == "Accept")
+			accept = get_str_before_char(request, "\n", &index);
 		else if (header == "Accept")
 			accept = get_str_before_char(request, "\n", &index);
 		else // ignore unkonwn headers
