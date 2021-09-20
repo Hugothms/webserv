@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 01:19:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:09:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 Request::Request(){}
 
-std::string function(std::string str, char c, size_t *index)
+std::string get_str_before_char(std::string str, char c, size_t *index)
 {
 	size_t length = str.find(c, *index) - *index;
 	std::string res;
@@ -33,8 +33,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 {
 	size_t index = 0;
 	std::string str(buffer, size);
-	type = function(str, ' ', &index);
-	target = function(str, ' ', &index);
+	type = get_str_before_char(str, ' ', &index);
+	target = get_str_before_char(str, ' ', &index);
 	while (index < size && buffer[index] && buffer[index] != '\n')
 		index++;
 	index++;
@@ -43,22 +43,22 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	{
 		// DEBUG("index:" << index);
 		// DEBUG("str[index]:" << str[index]);
-		if ((header = function(str, ': ', &index)).empty())
+		if ((header = get_str_before_char(str, ': ', &index)).empty())
 			break ;
 		header = header.substr(0, header.length() - 1);
 		DEBUG("HEADER:" << header);
 		if (header == "Host")
 		{
-			host = function(str, '\n', &index);
+			host = get_str_before_char(str, '\n', &index);
 			DEBUG("host:" << host);
 		}
 		else if (header == "Accept")
 		{
-			accept = function(str, '\n', &index);
+			accept = get_str_before_char(str, '\n', &index);
 			DEBUG("accept:" << accept);
 		}
 		else
-			std::string trash = function(str, '\n', &index);
+			std::string trash = get_str_before_char(str, '\n', &index);
 
 		DEBUG("");
 		// index++;
