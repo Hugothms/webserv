@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 12:50:57 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:56:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 Request::Request(){}
 
-std::string get_str_before_char(std::string str, char *c, size_t *index)
+std::string get_str_before_char(std::string str, std::string c, size_t *index)
 {
 	size_t length = str.find(c, *index) - *index;
 	std::string res;
@@ -41,7 +41,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	{
 		// DEBUG("index:" << index);
 		// DEBUG("str[index]:" << str[index]);
-		header = get_str_before_char(str, ": ", &index);
+		if ((header = get_str_before_char(str, ": ", &index))[1] == '\n')
+			break ; // case header is empty
 		index++;
 		if (header == "Host")
 		{
@@ -50,10 +51,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 		}
 		else if (header == "Accept")
 			accept = get_str_before_char(str, "\n", &index);
-		else if (header[1] != '\n')
-			std::string trash = get_str_before_char(str, "\n", &index);
 		else
-			break ;
+			std::string trash = get_str_before_char(str, "\n", &index);
 	}
 	//todo: Continue parsing here
 
