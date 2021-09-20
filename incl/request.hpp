@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 13:52:27 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 13:53:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 class Request
 {
 	private :
-		std::map<std::string, std::string>	headers;
 		std::string		type;			// GET or POST or DELETE
-		std::string		host;			// Name of the server (here localhost)
 		std::string		target;			// The URL requested
+		// std::map<std::string, std::string>	headers;
+		std::string		host;			// Name of the server (here localhost)
 		std::string		user_agent;		// Info about the platform
 		std::string		accept;			// List of accepted stuff
 		int				socket;			// Socket
