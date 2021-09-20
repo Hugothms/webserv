@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 12:48:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:50:57 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	{
 		// DEBUG("index:" << index);
 		// DEBUG("str[index]:" << str[index]);
-		if ((header = get_str_before_char(str, ": ", &index)).empty())
-			break ;
-		// header = header.substr(0, header.length() - 1);
+		header = get_str_before_char(str, ": ", &index);
+		index++;
 		if (header == "Host")
 		{
 			host = get_str_before_char(str, ":", &index);
