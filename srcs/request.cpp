@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 12:33:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/20 12:46:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 Request::Request(){}
 
-std::string get_str_before_char(std::string str, char c, size_t *index)
+std::string get_str_before_char(std::string str, char *c, size_t *index)
 {
 	size_t length = str.find(c, *index) - *index;
 	std::string res;
@@ -33,8 +33,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 {
 	size_t index = 0;
 	std::string str(buffer, size);
-	type = get_str_before_char(str, ' ', &index);
-	target = get_str_before_char(str, ' ', &index);
+	type = get_str_before_char(str, " ", &index);
+	target = get_str_before_char(str, " ", &index);
 	while (index < size && buffer[index] && buffer[index] != '\n')
 		index++;
 	index++;
@@ -43,33 +43,20 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	{
 		// DEBUG("index:" << index);
 		// DEBUG("str[index]:" << str[index]);
-		if ((header = get_str_before_char(str, ': ', &index)).empty())
+		if ((header = get_str_before_char(str, ": ", &index)).empty())
 			break ;
-		header = header.substr(0, header.length() - 1);
-		DEBUG("HEADER:" << header);
+		// header = header.substr(0, header.length() - 1);
 		if (header == "Host")
 		{
-			host = get_str_before_char(str, ':', &index);
-			DEBUG("host:" << host);
-			socket = atoi(get_str_before_char(str, '\n', &index).c_str());
-			DEBUG("socket:" << socket);
+			host = get_str_before_char(str, ":", &index);
+			socket = atoi(get_str_before_char(str, "\n", &index).c_str());
 		}
 		else if (header == "Accept")
-		{
-			accept = get_str_before_char(str, '\n', &index);
-			DEBUG("accept:" << accept);
-		}
-		else if (!header.empty())
-		{
-			std::string trash = get_str_before_char(str, '\n', &index);
-			DEBUG("UNKNOWN HEADER");
-			// break ;
-		}
+			accept = get_str_before_char(str, "\n", &index);
+		else if (header[1] != '\n')
+			std::string trash = get_str_before_char(str, "\n", &index);
 		else
 			break ;
-		DEBUG("");
-		// index++;
-		sleep(1);
 	}
 	//todo: Continue parsing here
 
