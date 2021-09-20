@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/13 18:48:38 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/20 16:44:46 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -29,7 +29,6 @@ Server::Server(unsigned int port) : _port(port)
 	// _addr.sin_family = V4;
 	// _addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	// _addr.sin_port = htons(_port);
-	
 	// start_listen_socket();
 }
 
@@ -65,10 +64,12 @@ int Server::setup()
 
 int Server::handle_new_connection()
 {
-
+	std::cout << "HANDLE_CONN\n";
 	char buffer[BUFFER_SIZE];
 	size_t bytes_read;
 	int msg_size = 0;
+
+	int new_client_sock = accept(_listen_sock, (struct sockaddr *)&client_addr, &client_len);
 	// read()
 	// struct sockaddr_in client_addr;
 	// memset(&client_addr, 0, sizeof(client_addr));
@@ -163,7 +164,7 @@ int Server::run()
 	FD_SET(server_socket, &current_sockets);
 	while (true)
 	{
-		std::cout << "Waiting for connections...\n";
+		// std::cout << "Waiting for connections...\n";
 		//Temp copy
 		ready_sockets = current_sockets;
 		if (select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL) < 0)
