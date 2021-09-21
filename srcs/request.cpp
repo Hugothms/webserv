@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 15:45:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/21 12:13:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,8 @@ std::string get_str_before_char(std::string str, std::string c, size_t *index)
 {
 	size_t length = str.find(c, *index) - *index;
 	std::string res;
-	if (length == std::string::npos)
-	{
-		DEBUG("\"" << c << "\" NOT FOUND IN STRING");
+	if (length == std::string::npos || str.find('\n', *index) - *index < length)
 		return res;
-	}
 	res = str.substr(*index , length);
 	*index += length + 1;
 	return res;
@@ -33,6 +30,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 {
 	size_t index = 0;
 	std::string request(buffer, size);
+	// std::string request = "GET / HTTP/1.1\nHost: localhost:8080\nUser-Agent: curl/7.64.1\nAccept: */*\n\r";
 	type = get_str_before_char(request, " ", &index);
 	target = get_str_before_char(request, " ", &index);
 	get_str_before_char(request, "\n", &index);
@@ -40,7 +38,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	while (index < size && request[index]) // headers parsing loop
 	{
 		header = get_str_before_char(request, ": ", &index);
-		if (header[1] == '\n')
+		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
+		if (header == "\r\0")
 			break ; // case header is empty
 		index++;
 		if (header == "Host")
@@ -75,7 +74,10 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 		else if (header == "Cache-Control")
 			cache_control = get_str_before_char(request, "\n", &index);
 		else // ignore/skip unkonwn headers
+		{
 			std::string trash = get_str_before_char(request, "\n", &index);
+			// DEBUG("trash:" << trash);
+		}
 		// todo: Continue parsing of header here
 	}
 	// todo: Continue parsing of body here
@@ -85,6 +87,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	DEBUG("type:" << type);
 	DEBUG("target:" << target);
 	DEBUG("host:" << host);
+	DEBUG("socket:" << socket);
+	DEBUG("user_agent:" << user_agent);
 	DEBUG("accept:" << accept);
 	DEBUG("accept_language:" << accept_language);
 	DEBUG("accept_encoding:" << accept_encoding);
