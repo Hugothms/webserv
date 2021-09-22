@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/21 12:13:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/22 12:49:57 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,8 +227,8 @@ void Request::respond()
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	// DEBUG("------- RESPONSE -------\n");
-	// DEBUG(response.str());
+	DEBUG("------- RESPONSE -------\n");
+	DEBUG(response.str());
 	myfile.close();
 }
 
