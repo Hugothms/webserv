@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/22 13:33:03 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/22 14:01:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,6 @@ std::string gettype(std::string str)
 	return ret;
 }
 
-
 void Request::respond()
 {
 	std::string filepath("website");
@@ -228,8 +227,8 @@ void Request::respond()
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	DEBUG("------- RESPONSE -------");
-	DEBUG(response.str());
+	// DEBUG("------- RESPONSE -------");
+	// DEBUG(response.str());
 	myfile.close();
 }
 

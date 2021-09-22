@@ -31,7 +31,12 @@
 *.out
 *.app
 webserv
+
+# VSCode
+webserv.code-workspace
 .vscode/
+
+# Others
 log
 err
 test
