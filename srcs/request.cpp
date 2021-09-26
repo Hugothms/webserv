@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/22 16:23:10 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/26 19:50:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	{
 		header = get_str_before_char(request, ": ", &index);
 		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
-		if (header == "\r\0")
-			break ; // case header is empty
+		if (header == "\0")
+			break ; // case empty line
 		index++;
 		if (header == "Host")
 		{
@@ -59,16 +59,18 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 			connection = get_str_before_char(request, "\n", &index);
 		else if (header == "Cache-Control")
 			cache_control = get_str_before_char(request, "\n", &index);
+		else if (header == "Content-Type")
+			content_type = get_str_before_char(request, "\n", &index);
+		else if (header == "Content-Length")
+			content_length = atoi(get_str_before_char(request, "\n", &index).c_str());
 		else // ignore/skip unkonwn headers
-		{
-			std::string trash = get_str_before_char(request, "\n", &index);
-			// DEBUG("trash:" << trash);
-		}
-		// todo: Continue parsing of header here
+			get_str_before_char(request, "\n", &index);
 	}
-	// todo: Continue parsing of body here
+	index += 2;
+	if (content_length)
+		body = get_str_before_char(request, "\n", &index);
 
-	DEBUG("******** PARSED ********");
+	DEBUG("\n******** PARSED ********");
 	DEBUG("type:" << type);
 	DEBUG("target:" << target);
 	DEBUG("socket:" << socket);
@@ -80,6 +82,9 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)
 	DEBUG("accept_encoding:" << accept_encoding);
 	DEBUG("connection:" << connection);
 	DEBUG("cache_control:" << cache_control);
+	DEBUG("content_type:" << content_type);
+	DEBUG("content_length:" << content_length);
+	DEBUG("body:" << body);
 	DEBUG("");
 }
 
