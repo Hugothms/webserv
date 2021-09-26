@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/26 19:50:02 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/09/26 20:26:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ std::string get_str_before_char(std::string str, std::string c, size_t *index)
 	return res;
 }
 
-Request::Request(char *buffer, size_t size, int sock) : socket(sock)
+Request::Request(char *buffer, size_t size, int sock) : socket(sock), content_length(0), port(0)
 {
 	size_t index = 0;
 	std::string request(buffer, size);
