@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 18:59:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/05 20:28:49 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/05 20:42:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,3 +114,4 @@ int main()
 	//Close socket
 	return 0;
 }
+https://www.youtube.com/watch?v=dquxuXeZXgo
