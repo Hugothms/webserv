@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 16:44:46 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/09/27 20:58:46 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -67,9 +67,33 @@ int Server::handle_new_connection()
 	std::cout << "HANDLE_CONN\n";
 	char buffer[BUFFER_SIZE];
 	size_t bytes_read;
-	int msg_size = 0;
+	// int msg_size = 0;
 
+
+	struct sockaddr_in client_addr;
+	memset(&client_addr, 0, sizeof(client_addr));
+	socklen_t client_len = sizeof(client_addr);
 	int new_client_sock = accept(_listen_sock, (struct sockaddr *)&client_addr, &client_len);
+	if (new_client_sock < 0) 
+	{
+		std::cerr << "ACCEPT ERROR\n";
+		return -1;
+	}
+
+	for (int i = 0; i < MAX_CLIENTS; ++i) 
+	{
+			if (_clients[i].socket == NO_SOCKET) 
+			{
+				_clients[i].socket = new_client_sock;
+				_clients[i].addres = client_addr;
+				// _clients[i].current_sending_byte   = -1;
+				// _clients[i].current_receiving_byte = 0;
+				return 0;
+			}
+	}
+	std::cerr << "Too much clients\n";
+	close(new_client_sock);
+	return -1;
 	// read()
 	// struct sockaddr_in client_addr;
 	// memset(&client_addr, 0, sizeof(client_addr));
@@ -178,7 +202,7 @@ int Server::run()
 				if (i == server_socket)
 				{
 					int client_socket = handle_new_connection();
-					FD_SET(client_socket, &current_sockets) ;
+					// FD_SET(client_socket, &current_sockets) ;
 				}
 				else //Read the data and handle
 				{
