@@ -45,3 +45,21 @@ Server Error 5**
 	503 Service Unavailable
 	504 Gateway Timeout
 	505 HTTP Version Not Supported
+
+
+
+
+
+
+
+
+---- HEADERS NAMES ----
+	Host
+	User-Agent
+	Accept
+	Accept-Language
+	Accept-Encoding
+	Connection
+	Cache-Control
+	Content-Type
+	Content-Length

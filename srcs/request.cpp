@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/05 16:06:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/05 17:09:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ std::string get_str_before_char(std::string str, std::string c, size_t *index)
 	return res;
 }
 
-Request::Request(char *buffer, size_t size, int sock) : socket(sock), content_length(0), port(0)
+Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_length(0), port(0)
 {
 	size_t index = 0;
 	std::string request(buffer, size);
@@ -44,47 +44,25 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock), content_le
 		index++;
 		if (header == "Host")
 		{
-			host = get_str_before_char(request, ":", &index);
-			port = atoi(get_str_before_char(request, "\n", &index).c_str());
+			headers.insert(std::pair<std::string, std::string>("Host", get_str_before_char(request, ":", &index)));
+			headers.insert(std::pair<std::string, std::string>("Port", get_str_before_char(request, "\n", &index)));
+			continue;
 		}
-		else if (header == "User-Agent")
-			user_agent = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept")
-			accept = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept-Language")
-			accept_language = get_str_before_char(request, "\n", &index);
-		else if (header == "Accept-Encoding")
-			accept_encoding = get_str_before_char(request, "\n", &index);
-		else if (header == "Connection")
-			connection = get_str_before_char(request, "\n", &index);
-		else if (header == "Cache-Control")
-			cache_control = get_str_before_char(request, "\n", &index);
-		else if (header == "Content-Type")
-			content_type = get_str_before_char(request, "\n", &index);
-		else if (header == "Content-Length")
-			content_length = atoi(get_str_before_char(request, "\n", &index).c_str());
-		else // ignore/skip unkonwn headers
-			get_str_before_char(request, "\n", &index);
+		headers.insert(std::pair<std::string, std::string>(header, get_str_before_char(request, "\n", &index)));
 	}
 	index += 2;
-	if (content_length)
-		body = get_str_before_char(request, "\n", &index);
+	if (headers["Content-Length"].length())
+		headers.insert(std::pair<std::string, std::string>("Body", &request[index]));
+
 
 	DEBUG("\n******** PARSED ********");
 	DEBUG("type:" << type);
 	DEBUG("target:" << target);
 	DEBUG("socket:" << socket);
-	DEBUG("host:" << host);
-	DEBUG("port:" << port);
-	DEBUG("user_agent:" << user_agent);
-	DEBUG("accept:" << accept);
-	DEBUG("accept_language:" << accept_language);
-	DEBUG("accept_encoding:" << accept_encoding);
-	DEBUG("connection:" << connection);
-	DEBUG("cache_control:" << cache_control);
-	DEBUG("content_type:" << content_type);
-	DEBUG("content_length:" << content_length);
-	DEBUG("body:" << body);
+	DEBUG("------------------------");
+	std::map<std::string, std::string>::iterator it = headers.begin();
+	while(it != headers.end())
+		DEBUG(it->first << ": " << it++->second);
 	DEBUG("");
 }
 
