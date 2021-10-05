@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/26 20:35:31 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/05 16:02:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,15 +195,15 @@ void Request::respond()
 		target += "index.html";
 	filepath += target;
 	std::ifstream myfile(filepath.c_str(), std::ofstream::in);
-	std::stringstream response("HTTP/1.1 ");
+	std::stringstream response("");
 	if (!myfile)
 	{
 		myfile.close();
 		myfile.open("website/404.html", std::ofstream::in);
-		response << "404 Not Found\n";
+		response << "HTTP/1.1 404 Not Found\n";
 	}
 	else
-		response << "200 OK\n";
+		response << "HTTP/1.1 200 OK\n";
 	std::string file((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
 	response << "Server: webserv/0.01\n";
