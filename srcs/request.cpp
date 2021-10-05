@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/05 16:02:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/05 16:06:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,7 @@ void Request::respond()
 		target += "index.html";
 	filepath += target;
 	std::ifstream myfile(filepath.c_str(), std::ofstream::in);
-	std::stringstream response("");
+	std::stringstream response;
 	if (!myfile)
 	{
 		myfile.close();
