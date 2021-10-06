@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 14:40:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/06 17:19:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,19 @@
 class Server
 {
 	private :
-		int						listen_socket;
-		std::string				server_name; //Host header in HTTP request
-		int						send_socket;
-		unsigned int			port;
-		struct sockaddr_in		hint;
-		std::vector<Request>	requests;
+		// * PARSED FROM CONFIG FILE *
+		unsigned int				port; // port to listen and send on ("listen" in config file)
+		std::vector<std::string>	server_names; // "Host" header in HTTP request (domain name)
+		std::string					root; // directory where the webste is
+		std::string					index; // file served when "/" is requested
+		std::vector<std::string>	error_pages; //
+		unsigned int				max_client_body_size;
+
+		// * FOR "INTERNAL" USE *
+		int							listen_socket; // created by socket
+		int							send_socket; // ?
+		struct sockaddr_in			hint; // ?
+		std::vector<Request>		requests;
 
 	public:
 		Server(unsigned int _port = 8080);
