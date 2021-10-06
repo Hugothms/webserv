@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 18:59:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 17:21:31 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 18:37:25 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,60 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <vector>
 #include <string>
+#include <string.h>
+using namespace std;
+
 #define PORT 4242
+
+class Client
+{
+	public :
+
+		int			fd;
+		struct 		sockaddr_in client_addr;
+		char		client_ipv4_str[INET_ADDRSTRLEN];
+		socklen_t 	client_len;
+		
+		Client()
+		{
+			memset(&client_addr, 0, sizeof(client_addr));
+			client_len = sizeof(client_addr);
+		}
+		struct sockaddr* get_sockaddr(void)
+		{
+			return (struct sockaddr*)(&client_addr);
+		}
+		socklen_t *get_addr_len(void)
+		{
+			return (&client_len);
+		}
+		char *v4str(void)
+		{
+			return client_ipv4_str;
+		}
+		void identify(void)
+		{
+			std::cout << client_ipv4_str <<":" <<client_addr.sin_port << std::endl;
+		}
+	private :
+};
+
+Client handle_new_conn(int listen_sock)
+{
+	cout << "New conn incomming, need to accept it !\n";
+	
+	Client new_client;
+	
+	new_client.fd = accept(listen_sock, new_client.get_sockaddr(), new_client.get_addr_len());
+	
+	inet_ntop(AF_INET, &(new_client.client_addr.sin_addr), new_client.client_ipv4_str, INET_ADDRSTRLEN);
+	// printf("Incoming connection from %s:%d.\n", new_client.v4str(), new_client.client_addr.sin_port);
+			
+	// clients.push_back(new_client);
+	return (new_client);
+}
 
 int main()
 {
@@ -27,7 +79,7 @@ int main()
 	
 	if (listen_sock == -1)
 	{
-		std::cerr << "Socket error\n";
+		cerr << "Socket error\n";
 		return -1;
 	}
 
@@ -41,7 +93,7 @@ int main()
 
 	if (bind(listen_sock, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
 	{
-		std::cerr << "Bind error\n";
+		cerr << "Bind error\n";
 		return -2;
 	}
 
@@ -49,7 +101,7 @@ int main()
 
 	fd_set master; 
 	fd_set copy;
-
+	vector<Client> clients;
 	//Add the listening new conn socket to the watched set
 	FD_ZERO(&master);
 	FD_SET(listen_sock, &master);
@@ -57,25 +109,46 @@ int main()
 	int high_sock = listen_sock;
 	while (1)
 	{
-		copy = master;
-
+		std::cout << "start\n";
+		// copy = master;
+		FD_COPY(&master, &copy);
+		for (int i = 0; i < clients.size(); ++i) 
+		{
+			if (clients[i].fd > high_sock)
+				high_sock = clients[i].fd;
+		}
 		int sock_count = select(high_sock + 1, &copy, nullptr, nullptr, nullptr);
 		//The sockets will be stocked in copy
 		if (FD_ISSET(listen_sock, &copy))
 		{
-			std::cout << "New conn incomming, need to accept it !\n";
-			
-			struct sockaddr_in client_addr;
-			memset(&client_addr, 0, sizeof(client_addr));
-			socklen_t client_len = sizeof(client_addr);
-			
-			int new_client = accept(listen_sock, (struct sockaddr *)&client_addr, &client_len);
-
-			char client_ipv4_str[INET_ADDRSTRLEN];
-			inet_ntop(AF_INET, &client_addr.sin_addr, client_ipv4_str, INET_ADDRSTRLEN);
-			printf("Incoming connection from %s:%d.\n", client_ipv4_str, client_addr.sin_port);
-			//Accept conn
+			std::cout << "FD SET\n";
+			Client tmp = handle_new_conn(listen_sock);
+			clients.push_back(tmp);
+			std::cout << "Client added to the list : " ;
+			clients.back().identify();
+			FD_SET(tmp.fd, &master);
+			FD_SET(tmp.fd, &copy);
+			// FD_CLR(listen_sock);
+			// continue;
 		}
+		std::cout << clients.size() << std::endl;
+		for (int i = 0; i < clients.size(); i++)
+		{
+			std::cout << "in\n";
+			if (FD_ISSET(clients[i].fd, &copy))
+			{
+				clients[i].identify();
+				std::cout << "is ready for read\n";
+				//Read
+				char buff[4096];
+				int received_count = recv(clients[i].fd, buff, 4096, 0);
+				write(1, buff, received_count);
+			}
+		}
+		// else if (FD_ISSET(i, &copy))
+		// {
+
+		// }
 
 		// for (int i = 0; i < sock_count; i++)
 		// {
@@ -107,7 +180,7 @@ int main()
 		// 		//Add it to list of connected clients
 		// 		FD_SET(client, &master);
 		// 		//Send welcome
-		// 		std::string test = "Hello world";
+		// 		string test = "Hello world";
 		// 		send(client, test.c_str(), test.size() + 1, 0);
 		// 	}
 		// 	else
