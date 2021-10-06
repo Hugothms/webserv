@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 13:53:47 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/06 13:52:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 
 // DATASTRUCTURE INCLUDES
 # include <vector>
-// # include <map>
+# include <map>
+
+// using namespace std;
 
 #endif
