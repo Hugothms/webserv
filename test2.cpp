@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 18:59:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 22:23:07 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 22:57:08 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,10 @@ int main()
 				clients[i].identify();
 				char buff[BUFFER_SIZE];
 				int received_count = recv(clients[i].fd, buff, BUFFER_SIZE, 0);
+				if (received_count == 0)
+				{
+					std::cout << "Client is done\n";
+				}
 				write(1, buff, received_count);
 			}
 		}

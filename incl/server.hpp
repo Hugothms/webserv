@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 22:22:55 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 22:51:09 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
@@ -96,6 +96,7 @@ class Server
 	~Server();
 	Server::Client handle_new_conn(int fd);
 	int setup();
+	int run(void);
 	// Client handle_new_conn(int listen_sock);
 		private :
 

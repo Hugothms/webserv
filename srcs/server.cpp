@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 22:47:15 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 23:00:41 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "server.hpp"
@@ -18,6 +18,12 @@ using namespace std;
 Server::~Server() 
 {
 	// delete _clients;
+	close(listen_fd);
+	for (int i = 0; i < _clients.size(); i++)
+	{
+		close(_clients[i].fd);
+	}
+	_clients.clear();
 }
 Server::Server(int prt)
 {
@@ -74,6 +80,55 @@ int Server::setup(void)
 		cerr << "Bind error\n";
 		return -2;
 	}
+	// listen(listen_fd, SOMAXCONN);
+	
+	// FD_ZERO(&master_set);
+	
+	// FD_SET(listen_fd, &master_set);
+
+	// int high_fd = listen_fd;
+	// while(true)
+	// {
+	// 	copy_set = master_set;
+
+	// 	//This can be optimized
+	// 	for (int i = 0; i < _clients.size(); i++)
+	// 	{
+	// 		if (_clients[i].fd > high_fd)
+	// 			high_fd = _clients[i].fd;	
+	// 	}
+
+	// 	int sock_count = select(high_fd + 1, &copy_set, NULL, NULL, NULL);
+	// 	if (FD_ISSET(listen_fd, &copy_set))
+	// 	{
+	// 		Client tmp = handle_new_conn(listen_fd);
+	// 		_clients.push_back(tmp);
+	// 		std::cout << "Client added to the list : " ;
+	// 		_clients.back().identify();
+	// 		//Add the client FD to master for processing
+	// 		FD_SET(tmp.fd, &master_set);
+	// 	}
+	// 	// //Loop through all the clients and find out if they sent
+	// 	for (int i = 0; i < _clients.size(); i++)
+	// 	{
+	// 		if (FD_ISSET(_clients[i].fd, &copy_set))
+	// 		{
+	// 			_clients[i].identify();
+	// 			char buff[BUFFER_SIZE];
+	// 			int received_count = recv(_clients[i].fd, buff, BUFFER_SIZE, 0);
+	// 			write(1, buff, received_count);
+	// 			// write(_clients[i].fd,buff , received_count);
+	// 			Request req(buff,received_count, _clients[i].fd);
+	// 			req.respond();
+	// 		}
+	// 	}
+	// }
+	// close(listen_fd);
+	return 0;
+}
+
+int Server::run(void)
+{
 	listen(listen_fd, SOMAXCONN);
 	
 	FD_ZERO(&master_set);
@@ -110,6 +165,10 @@ int Server::setup(void)
 				_clients[i].identify();
 				char buff[BUFFER_SIZE];
 				int received_count = recv(_clients[i].fd, buff, BUFFER_SIZE, 0);
+				if (received_count == 0)
+				{
+					std::cerr << "Client is done\n";
+				}
 				write(1, buff, received_count);
 				// write(_clients[i].fd,buff , received_count);
 				Request req(buff,received_count, _clients[i].fd);
@@ -118,5 +177,4 @@ int Server::setup(void)
 		}
 	}
 	close(listen_fd);
-	return 0;
 }

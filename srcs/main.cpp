@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 13:31:42 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/06 22:01:13 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 22:55:36 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@
 int main()
 {
    Server serv(4242);
-   serv.setup();
-   // serv.run();
+   if (serv.setup() != 0)
+      return 1;
+   serv.run();
 
    return 0;
 }
