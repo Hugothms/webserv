@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 17:19:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/06 17:28:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class Server
 	private :
 		// * PARSED FROM CONFIG FILE *
 		unsigned int				port; // port to listen and send on ("listen" in config file)
-		std::vector<std::string>	server_names; // "Host" header in HTTP request (domain name)
+		std::vector<std::string>	server_names; // "Host" header in HTTP request (domain names)
 		std::string					root; // directory where the webste is
 		std::string					index; // file served when "/" is requested
 		std::vector<std::string>	error_pages; //
