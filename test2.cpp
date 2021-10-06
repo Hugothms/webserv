@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 18:59:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 18:47:11 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 22:23:07 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,15 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/select.h>
 #include <string.h>
 #include <vector>
 #include <string>
 #include <string.h>
 using namespace std;
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 10000
 
 #define PORT 4242
 
@@ -59,7 +61,7 @@ class Client
 	private :
 };
 
-Client handle_new_conn(int listen_sock)
+Client Server::handle_new_conn(int listen_sock)
 {
 	cout << "New conn incomming, need to accept it !\n";
 	
@@ -115,7 +117,8 @@ int main()
 	int high_sock = listen_sock;
 	while (1)
 	{
-		FD_COPY(&master, &copy);
+		copy = master;
+		// FD_COPY(&master, &copy);
 		for (int i = 0; i < clients.size(); ++i) 
 		{
 			if (clients[i].fd > high_sock)
