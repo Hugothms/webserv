@@ -1,7 +1,7 @@
 body {
   /*margin: 25px;*/
   background-color: orange;
-  color: lightgrey;
+  color: red;
   border: 200px;
   /*font-family: arial, sans-serif;*/
   /*font-size: 14px;*/
@@ -13,11 +13,11 @@ div {
   height: 100%;
 }
 /* Applies to all <h1>...</h1> elements. */
-h1 {
+/* h1 {
   font-size: 35px;
   font-weight: bold;
   margin-top: 5px;
-}
+} */
 
 img {
   max-width: 100%;
