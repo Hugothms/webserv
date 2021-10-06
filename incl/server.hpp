@@ -6,15 +6,16 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 18:16:36 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 22:22:55 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-// #include "request.hpp"
+#include "request.hpp"
 #include "includes.hpp"
-
+// using namespace std;
+#include <vector>
 #define V4 AF_INET
 #define V6 AF_INET6
 #define TCP SOCK_STREAM
@@ -22,70 +23,87 @@
 #define IP 0
 #define MAX_BACKLOG 10
 #define MAX_CLIENTS 10
-
+#define BUFFER_SIZE 4096
 #define DEBUG 1
 
 class Server
 {
-	private :
-		class Client
-  		{
-  			private :
+// 	class Client
+// 	{
+// 		public :
+// 			int			fd;
+// 			struct 		sockaddr_in client_addr;
+// 			char		client_ipv4_str[INET_ADDRSTRLEN];
+// 			socklen_t 	client_len;
+			
+// 			Client()
+// 			{
+// 				// memset(&client_addr, 0, sizeof(client_addr));
+// 				client_len = sizeof(client_addr);
+// 			}
+// 			struct sockaddr* get_sockaddr(void)
+// 			{
+// 				return (struct sockaddr*)(&client_addr);
+// 			}
+// 			socklen_t *get_addr_len(void)
+// 			{
+// 				return (&client_len);
+// 			}
+// 			char *v4str(void)
+// 			{
+// 				return client_ipv4_str;
+// 			}
+// 			void identify(void)
+// 			{
+// 				std::cout << client_ipv4_str <<":" <<client_addr.sin_port << std::endl;
+// 			}
+// 		private :
+// };
 
-  			public :
-  				int 	socket;
-  				struct 	sockaddr_in addres;
-  				char 	*message;
-  				char 	*buffer;
-  				int 	len;
-  				size_t recv_bytes;
-  				Client()
-  				{
-  					buffer = new char[10000];
-  					recv_bytes = 0;
-  					socket = -1;
-  				}
-  				~Client()
-  				{
-  					delete buffer;
-  				}
-  		};
-
-		int 					_listen_sock;
-		int 					_reuse;
-		int 					server_socket;
-		// int 					send_socket;
-		unsigned int 			_port;
-		struct sockaddr_in 		_addr;
-
-		fd_set					_read_fds;
-  		fd_set					_write_fds;
-  		fd_set					_except_fds;
-
-  		// fd_set 					server_socket;
-  		Client 					*_clients;//[MAX_CLIENTS];
-  		
-  		
-  
-		// std::vector<Request> 	requests;
-		// struct sockaddr_in 	hint;
-		// struct sockaddr_in addr;
-		// unsigned int port;
- 		// const char *hello = "HTTP/1.1 200 OK\nContent-Length: 52\nContent-Type: text/html\nConnection: Closed\n\n<html>\n<body>\n<h1>Hello, World!</h1>\n</body>\n</html>\n";
  	public:
-		Server(unsigned int _port = 8080);
-		~Server();
-		int run();
-		void s_listen();
-		int setup_server();
-		int setup();
-		int setup_fd_set();
-		int start_listen_socket();
-		int handle_new_connection();
-		// int receive_from_peer();
-		int receive_from_peer(Client *peer);
-		void process_packet(Client *peer);
-		void close_client_connection(Client *client);
-		int send_to_peer(Client* client);
+ 		class Client
+		{
+			public :
+				int			fd;
+				struct 		sockaddr_in client_addr;
+				char		client_ipv4_str[INET_ADDRSTRLEN];
+				socklen_t 	client_len;
+				
+				Client()
+				{
+					// memset(&client_addr, 0, sizeof(client_addr));
+					client_len = sizeof(client_addr);
+				}
+				struct sockaddr* get_sockaddr(void)
+				{
+					return (struct sockaddr*)(&client_addr);
+				}
+				socklen_t *get_addr_len(void)
+				{
+					return (&client_len);
+				}
+				char *v4str(void)
+				{
+					return client_ipv4_str;
+				}
+				void identify(void)
+				{
+					std::cout << client_ipv4_str <<":" <<client_addr.sin_port << std::endl;
+				}
+			private :
+		};
+	Server(int prt);
+	~Server();
+	Server::Client handle_new_conn(int fd);
+	int setup();
+	// Client handle_new_conn(int listen_sock);
+		private :
+
+	int listen_fd;
+	int port;
+	struct sockaddr_in hint;
+	fd_set master_set;
+	fd_set copy_set;
+	std::vector<Client> _clients;
 };
 #endif
