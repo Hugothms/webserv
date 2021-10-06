@@ -6,14 +6,13 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/05 16:55:26 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/06 14:34:27 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
-# include <map>
 # include "includes.hpp"
 
 class Request
@@ -53,7 +52,7 @@ class Request
 		*/
 
 	public :
-		Request();
+		// Request();
 		Request(char *buffer, size_t size, int socket=80);
 		~Request();
 		void respond(void);
