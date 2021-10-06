@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 18:59:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 18:37:25 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/06 18:47:11 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <string>
 #include <string.h>
 using namespace std;
+
+#define BUFFER_SIZE 4096
 
 #define PORT 4242
 
@@ -96,21 +98,23 @@ int main()
 		cerr << "Bind error\n";
 		return -2;
 	}
-
+	//Listen for incomming connections
 	listen(listen_sock, SOMAXCONN);
 
-	fd_set master; 
+	//Sets requiered to use select
+	fd_set master;
 	fd_set copy;
+
+	//Clients and their info
 	vector<Client> clients;
-	//Add the listening new conn socket to the watched set
+	
 	FD_ZERO(&master);
+	//Add the listening new conn socket to the watched set
 	FD_SET(listen_sock, &master);
 	
 	int high_sock = listen_sock;
 	while (1)
 	{
-		std::cout << "start\n";
-		// copy = master;
 		FD_COPY(&master, &copy);
 		for (int i = 0; i < clients.size(); ++i) 
 		{
@@ -121,27 +125,19 @@ int main()
 		//The sockets will be stocked in copy
 		if (FD_ISSET(listen_sock, &copy))
 		{
-			std::cout << "FD SET\n";
 			Client tmp = handle_new_conn(listen_sock);
 			clients.push_back(tmp);
 			std::cout << "Client added to the list : " ;
 			clients.back().identify();
 			FD_SET(tmp.fd, &master);
-			FD_SET(tmp.fd, &copy);
-			// FD_CLR(listen_sock);
-			// continue;
 		}
-		std::cout << clients.size() << std::endl;
 		for (int i = 0; i < clients.size(); i++)
 		{
-			std::cout << "in\n";
 			if (FD_ISSET(clients[i].fd, &copy))
 			{
 				clients[i].identify();
-				std::cout << "is ready for read\n";
-				//Read
-				char buff[4096];
-				int received_count = recv(clients[i].fd, buff, 4096, 0);
+				char buff[BUFFER_SIZE];
+				int received_count = recv(clients[i].fd, buff, BUFFER_SIZE, 0);
 				write(1, buff, received_count);
 			}
 		}
