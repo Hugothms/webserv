@@ -6,14 +6,20 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/20 14:19:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/07 14:41:43 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::~Server() {}
-Server::Server(unsigned int _port) : port(_port)
+Server::Server(	std::vector<std::string>	server_names,
+				std::vector<std::string>	error_pages,
+				unsigned int 				port,
+				std::string					root,
+				std::string					index,
+				unsigned int				max_client_body_size)
+	:port(port), server_names(server_names), root(root), index(index), error_pages(error_pages), max_client_body_size(max_client_body_size)
 {
 	int opt = 1;
 

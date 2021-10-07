@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/07 12:02:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/07 13:16:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,9 @@
 // #include <sys/socket.h>
 // #include <netinet/in.h>
 
-std::string get_content_file(std::string filename)
+int main(int argc, char *argv[])
 {
-	std::ifstream myfile;
-	myfile.open(filename);
-	std::string content("");
-	while (myfile)
-		content = content + (char)myfile.get();
-	myfile.close();
-	return content.substr(0, content.length() - 1);
-}
-
-int main()
-{
-	Server serv;
-	while (true)
-		serv.s_listen();
+	Webserv webserv((argc == 1) ? "" : argv[1]);
+	webserv.listen();
 	return 0;
 }

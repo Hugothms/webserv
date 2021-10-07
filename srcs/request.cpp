@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 14:46:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/07 14:35:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,6 @@
 // Request::Request(){}
 
 Request::~Request() {}
-
-std::string get_str_before_char(std::string str, std::string c, size_t *index)
-{
-	size_t length = str.find(c, *index) - *index;
-	std::string res;
-	if (length == std::string::npos || str.find('\n', *index) - *index < length)
-		return res;
-	res = str.substr(*index , length);
-	*index += length + 1;
-	return res;
-}
 
 Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_length(0), port(0)
 {
@@ -43,7 +32,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
 		if (header == "\0")
 			break ; // case empty line
-		index++;
+		// index++;
 		if (header == "Host")
 		{
 			headers.insert(std::pair<std::string, std::string>("Host", get_str_before_char(request, ":", &index)));
@@ -52,7 +41,8 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 		}
 		headers.insert(std::pair<std::string, std::string>(header, get_str_before_char(request, "\n", &index)));
 	}
-	index += 2;
+	// index += 2;
+	index++;
 	if (headers["Content-Length"].length())
 		headers.insert(std::pair<std::string, std::string>("Body", &request[index]));
 

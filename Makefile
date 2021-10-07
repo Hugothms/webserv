@@ -6,7 +6,7 @@
 #    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/09/16 11:37:12 by hthomas          ###   ########.fr        #
+#    Updated: 2021/10/07 14:42:54 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,9 +21,11 @@ INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 				$(INCLUDE)/server.hpp		\
 				$(INCLUDE)/webserv.hpp
 
-SRC			=	main.cpp		\
-				server.cpp		\
-				request.cpp
+SRC			=	main.cpp			\
+				request.cpp			\
+				server.cpp			\
+				utils_parsing.cpp	\
+				webserv.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
@@ -43,7 +45,7 @@ $(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
 $(OBJD)		:
 				@mkdir $(OBJD)
 
-$(OBJD)/%.o	:	$(DIRSRC)/%.cpp
+$(OBJD)/%.o	:	$(DIRSRC)/%.cpp $(INCLUDEF)
 				$(CC) -I ./$(INCLUDE) $(CFLAGS) -D DEBUG_ACTIVE=$(DEBUG) -o $@ -c $<
 
 all			:	$(NAME)
@@ -55,8 +57,11 @@ fclean		:	clean
 
 				$(RM) $(NAME) $(LIB)
 
-run			:	re
+run			:	all
 				./webserv
+
+run_config_base:	all
+				./webserv config/base.conf
 
 bonus		:	all
 

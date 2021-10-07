@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 17:28:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/07 14:43:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,12 @@ class Server
 		std::vector<Request>		requests;
 
 	public:
-		Server(unsigned int _port = 8080);
+		Server(	std::vector<std::string>	server_names,
+				std::vector<std::string>	error_pages,
+				unsigned int				_port = 8080,
+				std::string					root = "website",
+				std::string					index = "index.html",
+				unsigned int				max_client_body_size = 2048);
 		~Server();
 		void s_listen();
 };
