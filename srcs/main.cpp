@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 13:55:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/07 12:02:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,19 @@
 
 std::string get_content_file(std::string filename)
 {
-   std::ifstream myfile;
-    myfile.open(filename);
-    std::string content("");
-    while (myfile)
-        content = content + (char)myfile.get();
-    myfile.close();
-    return content.substr(0, content.length() - 1);
+	std::ifstream myfile;
+	myfile.open(filename);
+	std::string content("");
+	while (myfile)
+		content = content + (char)myfile.get();
+	myfile.close();
+	return content.substr(0, content.length() - 1);
 }
 
 int main()
 {
-   Server serv;
-   while (true)
-      serv.s_listen();
-   return 0;
+	Server serv;
+	while (true)
+		serv.s_listen();
+	return 0;
 }
