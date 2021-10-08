@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/07 14:35:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/08 14:09:11 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,32 +19,32 @@ Request::~Request() {}
 
 Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_length(0), port(0)
 {
-	size_t index = 0;
+	size_t pos = 0;
 	std::string request(buffer, size);
 	// std::string request = "GET / HTTP/1.1\nHost: localhost:8080\nUser-Agent: curl/7.64.1\nAccept: */*\n\r";
-	type = get_str_before_char(request, " ", &index);
-	target = get_str_before_char(request, " ", &index);
-	get_str_before_char(request, "\n", &index);
+	type = get_str_before_char(request, " ", &pos);
+	target = get_str_before_char(request, " ", &pos);
+	get_str_before_char(request, "\n", &pos);
 	std::string header;
-	while (index < size && request[index]) // headers parsing loop
+	while (pos < size && request[pos]) // headers parsing loop
 	{
-		header = get_str_before_char(request, ": ", &index);
+		header = get_str_before_char(request, ": ", &pos);
 		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
 		if (header == "\0")
 			break ; // case empty line
-		// index++;
+		// pos++;
 		if (header == "Host")
 		{
-			headers.insert(std::pair<std::string, std::string>("Host", get_str_before_char(request, ":", &index)));
-			headers.insert(std::pair<std::string, std::string>("Port", get_str_before_char(request, "\n", &index)));
+			headers.insert(std::pair<std::string, std::string>("Host", get_str_before_char(request, ":", &pos)));
+			headers.insert(std::pair<std::string, std::string>("Port", get_str_before_char(request, "\n", &pos)));
 			continue;
 		}
-		headers.insert(std::pair<std::string, std::string>(header, get_str_before_char(request, "\n", &index)));
+		headers.insert(std::pair<std::string, std::string>(header, get_str_before_char(request, "\n", &pos)));
 	}
-	// index += 2;
-	index++;
+	// pos += 2;
+	pos++;
 	if (headers["Content-Length"].length())
-		headers.insert(std::pair<std::string, std::string>("Body", &request[index]));
+		headers.insert(std::pair<std::string, std::string>("Body", &request[pos]));
 
 
 	DEBUG("\n******** PARSED ********");

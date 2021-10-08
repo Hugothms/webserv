@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/07 14:43:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/08 14:23:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,25 +30,25 @@ class Server
 	private :
 		// * PARSED FROM CONFIG FILE *
 		unsigned int				port; // port to listen and send on ("listen" in config file)
-		std::vector<std::string>	server_names; // "Host" header in HTTP request (domain names)
+		std::list<std::string>		server_names; // "Host" header in HTTP request (domain names)
 		std::string					root; // directory where the webste is
 		std::string					index; // file served when "/" is requested
-		std::vector<std::string>	error_pages; //
+		std::list<std::string>		error_pages; //
 		unsigned int				max_client_body_size;
 
 		// * FOR "INTERNAL" USE *
 		int							listen_socket; // created by socket
 		int							send_socket; // ?
 		struct sockaddr_in			hint; // ?
-		std::vector<Request>		requests;
+		std::list<Request>			requests;
 
 	public:
-		Server(	std::vector<std::string>	server_names,
-				std::vector<std::string>	error_pages,
-				unsigned int				_port = 8080,
-				std::string					root = "website",
-				std::string					index = "index.html",
-				unsigned int				max_client_body_size = 2048);
+		Server(	std::list<std::string>	server_names,
+				std::list<std::string>	error_pages,
+				unsigned int			port = 8080,
+				std::string				root = "website",
+				std::string				index = "index.html",
+				unsigned int			max_client_body_size = 2048);
 		~Server();
 		void s_listen();
 };

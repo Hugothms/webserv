@@ -6,11 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/07 14:39:43 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/08 16:31:43 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.hpp"
+#include "webserv.hpp"
 
 std::string get_content_file(std::string filename)
 {
@@ -23,15 +24,28 @@ std::string get_content_file(std::string filename)
 	return content.substr(0, content.length() - 1);
 }
 
-std::string get_str_before_char(std::string str, std::string stop, size_t *index, std::string skip)
+/**
+ * @param str	string where to extract the substr
+ * @param stop	set of stoping chars
+ * @param pos	position where to start in str
+ * @param skip	set of chars to ignore at the begin (default: " \\t")
+ * @return first substring found between the start and the first occurence of a char in 'stop' (or empty string if '\\n' is found first)
+ *
+**/
+std::string get_str_before_char(std::string str, std::string stop, size_t *pos, std::string skip)
 {
-	while (skip.find(str[*index]) == 0)
-		(*index)++;
-	size_t length = str.find(stop, *index) - *index;
+	while (skip.find(str[*pos]) < skip.length())
+		(*pos)++;
+	size_t length = std::string::npos;
+	for (size_t i = 0; i < stop.length(); i++)
+	{
+		if (str.find(stop[i], *pos) - *pos < length)
+			length = str.find(stop[i], *pos) - *pos;
+	}
 	std::string res;
-	if (length == std::string::npos || str.find('\n', *index) - *index < length)
+	if (length == std::string::npos || str.find('\n', *pos) < *pos + length)
 		return res;
-	res = str.substr(*index , length);
-	*index += length + 1;
+	res = str.substr(*pos , length);
+	*pos += length + 1;
 	return res;
 }
