@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/07 14:38:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/08 16:05:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,6 @@
 // using namespace std;
 
 std::string	get_content_file(std::string filename);
-std::string	get_str_before_char(std::string str, std::string c, size_t *index, std::string skip = " \t");
+std::string	get_str_before_char(std::string str, std::string c, size_t *pos, std::string skip = "\t 	");
 
 #endif
