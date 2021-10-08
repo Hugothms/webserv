@@ -6,7 +6,7 @@
 #    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/10/07 14:42:54 by hthomas          ###   ########.fr        #
+#    Updated: 2021/10/08 17:32:40 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ OBJD		=	obj
 INCLUDE		=	incl
 
 INCLUDEF	=	$(INCLUDE)/includes.hpp		\
+				$(INCLUDE)/location.hpp		\
 				$(INCLUDE)/request.hpp		\
 				$(INCLUDE)/server.hpp		\
 				$(INCLUDE)/webserv.hpp

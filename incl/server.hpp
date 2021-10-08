@@ -6,16 +6,17 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/08 14:23:10 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/08 17:33:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "webserv.hpp"
-#include "request.hpp"
 #include "includes.hpp"
+#include "location.hpp"
+#include "request.hpp"
+#include "webserv.hpp"
 
 #define BUFFER_SIZE 1024
 
@@ -35,6 +36,7 @@ class Server
 		std::string					index; // file served when "/" is requested
 		std::list<std::string>		error_pages; //
 		unsigned int				max_client_body_size;
+		std::list<Location>			locations;
 
 		// * FOR "INTERNAL" USE *
 		int							listen_socket; // created by socket
