@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/07 13:16:10 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 16:31:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,20 @@
 
 int main(int argc, char *argv[])
 {
+	if (argc != 1 && argc != 2)
+	{
+		std::cerr << "ERROR: Wrong number of arguments" << std::endl;
+		return -1;
+	}
+	if (argc == 2)
+	{
+		std::ifstream file(argv[1]);
+		if(!file.is_open())
+		{
+			std::cerr << "ERROR: File does not exist" << std::endl;
+			return -1;
+		}
+	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
 	webserv.listen();
 	return 0;
