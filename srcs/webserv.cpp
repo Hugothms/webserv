@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/11 16:01:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 16:03:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,15 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 	DEBUG("\t"<<location<<"\n\t{");
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		return false;
-	std::string str_location;
-	while ((str_location = get_str_before_char(config, " ;\n", pos)) != "}")
+	std::string str;
+	while ((str = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
 		std::string tmp;
 
-		DEBUG("\t\t"<<str_location<<":");
-		if (str_location[0] == '#')
+		DEBUG("\t\t"<<str<<":");
+		if (str[0] == '#')
 			get_str_before_char(config, "\n", pos);
-		else if (str_location == "HTTP_methods")
+		else if (str == "HTTP_methods")
 		{
 			while ((tmp = get_str_before_char(config, " ;", pos)).length())
 			{
@@ -43,19 +43,19 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 			}
 			get_str_before_char(config, "\n", pos);
 		}
-		else if (str_location == "HTTP_redirection")
+		else if (str == "HTTP_redirection")
 		{
 			if ((HTTP_redirection = get_str_before_char(config, ";", pos)).length())
 				get_str_before_char(config, "\n", pos);
 			DEBUG("\t\t\t" << HTTP_redirection);
 		}
-		else if (str_location == "location_root")
+		else if (str == "location_root")
 		{
 			if ((location_root = get_str_before_char(config, ";", pos)).length())
 				get_str_before_char(config, "\n", pos);
 			DEBUG("\t\t\t" << location_root);
 		}
-		else if (str_location == "directory_listing")
+		else if (str == "directory_listing")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
@@ -64,7 +64,7 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 			}
 			DEBUG("\t\t\t" << directory_listing);
 		}
-		else if (str_location == "default_answer")
+		else if (str == "default_answer")
 		{
 			if ((default_answer = get_str_before_char(config, ";", pos)).length())
 				get_str_before_char(config, "\n", pos);
@@ -72,7 +72,7 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 		}
 		else
 		{
-			DEBUG("\t\t***OTHER_LOCATION: " << str_location);
+			DEBUG("\t\t***OTHER_LOCATION: " << str);
 			get_str_before_char(config, "\n", pos);
 		}
 		// sleep(1);
