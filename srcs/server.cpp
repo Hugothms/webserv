@@ -6,20 +6,21 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/08 14:20:09 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 14:42:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::~Server() {}
-Server::Server(	std::list<std::string>	server_names,
-				std::list<std::string>	error_pages,
+Server::Server(	std::list<Location>			locations,
+				std::list<std::string>		server_names,
+				std::list<std::string>		error_pages,
 				unsigned int 				port,
 				std::string					root,
 				std::string					index,
 				unsigned int				max_client_body_size)
-	:port(port), server_names(server_names), root(root), index(index), error_pages(error_pages), max_client_body_size(max_client_body_size)
+	: locations(locations), server_names(server_names), error_pages(error_pages), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
 {
 	int opt = 1;
 

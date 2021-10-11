@@ -6,13 +6,15 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/08 17:31:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 15:03:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location.hpp"
 
 Location::~Location() {}
+
+Location::Location() {}
 
 Location::Location(	std::string				location,
 					std::list<std::string>	HTTP_methods,

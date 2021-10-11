@@ -6,7 +6,7 @@
 #    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/10/08 17:32:40 by hthomas          ###   ########.fr        #
+#    Updated: 2021/10/11 14:18:52 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 				$(INCLUDE)/webserv.hpp
 
 SRC			=	main.cpp			\
+				location.cpp			\
 				request.cpp			\
 				server.cpp			\
 				utils_parsing.cpp	\
