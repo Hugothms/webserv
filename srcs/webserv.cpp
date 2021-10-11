@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/11 17:11:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 17:17:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 	{
 		std::string tmp;
 
-		DEBUG("\t\t" << (str!=) << ":");
+		DEBUG("\t\t" << str << ":");
 		if (str[0] == '#')
 		{
 			if (config[*pos-1] != '\n')
