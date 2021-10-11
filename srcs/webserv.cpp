@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/11 16:31:43 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 16:51:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,11 @@ Webserv::Webserv(std::string config_file)
 				Location	location;
 
 				DEBUG("\t"<<str);
-				if (str.empty() || str[0] == '#')
-					get_str_before_char(config, "\n", &pos);
+				if (str.empty() || (str[0] == '#'))
+				{
+					if (str[1])
+						get_str_before_char(config, "\n", &pos);
+				}
 				else if (str == "listen")
 				{
 					if((tmp = get_str_before_char(config, ";", &pos)).length())
