@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/08 14:09:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 17:12:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,9 +123,9 @@ std::string gettimestamp()
 	output << getdayofweek(time->tm_wday);
 
 	if (time->tm_mday < 10)
-		output <<", 0" << time->tm_mday;
+		output  << ", 0" << time->tm_mday;
 	else
-		output <<", " << time->tm_mday;
+		output  << ", " << time->tm_mday;
 	output << " " << getmonth(time->tm_mon);
 	output << " " << time->tm_year + 1900 << " ";
 	if (time->tm_hour < 10)
