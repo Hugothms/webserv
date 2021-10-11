@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/08 17:33:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 14:12:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ class Server
 		std::list<Request>			requests;
 
 	public:
-		Server(	std::list<std::string>	server_names,
+		Server(	std::list<Location>		locations,
+				std::list<std::string>	server_names,
 				std::list<std::string>	error_pages,
 				unsigned int			port = 8080,
 				std::string				root = "website",

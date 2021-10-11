@@ -27,6 +27,7 @@ class Location
 		std::string				default_answer;
 
 	public:
+		Location();
 		Location(	std::string				location,
 					std::list<std::string>	HTTP_methods,
 					std::string				HTTP_redirection,
