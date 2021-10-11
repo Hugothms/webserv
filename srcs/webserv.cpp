@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/11 16:03:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 16:31:43 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,15 +84,14 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 
 Webserv::Webserv(std::string config_file)
 {
-
 	if (config_file == "")
 	{
-		DEBUG("\tDefault config (no config provided)");
+		DEBUG("Default config (no config provided)");
 		servers.push_back(Server(std::list<Location>(), std::list<std::string>(), std::list<std::string>()));
 		return ;
 	}
 	std::string config = get_content_file(config_file);
-	DEBUG("\tProvided config:\n----------------");
+	DEBUG("Provided config:");
 	DEBUG(config);
 
 	// Parse and add multiple servers in "servers"
