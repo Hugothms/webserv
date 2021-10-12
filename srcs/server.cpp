@@ -6,79 +6,178 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/11 14:42:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:30 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
+#include <fcntl.h>
 
-Server::~Server() {}
-Server::Server(	std::list<Location>			locations,
-				std::list<std::string>		server_names,
-				std::list<std::string>		error_pages,
-				unsigned int 				port,
-				std::string					root,
-				std::string					index,
-				unsigned int				max_client_body_size)
-	: locations(locations), server_names(server_names), error_pages(error_pages), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
+Server::Server(	list<Location>	locations,
+		list<string>	server_names,
+		list<string>	error_pages,
+		unsigned int			port,
+		string				root,
+		string				index,
+		unsigned int			max_client_body_size)
+		:locations(locations), server_names(server_names), error_pages(error_pages), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
+{}
+
+Server::~Server()
 {
-	int opt = 1;
-
-	//Creating a socket on IPv4 mode, using TCP/IP protocol
-	if ((listen_socket = socket(V4, TCP, IP)) == 0)
+	// delete _clients;
+	close(listen_fd);
+	for (int i = 0; i < _clients.size(); i++)
 	{
-		std::cerr << "socket init failed !\n";
-		exit(1);
+		close(_clients[i].fd);
 	}
-	if (setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR /*| SO_REUSEPORT*/, &opt, sizeof(opt)))
-	{
-		std::cerr << "setsockopt failed !\n";
-		exit(2);
-	}
-	//IPV4 mode, use sockaddr_in6 for V6
-	hint.sin_family = V4;
-	//Bind to any IP ont the machine
-	hint.sin_addr.s_addr = INADDR_ANY;
-	//We have to change big endian to little endian, so change 8080
-	//HTONS = Host To Network Short | NTOHS is the reverse
-	hint.sin_port = htons(port);
-
-	//Bind it ?
-	if (bind(listen_socket, ( struct sockaddr*) &hint, sizeof(hint)) < 0)
-	{
-		std::cerr << "socket bind failed !\n";
-		exit(3);
-	}
-	//Set it to listen
-	if (listen(listen_socket, SOMAXCONN) == -1)
-	{
-		std::cerr << "Can't listen !\n";
-		exit(4);
-	}
+	_clients.clear();
 }
-//https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/
 
-//Need to use kqueue vs epoll
-void Server::s_listen()
+// Client Server::handle_new_conn(int listen_sock)
+// {
+// 	cout << "New conn incomming, need to accept it !\n";
+
+// 	Client new_client;
+
+// 	new_client.fd = accept(listen_sock, new_client.get_sockaddr(), new_client.get_addr_len());
+
+// 	inet_ntop(AF_INET, &(new_client.client_addr.sin_addr), new_client.client_ipv4_str, INET_ADDRSTRLEN);
+// 	// printf("Incoming connection from %s:%d.\n", new_client.v4str(), new_client.client_addr.sin_port);
+
+// 	// clients.push_back(new_client);
+// 	return (new_client);
+// }
+
+Server::Client Server::handle_new_conn(int fd)
 {
-	struct sockaddr_in client;
-	socklen_t client_size = sizeof(client);
-	//Accept functions give you a new file descriptor
-	send_socket = accept(listen_socket, (struct sockaddr*) &client, &client_size);
-	//Need to use either Poll Epoll or Select
-	if (send_socket == -1)
+	cout << "New conn incomming, need to accept it !\n";
+
+	Client new_client;
+
+	new_client.fd = accept(listen_fd, new_client.get_sockaddr(), new_client.get_addr_len());
+
+	inet_ntop(AF_INET, &(new_client.client_addr.sin_addr), new_client.client_ipv4_str, INET_ADDRSTRLEN);
+	// printf("Incoming connection from %s:%d.\n", new_client.v4str(), new_client.client_addr.sin_port);
+
+	// clients.push_back(new_client);
+	return (new_client);
+}
+
+int Server::setup(void)
+{
+	//Create IPV4 TCP socket;
+	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_fd == -1)
 	{
-		std::cerr << "Can't client sock\n";
-		exit(-1);
+		cerr << "Socket error\n";
+		return -1;
 	}
 
+	hint.sin_family = AF_INET;
+	hint.sin_port = htons(port);
+	inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
 
-	char buffer[BUFFER_SIZE];
-	int query_size = read(send_socket, buffer, BUFFER_SIZE);
-	buffer[query_size] = '\0';
-	DEBUG("-------- REQUEST --------");
-	DEBUG(buffer);
-	Request query(buffer, query_size, send_socket);
-	query.respond();
-	close(send_socket);
+	if (bind(listen_fd, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
+	{
+		cerr << "Bind error\n";
+		return -2;
+	}
+	// listen(listen_fd, SOMAXCONN);
+
+	// FD_ZERO(&master_set);
+
+	// FD_SET(listen_fd, &master_set);
+
+	// int high_fd = listen_fd;
+	// while(true)
+	// {
+	// 	copy_set = master_set;
+
+	// 	//This can be optimized
+	// 	for (int i = 0; i < _clients.size(); i++)
+	// 	{
+	// 		if (_clients[i].fd > high_fd)
+	// 			high_fd = _clients[i].fd;
+	// 	}
+
+	// 	int sock_count = select(high_fd + 1, &copy_set, NULL, NULL, NULL);
+	// 	if (FD_ISSET(listen_fd, &copy_set))
+	// 	{
+	// 		Client tmp = handle_new_conn(listen_fd);
+	// 		_clients.push_back(tmp);
+	// 		cout << "Client added to the list : " ;
+	// 		_clients.back().identify();
+	// 		//Add the client FD to master for processing
+	// 		FD_SET(tmp.fd, &master_set);
+	// 	}
+	// 	// //Loop through all the clients and find out if they sent
+	// 	for (int i = 0; i < _clients.size(); i++)
+	// 	{
+	// 		if (FD_ISSET(_clients[i].fd, &copy_set))
+	// 		{
+	// 			_clients[i].identify();
+	// 			char buff[BUFFER_SIZE];
+	// 			int received_count = recv(_clients[i].fd, buff, BUFFER_SIZE, 0);
+	// 			write(1, buff, received_count);
+	// 			// write(_clients[i].fd,buff , received_count);
+	// 			Request req(buff,received_count, _clients[i].fd);
+	// 			req.respond();
+	// 		}
+	// 	}
+	// }
+	// close(listen_fd);
+	return 0;
+}
+
+int Server::run(void)
+{
+	listen(listen_fd, SOMAXCONN);
+
+	FD_ZERO(&master_set);
+
+	FD_SET(listen_fd, &master_set);
+
+	int high_fd = listen_fd;
+	while(true)
+	{
+		copy_set = master_set;
+
+		//This can be optimized
+		for (int i = 0; i < _clients.size(); i++)
+		{
+			if (_clients[i].fd > high_fd)
+				high_fd = _clients[i].fd;
+		}
+
+		int sock_count = select(high_fd + 1, &copy_set, NULL, NULL, NULL);
+		if (FD_ISSET(listen_fd, &copy_set))
+		{
+			Client tmp = handle_new_conn(listen_fd);
+			_clients.push_back(tmp);
+			cout << "Client added to the list : " ;
+			_clients.back().identify();
+			//Add the client FD to master for processing
+			FD_SET(tmp.fd, &master_set);
+		}
+		// //Loop through all the clients and find out if they sent
+		for (int i = 0; i < _clients.size(); i++)
+		{
+			if (FD_ISSET(_clients[i].fd, &copy_set))
+			{
+				_clients[i].identify();
+				char buff[BUFFER_SIZE];
+				int received_count = recv(_clients[i].fd, buff, BUFFER_SIZE, 0);
+				if (received_count == 0)
+				{
+					cerr << "Client is done\n";
+				}
+				write(1, buff, received_count);
+				// write(_clients[i].fd,buff , received_count);
+				Request req(buff,received_count, _clients[i].fd);
+				req.respond();
+			}
+		}
+	}
+	close(listen_fd);
 }

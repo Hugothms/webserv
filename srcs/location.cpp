@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/11 15:03:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@ Location::~Location() {}
 
 Location::Location() {}
 
-Location::Location(	std::string				location,
-					std::list<std::string>	HTTP_methods,
-					std::string				HTTP_redirection,
-					std::string				location_root,
+Location::Location(	string				location,
+					list<string>	HTTP_methods,
+					string				HTTP_redirection,
+					string				location_root,
 					bool 					directory_listing,
-					std::string				default_answer)
+					string				default_answer)
 	: location(location), HTTP_methods(HTTP_methods), HTTP_redirection(HTTP_redirection), location_root(location_root), directory_listing(directory_listing), default_answer(default_answer)
 {
 }
