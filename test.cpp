@@ -104,7 +104,7 @@ int main(int agrc, char** argv) {
 
     //set non blocking
     set_nonblock(new_sd);
-    std::cout<<"\nSuccessful Connection!\n";
+    cout<<"\nSuccessful Connection!\n";
 
     char in[255];
     char out[255];
@@ -143,7 +143,7 @@ int main(int agrc, char** argv) {
                 break;
             }
             else if(in[0] != '\0')
-                std::cout<<"\nClient: "<<in;
+                cout<<"\nClient: "<<in;
 
         }   //end if ready for read
 
@@ -161,6 +161,6 @@ int main(int agrc, char** argv) {
         }   //end if
     }   //end while
 
-   std::cout<<"\n\nExiting normally\n";
+   cout<<"\n\nExiting normally\n";
     return 0;
 }

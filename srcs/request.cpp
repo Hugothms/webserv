@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 20:44:22 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ Request::~Request() {}
 Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_length(0), port(0)
 {
 	size_t pos = 0;
-	std::string request(buffer, size);
+	string request(buffer, size);
 	type = get_str_before_char(request, " ", &pos);
 	target = get_str_before_char(request, " ", &pos);
 	get_str_before_char(request, "\n", &pos);
-	std::string header;
+	string header;
 	while (pos < size && request[pos]) // headers parsing loop
 	{
 		header = get_str_before_char(request, ": ", &pos);
@@ -34,16 +34,16 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 		// pos++;
 		if (header == "Host")
 		{
-			headers.insert(std::pair<std::string, std::string>("Host", get_str_before_char(request, ":", &pos)));
-			headers.insert(std::pair<std::string, std::string>("Port", get_str_before_char(request, "\n", &pos)));
+			headers.insert(pair<string, string>("Host", get_str_before_char(request, ":", &pos)));
+			headers.insert(pair<string, string>("Port", get_str_before_char(request, "\n", &pos)));
 			continue;
 		}
-		headers.insert(std::pair<std::string, std::string>(header, get_str_before_char(request, "\n", &pos)));
+		headers.insert(pair<string, string>(header, get_str_before_char(request, "\n", &pos)));
 	}
 	// pos += 2;
 	pos++;
 	if (headers["Content-Length"].length())
-		headers.insert(std::pair<std::string, std::string>("Body", &request[pos]));
+		headers.insert(pair<string, string>("Body", &request[pos]));
 
 
 	DEBUG("\n******** PARSED ********");
@@ -51,13 +51,13 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 	DEBUG("target:" << target);
 	DEBUG("socket:" << socket);
 	DEBUG("------------------------");
-	std::map<std::string, std::string>::iterator it = headers.begin();
+	map<string, string>::iterator it = headers.begin();
 	while(it != headers.end())
 		DEBUG(it->first << ": " << it++->second);
 	DEBUG("");
 }
 
-std::string getdayofweek(int day)
+string getdayofweek(int day)
 {
 	switch(day)
 	{
@@ -80,7 +80,7 @@ std::string getdayofweek(int day)
 	}
 }
 
-std::string getmonth(int month)
+string getmonth(int month)
 {
 	switch(month)
 	{
@@ -113,12 +113,12 @@ std::string getmonth(int month)
 	}
 }
 
-std::string gettimestamp()
+string gettimestamp()
 {
 	time_t now = time(0);
 
 	tm *time = gmtime(&now);
-	std::stringstream output;
+	stringstream output;
 	output << getdayofweek(time->tm_wday);
 
 	if (time->tm_mday < 10)
@@ -139,18 +139,18 @@ std::string gettimestamp()
 	return (output.str());
 }
 
-std::string gettype(std::string str)
+string gettype(string str)
 {
-	std::string ret;
-	if (str.find(".png", str.length() - 4) != std::string::npos)
+	string ret;
+	if (str.find(".png", str.length() - 4) != string::npos)
 		ret = "image/png";
-	else if (str.find(".jpg", str.length() - 4) != std::string::npos)
+	else if (str.find(".jpg", str.length() - 4) != string::npos)
 		ret = "image/jpg";
-	else if (str.find(".png", str.length() - 4) != std::string::npos)
+	else if (str.find(".png", str.length() - 4) != string::npos)
 		ret = "image/x-icon";
-	else if (str.find(".css", str.length() - 4) != std::string::npos)
+	else if (str.find(".css", str.length() - 4) != string::npos)
 		ret = "text/css";
-	else if (str.find(".js", str.length() - 3) != std::string::npos)
+	else if (str.find(".js", str.length() - 3) != string::npos)
 		ret = "application/javascript";
 	else
 		ret = "text/html";
@@ -159,22 +159,22 @@ std::string gettype(std::string str)
 
 void Request::respond()
 {
-	std::string filepath("website");
+	string filepath("website");
 	if (target.compare("/") == 0)
 		target += "index.html";
 	filepath += target;
-	std::ifstream myfile(filepath.c_str(), std::ofstream::in);
-	std::stringstream response;
+	ifstream myfile(filepath.c_str(), ofstream::in);
+	stringstream response;
 	if (!myfile)
 	{
 		myfile.close();
-		myfile.open("website/404.html", std::ofstream::in);
+		myfile.open("website/404.html", ofstream::in);
 		response << "HTTP/1.1 404 Not Found\n";
 	}
 	else
 		response << "HTTP/1.1 200 OK\n";
-	std::string file((std::istreambuf_iterator<char>(myfile)),
-                 std::istreambuf_iterator<char>());
+	string file((istreambuf_iterator<char>(myfile)),
+                 istreambuf_iterator<char>());
 	response << "Server: webserv/0.01\n";
 	response << "Date: " << gettimestamp();
 	response << "Content-Type: " << gettype(target);

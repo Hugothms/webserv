@@ -6,30 +6,30 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 21:06:20 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-bool	parse_location(std::string config, size_t *pos, Location *returned_location)
+bool	parse_location(string config, size_t *pos, Location *returned_location)
 {
 	// Locations's attributes:
-	std::string				location;
-	std::list<std::string>	HTTP_methods;
-	std::string				HTTP_redirection;
-	std::string				location_root;
+	string				location;
+	list<string>	HTTP_methods;
+	string				HTTP_redirection;
+	string				location_root;
 	bool 					directory_listing = false;
-	std::string				default_answer;
+	string				default_answer;
 
 	location = get_str_before_char(config, " ", pos);
 	DEBUG("\t" << location << "\n\t{");
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		return false;
-	std::string str;
+	string str;
 	while ((str = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
-		std::string tmp;
+		string tmp;
 
 		if (str[0] != '#')
 			DEBUG("\t\t" << str << ":");
@@ -86,21 +86,21 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 	return true;
 }
 
-Webserv::Webserv(std::string config_file)
+Webserv::Webserv(string config_file)
 {
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
-		servers.push_back(Server(std::list<Location>(), std::list<std::string>(), std::list<std::string>()));
+		servers.push_back(Server(list<Location>(), list<string>(), list<string>()));
 		return ;
 	}
-	const std::string config = get_content_file(config_file);
+	const string config = get_content_file(config_file);
 	DEBUG("Provided config:");
 	DEBUG(config);
 
 	// Parse and add multiple servers in "servers"
 	size_t pos = 0;
-	std::string str;
+	string str;
 	while (config[pos]) // config parsing loop
 	{
 		DEBUG("!!!!!!!!!!!! SERVER !!!!!!!!!!!!");
@@ -112,18 +112,18 @@ Webserv::Webserv(std::string config_file)
 				continue ;
 			DEBUG("{");
 			// Webserv's attributes:
-			std::list<Location>		locations;
-			std::list<std::string>	server_names;
-			std::list<std::string>	error_pages;
-			std::string				host;
+			list<Location>		locations;
+			list<string>	server_names;
+			list<string>	error_pages;
+			string				host;
 			unsigned int			port = 8080;
-			std::string				root = "website";
-			std::string				index = "index.html";
+			string				root = "website";
+			string				index = "index.html";
 			unsigned int			max_client_body_size = 2048;
 
 			while (config[pos] && (str = get_str_before_char(config, " ;\n", &pos)) != "}")
 			{
-				std::string	tmp;
+				string	tmp;
 				Location	location;
 
 				DEBUG("\t" << str);
@@ -190,7 +190,7 @@ Webserv::Webserv(std::string config_file)
 			DEBUG("}");
 			if (!is_a_valid_server(locations, server_names, error_pages, port, root, index, max_client_body_size))
 			{
-				std::cerr << "Wrong server configuration" << std::endl;
+				cerr << "Wrong server configuration" << endl;
 				exit(5);
 			}
 			servers.push_back(Server(locations, server_names, error_pages, port, root, index, max_client_body_size));
@@ -205,7 +205,7 @@ void	Webserv::listen()
 	servers.begin()->run();
 	// while (true)
 	// {
-		// for (std::list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
+		// for (list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
 		// {
 		// 	// DEBUG("\t---" << &server);
 		// 	server->run();

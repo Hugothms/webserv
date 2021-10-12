@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 21:03:47 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,26 +34,26 @@ class Server
 	private :
 		// * PARSED FROM CONFIG FILE *
 		// unsigned int				port; // port to listen and send on ("listen" in config file)
-		std::list<std::string>		server_names; // "Host" header in HTTP request (domain names)
-		std::string					root; // directory where the webste is
-		std::string					index; // file served when "/" is requested
-		std::list<std::string>		error_pages; //
+		list<string>		server_names; // "Host" header in HTTP request (domain names)
+		string					root; // directory where the webste is
+		string					index; // file served when "/" is requested
+		list<string>		error_pages; //
 		unsigned int				max_client_body_size;
-		std::list<Location>			locations;
+		list<Location>			locations;
 
 		// * FOR "INTERNAL" USE *
 		int							listen_socket; // created by socket
 		int							send_socket; // ?
 		struct sockaddr_in			hint; // ?
-		std::list<Request>			requests;
+		list<Request>			requests;
 
 	public:
-		Server(	std::list<Location>		locations,
-				std::list<std::string>	server_names,
-				std::list<std::string>	error_pages,
+		Server(	list<Location>		locations,
+				list<string>	server_names,
+				list<string>	error_pages,
 				unsigned int			port = 8080,
-				std::string				root = "website",
-				std::string				index = "index.html",
+				string				root = "website",
+				string				index = "index.html",
 				unsigned int			max_client_body_size = 2048);
 		~Server();
 		void s_listen();
@@ -85,7 +85,7 @@ class Server
 				}
 				void identify(void)
 				{
-					std::cout << client_ipv4_str <<":" <<client_addr.sin_port << std::endl;
+					cout << client_ipv4_str <<":" <<client_addr.sin_port << endl;
 				}
 			private :
 		};
@@ -100,7 +100,7 @@ class Server
 	// struct sockaddr_in hint;
 	fd_set master_set;
 	fd_set copy_set;
-	std::vector<Client> _clients;
+	vector<Client> _clients;
 };
 
 #endif
