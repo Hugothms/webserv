@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 20:43:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 20:55:22 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,10 @@ bool		is_a_valid_server(	std::list<Location>		locations,
 bool		is_integer(const std::string &s);
 std::string	get_content_file(const std::string filename);
 std::string	get_str_before_char(const std::string str, const std::string c, size_t *pos, const std::string skip = "\t 	");
+//NEW
+
+#include <arpa/inet.h>
+#include <sys/select.h>
+
 
 #endif

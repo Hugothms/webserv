@@ -6,13 +6,19 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 20:42:26 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 20:49:34 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 #include "server.hpp"
-
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <string.h>
+// #define PORT 8080
 int main(int argc, char *argv[])
 {
 	if (argc != 1 && argc != 2)
