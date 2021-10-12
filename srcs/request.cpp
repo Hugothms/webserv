@@ -6,23 +6,56 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 11:37:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/11 17:12:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 #include "request.hpp"
 
-Request::Request(){}
+// Request::Request(){}
 
-Request::Request(char *buffer, int size, int sock) : socket(sock)
+Request::~Request() {}
+
+Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_length(0), port(0)
 {
-	int i = 0;
-	while (i < size && buffer[i] && buffer[i] != ' ')
-		type += buffer[i++];
-	++i;
-	while (i < size && buffer[i] && buffer[i] != ' ')
-		target += buffer[i++];
+	size_t pos = 0;
+	std::string request(buffer, size);
+	// std::string request = "GET / HTTP/1.1\nHost: localhost:8080\nUser-Agent: curl/7.64.1\nAccept: */*\n\r";
+	type = get_str_before_char(request, " ", &pos);
+	target = get_str_before_char(request, " ", &pos);
+	get_str_before_char(request, "\n", &pos);
+	std::string header;
+	while (pos < size && request[pos]) // headers parsing loop
+	{
+		header = get_str_before_char(request, ": ", &pos);
+		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
+		if (header == "\0")
+			break ; // case empty line
+		// pos++;
+		if (header == "Host")
+		{
+			headers.insert(std::pair<std::string, std::string>("Host", get_str_before_char(request, ":", &pos)));
+			headers.insert(std::pair<std::string, std::string>("Port", get_str_before_char(request, "\n", &pos)));
+			continue;
+		}
+		headers.insert(std::pair<std::string, std::string>(header, get_str_before_char(request, "\n", &pos)));
+	}
+	// pos += 2;
+	pos++;
+	if (headers["Content-Length"].length())
+		headers.insert(std::pair<std::string, std::string>("Body", &request[pos]));
+
+
+	DEBUG("\n******** PARSED ********");
+	DEBUG("type:" << type);
+	DEBUG("target:" << target);
+	DEBUG("socket:" << socket);
+	DEBUG("------------------------");
+	std::map<std::string, std::string>::iterator it = headers.begin();
+	while(it != headers.end())
+		DEBUG(it->first << ": " << it++->second);
+	DEBUG("");
 }
 
 std::string getdayofweek(int day)
@@ -90,9 +123,9 @@ std::string gettimestamp()
 	output << getdayofweek(time->tm_wday);
 
 	if (time->tm_mday < 10)
-		output <<", 0" << time->tm_mday;
+		output  << ", 0" << time->tm_mday;
 	else
-		output <<", " << time->tm_mday;
+		output  << ", " << time->tm_mday;
 	output << " " << getmonth(time->tm_mon);
 	output << " " << time->tm_year + 1900 << " ";
 	if (time->tm_hour < 10)
@@ -125,7 +158,6 @@ std::string gettype(std::string str)
 	return ret;
 }
 
-
 void Request::respond()
 {
 	std::string filepath("website");
@@ -134,7 +166,6 @@ void Request::respond()
 	filepath += target;
 	std::ifstream myfile(filepath.c_str(), std::ofstream::in);
 	std::stringstream response;
-
 	if (!myfile)
 	{
 		myfile.close();
@@ -143,11 +174,8 @@ void Request::respond()
 	}
 	else
 		response << "HTTP/1.1 200 OK\n";
-
 	std::string file((std::istreambuf_iterator<char>(myfile)),
                  std::istreambuf_iterator<char>());
-
-
 	response << "Server: webserv/0.01\n";
 	response << "Date: " << gettimestamp();
 	response << "Content-Type: " << gettype(target);
@@ -155,9 +183,8 @@ void Request::respond()
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	// DEBUG("------- RESPONSE -------\n");
+	// DEBUG("------- RESPONSE -------");
 	// DEBUG(response.str());
 	myfile.close();
 }
 
-Request::~Request() {}
