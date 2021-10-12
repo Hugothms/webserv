@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 17:02:20 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 20:57:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,7 @@ void	Webserv::listen()
 		for (std::list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
 		{
 			// DEBUG("\t---" << &server);
-			server->s_listen();
+			server->run();
 		}
 	}
 }
