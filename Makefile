@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
+#    By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/10/12 20:46:42 by hthomas          ###   ########.fr        #
+#    Updated: 2021/10/12 23:13:43 by edal--ce         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,7 @@ INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 				$(INCLUDE)/location.hpp		\
 				$(INCLUDE)/request.hpp		\
 				$(INCLUDE)/server.hpp		\
+				$(INCLUDE)/client.hpp		\
 				$(INCLUDE)/webserv.hpp
 
 SRC			=	main.cpp			\
