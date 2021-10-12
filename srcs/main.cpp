@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/11 16:31:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 14:53:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 			std::cerr << "ERROR: File does not exist" << std::endl;
 			return -1;
 		}
+		file.close();
 	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
 	webserv.listen();
