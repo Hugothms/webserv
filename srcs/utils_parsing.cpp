@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 15:07:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.hpp"
 #include "webserv.hpp"
 
-bool is_integer(const std::string &s)
+bool is_integer(const string &s)
 {
 	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
 		return false;
@@ -22,11 +22,11 @@ bool is_integer(const std::string &s)
 	return (*p == 0);
 }
 
-std::string get_content_file(const std::string filename)
+string get_content_file(const string filename)
 {
-	std::ifstream myfile;
+	ifstream myfile;
 	myfile.open(filename);
-	std::string content("");
+	string content("");
 	while (myfile)
 		content = content + (char)myfile.get();
 	myfile.close();
@@ -41,30 +41,30 @@ std::string get_content_file(const std::string filename)
  * @return first substring found between the start and the first occurence of a char in 'stop' (or empty string if '\\n' is found first)
  *
 **/
-std::string get_str_before_char(const std::string str, const std::string stop, size_t *pos, const std::string skip)
+string get_str_before_char(const string str, const string stop, size_t *pos, const string skip)
 {
 	while (skip.find(str[*pos]) < skip.length())
 		(*pos)++;
-	size_t length = std::string::npos;
+	size_t length = string::npos;
 	for (size_t i = 0; i < stop.length(); i++)
 	{
 		if (str.find(stop[i], *pos) - *pos < length)
 			length = str.find(stop[i], *pos) - *pos;
 	}
-	std::string res;
-	if (length == std::string::npos || str.find('\n', *pos) < *pos + length)
+	string res;
+	if (length == string::npos || str.find('\n', *pos) < *pos + length)
 		return res;
 	res = str.substr(*pos , length);
 	*pos += length + 1;
 	return res;
 }
 
-bool	is_a_valid_server(	std::list<Location>		locations,
-							std::list<std::string>	server_names,
-							std::list<std::string>	error_pages,
+bool	is_a_valid_server(	list<Location>		locations,
+							list<string>	server_names,
+							list<string>	error_pages,
 							unsigned int 			port,
-							std::string				root,
-							std::string				index,
+							string				root,
+							string				index,
 							unsigned int			max_client_body_size)
 {
 	// TODO

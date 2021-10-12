@@ -19,21 +19,21 @@ class Location
 {
 	private :
 		// * PARSED FROM CONFIG FILE *
-		std::string				location;
-		std::list<std::string>	HTTP_methods;
-		std::string				HTTP_redirection;
-		std::string				location_root;
+		string				location;
+		list<string>	HTTP_methods;
+		string				HTTP_redirection;
+		string				location_root;
 		bool 					directory_listing;
-		std::string				default_answer;
+		string				default_answer;
 
 	public:
 		Location();
-		Location(	std::string				location,
-					std::list<std::string>	HTTP_methods,
-					std::string				HTTP_redirection,
-					std::string				location_root,
+		Location(	string				location,
+					list<string>	HTTP_methods,
+					string				HTTP_redirection,
+					string				location_root,
 					bool 					directory_listing,
-					std::string				default_answer);
+					string				default_answer);
 		~Location();
 };
 
