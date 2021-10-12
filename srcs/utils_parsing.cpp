@@ -6,14 +6,23 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/08 16:31:43 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 14:04:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.hpp"
 #include "webserv.hpp"
 
-std::string get_content_file(std::string filename)
+bool isInteger(const std::string &s)
+{
+	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
+		return false;
+	char *p;
+	strtol(s.c_str(), &p, 10);
+	return (*p == 0);
+}
+
+std::string get_content_file(const std::string filename)
 {
 	std::ifstream myfile;
 	myfile.open(filename);
@@ -32,7 +41,7 @@ std::string get_content_file(std::string filename)
  * @return first substring found between the start and the first occurence of a char in 'stop' (or empty string if '\\n' is found first)
  *
 **/
-std::string get_str_before_char(std::string str, std::string stop, size_t *pos, std::string skip)
+std::string get_str_before_char(const std::string str, const std::string stop, size_t *pos, const std::string skip)
 {
 	while (skip.find(str[*pos]) < skip.length())
 		(*pos)++;
