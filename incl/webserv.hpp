@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/09/16 13:51:10 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/07 13:43:16 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,10 @@ class Server;
 class Webserv
 {
 	private:
-		std::vector<Server>	servers;
-
+		std::list<Server>	servers;
+	public:
+		Webserv(std::string config_file = "");
+		void	listen();
 };
 
 #endif
