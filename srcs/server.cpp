@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 23:28:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/12 23:44:45 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ int Server::setup(void)
 		perror("socket");
 		exit(1);
 	}
-
-
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
