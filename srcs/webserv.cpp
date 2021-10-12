@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/11 17:17:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 14:24:14 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 	{
 		std::string tmp;
 
-		DEBUG("\t\t" << str << ":");
+		if (str[0] != '#')
+			DEBUG("\t\t" << str << ":");
 		if (str[0] == '#')
 		{
 			if (config[*pos-1] != '\n')
@@ -48,34 +49,34 @@ bool	parse_location(std::string config, size_t *pos, Location *returned_location
 		}
 		else if (str == "HTTP_redirection")
 		{
+			DEBUG("\t\t\t" << HTTP_redirection);
 			if ((HTTP_redirection = get_str_before_char(config, ";", pos)).length())
 				get_str_before_char(config, "\n", pos);
-			DEBUG("\t\t\t" << HTTP_redirection);
 		}
 		else if (str == "location_root")
 		{
+			DEBUG("\t\t\t" << location_root);
 			if ((location_root = get_str_before_char(config, ";", pos)).length())
 				get_str_before_char(config, "\n", pos);
-			DEBUG("\t\t\t" << location_root);
 		}
 		else if (str == "directory_listing")
 		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
 			{
 				directory_listing = atoi(tmp.c_str());
+				DEBUG("\t\t\t" << directory_listing);
 				get_str_before_char(config, "\n", pos);
 			}
-			DEBUG("\t\t\t" << directory_listing);
 		}
 		else if (str == "default_answer")
 		{
+			DEBUG("\t\t\t" << default_answer);
 			if ((default_answer = get_str_before_char(config, ";", pos)).length())
 				get_str_before_char(config, "\n", pos);
-			DEBUG("\t\t\t" << default_answer);
 		}
 		else
 		{
-			DEBUG("\t\t***OTHER_LOCATION: " << str);
+			// DEBUG("\t\t***OTHER_LOCATION: " << str);
 			get_str_before_char(config, ";\n", pos);
 		}
 		// sleep(1);
@@ -93,7 +94,7 @@ Webserv::Webserv(std::string config_file)
 		servers.push_back(Server(std::list<Location>(), std::list<std::string>(), std::list<std::string>()));
 		return ;
 	}
-	std::string config = get_content_file(config_file);
+	const std::string config = get_content_file(config_file);
 	DEBUG("Provided config:");
 	DEBUG(config);
 
@@ -132,7 +133,7 @@ Webserv::Webserv(std::string config_file)
 				}
 				else if (str == "listen")
 				{
-					if((tmp = get_str_before_char(config, ";", &pos)).length())
+					if(isInteger(tmp = get_str_before_char(config, ";", &pos)))
 					{
 						port = atoi(tmp.c_str());
 						get_str_before_char(config, "\n", &pos);
@@ -170,7 +171,7 @@ Webserv::Webserv(std::string config_file)
 				}
 				else if (str == "max_client_body_size")
 				{
-					if((tmp = get_str_before_char(config, ";", &pos)).length())
+					if(isInteger(tmp = get_str_before_char(config, ";", &pos)))
 					{
 						get_str_before_char(config, "\n", &pos);
 						max_client_body_size = atoi(tmp.c_str());
