@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/11 17:12:10 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 20:44:22 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 {
 	size_t pos = 0;
 	std::string request(buffer, size);
-	// std::string request = "GET / HTTP/1.1\nHost: localhost:8080\nUser-Agent: curl/7.64.1\nAccept: */*\n\r";
 	type = get_str_before_char(request, " ", &pos);
 	target = get_str_before_char(request, " ", &pos);
 	get_str_before_char(request, "\n", &pos);
