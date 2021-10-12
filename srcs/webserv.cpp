@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 20:57:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:06:20 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,12 +201,14 @@ Webserv::Webserv(std::string config_file)
 
 void	Webserv::listen()
 {
-	while (true)
-	{
-		for (std::list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
-		{
-			// DEBUG("\t---" << &server);
-			server->run();
-		}
-	}
+	servers.begin()->setup();
+	servers.begin()->run();
+	// while (true)
+	// {
+		// for (std::list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
+		// {
+		// 	// DEBUG("\t---" << &server);
+		// 	server->run();
+		// }
+	// }
 }
