@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 14:04:32 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 15:07:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes.hpp"
 #include "webserv.hpp"
 
-bool isInteger(const std::string &s)
+bool is_integer(const std::string &s)
 {
 	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
 		return false;
@@ -57,4 +57,16 @@ std::string get_str_before_char(const std::string str, const std::string stop, s
 	res = str.substr(*pos , length);
 	*pos += length + 1;
 	return res;
+}
+
+bool	is_a_valid_server(	std::list<Location>		locations,
+							std::list<std::string>	server_names,
+							std::list<std::string>	error_pages,
+							unsigned int 			port,
+							std::string				root,
+							std::string				index,
+							unsigned int			max_client_body_size)
+{
+	// TODO
+	return true;
 }

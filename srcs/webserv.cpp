@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 14:24:14 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 17:02:20 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ Webserv::Webserv(std::string config_file)
 			std::list<Location>		locations;
 			std::list<std::string>	server_names;
 			std::list<std::string>	error_pages;
+			std::string				host;
 			unsigned int			port = 8080;
 			std::string				root = "website";
 			std::string				index = "index.html";
@@ -133,12 +134,12 @@ Webserv::Webserv(std::string config_file)
 				}
 				else if (str == "listen")
 				{
-					if(isInteger(tmp = get_str_before_char(config, ";", &pos)))
-					{
+					host = get_str_before_char(config, ":", &pos);
+					DEBUG("\t\thost " << host);
+					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
 						port = atoi(tmp.c_str());
-						get_str_before_char(config, "\n", &pos);
-					}
-					DEBUG("\t\t" << port);
+					get_str_before_char(config, "\n", &pos);
+					DEBUG("\t\tport: " << port);
 				}
 				else if (str == "server_name")
 				{
@@ -171,7 +172,7 @@ Webserv::Webserv(std::string config_file)
 				}
 				else if (str == "max_client_body_size")
 				{
-					if(isInteger(tmp = get_str_before_char(config, ";", &pos)))
+					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
 						get_str_before_char(config, "\n", &pos);
 						max_client_body_size = atoi(tmp.c_str());
@@ -183,10 +184,15 @@ Webserv::Webserv(std::string config_file)
 				else
 				{
 					DEBUG("\t\t***OTHER: " << str);
-					str = get_str_before_char(config, ";\n", &pos);
+					str = get_str_before_char(config, "\n", &pos);
 				}
 			}
 			DEBUG("}");
+			if (!is_a_valid_server(locations, server_names, error_pages, port, root, index, max_client_body_size))
+			{
+				std::cerr << "Wrong server configuration" << std::endl;
+				exit(5);
+			}
 			servers.push_back(Server(locations, server_names, error_pages, port, root, index, max_client_body_size));
 		}
 	}
