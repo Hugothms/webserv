@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 23:13:00 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/12 23:28:35 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,14 @@ int Server::setup(void)
 		exit(1);
 	}
 
+	listen(listen_fd, SOMAXCONN);
+
+	FD_ZERO(&master_set);
+
+	FD_SET(listen_fd, &master_set);
+
 	_setup = true;
+	high_fd = listen_fd;
 	return 0;
 }
 
@@ -89,13 +96,6 @@ int Server::run(void)
 {
 	if (_setup == false)
 		setup();
-
-	listen(listen_fd, SOMAXCONN);
-
-	FD_ZERO(&master_set);
-
-	FD_SET(listen_fd, &master_set);
-	int high_fd = listen_fd;
 	while(true)
 	{
 		copy_set = master_set;

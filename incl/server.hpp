@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 23:12:45 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/12 23:26:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class Server
 	int setup();
 	int run(void);
 	// Client handle_new_conn(int listen_sock);
+	int port;
 		private :
 		// * PARSED FROM CONFIG FILE *
 		// unsigned int				port; // port to listen and send on ("listen" in config file)
@@ -65,9 +66,9 @@ class Server
 		bool 					_setup;
 
 
-
+	int high_fd;
 	int listen_fd;
-	int port;
+	
 	struct sockaddr_in hint;
 	fd_set master_set;
 	fd_set copy_set;
