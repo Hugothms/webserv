@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 20:55:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include "server.hpp"
 
 # if DEBUG_ACTIVE == 1
-#  define DEBUG(x) std::cout << x << std::endl;
+#  define DEBUG(x) cout << x << endl;
 # else
 #  define DEBUG(x)
 # endif
@@ -28,9 +28,9 @@ class Server;
 class Webserv
 {
 	private:
-		std::list<Server>	servers;
+		list<Server>	servers;
 	public:
-		Webserv(std::string config_file = "");
+		Webserv(string config_file = "");
 		void	listen();
 };
 

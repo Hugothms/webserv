@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test2.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/05 18:59:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 22:57:08 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Client
 		struct 		sockaddr_in client_addr;
 		char		client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t 	client_len;
-		
+
 		Client()
 		{
 			memset(&client_addr, 0, sizeof(client_addr));
@@ -56,7 +56,7 @@ class Client
 		}
 		void identify(void)
 		{
-			std::cout << client_ipv4_str <<":" <<client_addr.sin_port << std::endl;
+			cout << client_ipv4_str <<":" <<client_addr.sin_port << endl;
 		}
 	private :
 };
@@ -64,14 +64,14 @@ class Client
 Client Server::handle_new_conn(int listen_sock)
 {
 	cout << "New conn incomming, need to accept it !\n";
-	
+
 	Client new_client;
-	
+
 	new_client.fd = accept(listen_sock, new_client.get_sockaddr(), new_client.get_addr_len());
-	
+
 	inet_ntop(AF_INET, &(new_client.client_addr.sin_addr), new_client.client_ipv4_str, INET_ADDRSTRLEN);
 	// printf("Incoming connection from %s:%d.\n", new_client.v4str(), new_client.client_addr.sin_port);
-			
+
 	// clients.push_back(new_client);
 	return (new_client);
 }
@@ -80,7 +80,7 @@ int main()
 {
 	//Create Socket
 	int listen_sock = socket(AF_INET, SOCK_STREAM, 0);
-	
+
 	if (listen_sock == -1)
 	{
 		cerr << "Socket error\n";
@@ -90,7 +90,7 @@ int main()
 
 	//Bind the socket to a IP / port
 	struct sockaddr_in hint;
-	
+
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(PORT);
 	inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
@@ -109,17 +109,17 @@ int main()
 
 	//Clients and their info
 	vector<Client> clients;
-	
+
 	FD_ZERO(&master);
 	//Add the listening new conn socket to the watched set
 	FD_SET(listen_sock, &master);
-	
+
 	int high_sock = listen_sock;
 	while (1)
 	{
 		copy = master;
 		// FD_COPY(&master, &copy);
-		for (int i = 0; i < clients.size(); ++i) 
+		for (int i = 0; i < clients.size(); ++i)
 		{
 			if (clients[i].fd > high_sock)
 				high_sock = clients[i].fd;
@@ -130,7 +130,7 @@ int main()
 		{
 			Client tmp = handle_new_conn(listen_sock);
 			clients.push_back(tmp);
-			std::cout << "Client added to the list : " ;
+			cout << "Client added to the list : " ;
 			clients.back().identify();
 			FD_SET(tmp.fd, &master);
 		}
@@ -143,7 +143,7 @@ int main()
 				int received_count = recv(clients[i].fd, buff, BUFFER_SIZE, 0);
 				if (received_count == 0)
 				{
-					std::cout << "Client is done\n";
+					cout << "Client is done\n";
 				}
 				write(1, buff, received_count);
 			}
@@ -206,7 +206,7 @@ int main()
 		// 				{
 		// 					send(outsock, buff, bytesIn, 0);
 		// 				}
-		// 			}	
+		// 			}
 		// 		}
 		// 		//Accept message from established conn
 		// 		//Send response to clients and not sockets
@@ -217,7 +217,7 @@ int main()
 
 	// if ( == -1)
 	// {
-	// 	std::cerr << "can't listen\n";
+	// 	cerr << "can't listen\n";
 	// 	return -3;
 	// }
 
@@ -231,7 +231,7 @@ int main()
 
 	// if (clientsocket == -1)
 	// {
-	// 	std::cerr << "Accept error\n";
+	// 	cerr << "Accept error\n";
 	// 	return -4;
 	// }
 
@@ -242,15 +242,15 @@ int main()
 
 
 	// int result = getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, svc, NI_MAXSERV,0);
-	
+
 	// if (result)
 	// {
-	// 	std::cout <<host<< " connected to " << svc << std::endl;
+	// 	cout <<host<< " connected to " << svc << endl;
 	// }
 	// else
 	// {
 	// 	inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-	// 	std::cout << host << " connected to " << ntohs(client.sin_port) << std::endl;
+	// 	cout << host << " connected to " << ntohs(client.sin_port) << endl;
 	// }
 
 	// char buff[4096];
@@ -260,16 +260,16 @@ int main()
 	// 	int bytes_rcv = recv(clientsocket, buff, 4096, 0);
 	// 	if (bytes_rcv == -1)
 	// 	{
-	// 		std::cerr << "Conn error\n";
+	// 		cerr << "Conn error\n";
 	// 		break;
 	// 	}
 	// 	else if (bytes_rcv == 0)
 	// 	{
-	// 		std::cerr << "Client DC\n";
+	// 		cerr << "Client DC\n";
 	// 		break;
 	// 	}
-	// 	std::cerr << "received: " ;
-	// 	write(2,buff, bytes_rcv);//<< string(buff, 0, bytes_rcv) << std::endl;
+	// 	cerr << "received: " ;
+	// 	write(2,buff, bytes_rcv);//<< string(buff, 0, bytes_rcv) << endl;
 	// 	write(2,"\n",1);
 
 	// 	send(clientsocket, buff, bytes_rcv + 1, 0);

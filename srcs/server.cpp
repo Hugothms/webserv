@@ -6,20 +6,19 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 21:03:37 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:30 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
-using namespace std;
 #include <fcntl.h>
 
-Server::Server(	std::list<Location>	locations,
-		std::list<std::string>	server_names,
-		std::list<std::string>	error_pages,
+Server::Server(	list<Location>	locations,
+		list<string>	server_names,
+		list<string>	error_pages,
 		unsigned int			port,
-		std::string				root,
-		std::string				index,
+		string				root,
+		string				index,
 		unsigned int			max_client_body_size)
 		:locations(locations), server_names(server_names), error_pages(error_pages), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
 {}
@@ -107,7 +106,7 @@ int Server::setup(void)
 	// 	{
 	// 		Client tmp = handle_new_conn(listen_fd);
 	// 		_clients.push_back(tmp);
-	// 		std::cout << "Client added to the list : " ;
+	// 		cout << "Client added to the list : " ;
 	// 		_clients.back().identify();
 	// 		//Add the client FD to master for processing
 	// 		FD_SET(tmp.fd, &master_set);
@@ -156,7 +155,7 @@ int Server::run(void)
 		{
 			Client tmp = handle_new_conn(listen_fd);
 			_clients.push_back(tmp);
-			std::cout << "Client added to the list : " ;
+			cout << "Client added to the list : " ;
 			_clients.back().identify();
 			//Add the client FD to master for processing
 			FD_SET(tmp.fd, &master_set);
@@ -171,7 +170,7 @@ int Server::run(void)
 				int received_count = recv(_clients[i].fd, buff, BUFFER_SIZE, 0);
 				if (received_count == 0)
 				{
-					std::cerr << "Client is done\n";
+					cerr << "Client is done\n";
 				}
 				write(1, buff, received_count);
 				// write(_clients[i].fd,buff , received_count);

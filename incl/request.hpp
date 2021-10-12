@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/06 14:34:27 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,20 @@
 class Request
 {
 	private :
-		std::string		type;			// GET or POST or DELETE
-		std::string		target;			// The URL requested
+		string		type;			// GET or POST or DELETE
+		string		target;			// The URL requested
 		int				socket;			// ? i don't know
-		std::map<std::string, std::string>	headers;
-		// std::string		body;			// Only for POST
+		map<string, string>	headers;
+		// string		body;			// Only for POST
 
 		/* Ignored because not HTTP/1.1 compliant
-		std::string		dnt;
-		std::string		upgrade_insecure_requests;
-		std::string		sec_fetch_dest;
-		std::string		sec_fetch_mode;
-		std::string		sec_fetch_site;
-		std::string		sec_fetch_user;
-		std::string		sec_gpc;
+		string		dnt;
+		string		upgrade_insecure_requests;
+		string		sec_fetch_dest;
+		string		sec_fetch_mode;
+		string		sec_fetch_site;
+		string		sec_fetch_user;
+		string		sec_gpc;
 		*/
 
 		/* Unimplemented headers for now:
