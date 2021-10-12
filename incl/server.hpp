@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 22:44:13 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Server
 		int							send_socket; // ?
 		struct sockaddr_in			hint; // ?
 		list<Request>			requests;
-
+		bool 					_setup;
 	public:
 		Server(	list<Location>		locations,
 				list<string>	server_names,
