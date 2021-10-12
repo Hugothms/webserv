@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 23:00:12 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/12 23:13:00 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ Server::~Server()
 	close(listen_fd);
 }
 
-Server::Client Server::handle_new_conn(int fd)
+Client Server::handle_new_conn()
 {
 	DEBUG("New conn incomming, need to accept it !\n");
 
@@ -101,16 +101,16 @@ int Server::run(void)
 		copy_set = master_set;
 
 		//This can be optimized
-		for (int i = 0; i < _clients.size(); i++)
+		for (vector<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
 		{
-			if (_clients[i].fd > high_fd)
-				high_fd = _clients[i].fd;
+			if (i->fd > high_fd)
+				high_fd = i->fd;
 		}
 
-		int sock_count = select(high_fd + 1, &copy_set, NULL, NULL, NULL);
+		select(high_fd + 1, &copy_set, NULL, NULL, NULL);
 		if (FD_ISSET(listen_fd, &copy_set))
 		{
-			Client tmp = handle_new_conn(listen_fd);
+			Client tmp = handle_new_conn();
 			_clients.push_back(tmp);
 			DEBUG("Client added to the list : ");
 			// _clients.back().identify();
@@ -119,20 +119,20 @@ int Server::run(void)
 			DEBUG("Client added to the FD_SET : ");
 		}
 		// //Loop through all the clients and find out if they sent
-		for (int i = 0; i < _clients.size(); i++)
+		for (vector<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
 		{
-			if (FD_ISSET(_clients[i].fd, &copy_set))
+			if (FD_ISSET(i->fd, &copy_set))
 			{
-				_clients[i].identify();
+				i->identify();
 				char buff[BUFFER_SIZE];
-				int received_count = recv(_clients[i].fd, buff, BUFFER_SIZE, 0);
+				int received_count = recv(i->fd, buff, BUFFER_SIZE, 0);
 				if (received_count == 0)
 				{
 					cerr << "Client is done\n";
 				}
 				write(1, buff, received_count);
 				// write(_clients[i].fd,buff , received_count);
-				Request req(buff,received_count, _clients[i].fd);
+				Request req(buff,received_count, i->fd);
 				req.respond();
 			}
 		}
