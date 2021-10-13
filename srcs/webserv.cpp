@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 15:20:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:27:24 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ Webserv::Webserv(string config_file)
 			servers.push_back(Server(locations, server_names, error_pages, port, root, index, max_client_body_size));
 		}
 	}
-	DEBUG("******** PARSED ********\n");
+	DEBUG("******* CONFIG PARSED ******\n");
 }
 
 void	Webserv::listen()

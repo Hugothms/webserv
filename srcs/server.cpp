@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:00:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:30:43 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int Server::run(void)
 					// exit(6);
 					perror("recv");
 				}
-				write(1, buff, received_count);
+				// DEBUG(buff);
 				// write(_clients[i].fd,buff , received_count);
 				Request req(buff,received_count, i->fd);
 				req.respond();
