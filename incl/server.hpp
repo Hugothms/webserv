@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 17:30:34 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:38:07 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,15 @@ class Server
 		// Client handle_new_conn(int listen_sock);
 		// int port;
 
+		list<Location>	get_locations();
+		list<string>	get_server_names();
+		list<string>	get_error_pages();
+		string			get_host();
 		unsigned int	get_port();
+		string			get_root();
+		string			get_index();
+		unsigned int	get_max_client_body_size();
+
 
 		void set_locations(list<Location> locations);
 		void push_back_location(Location location);
