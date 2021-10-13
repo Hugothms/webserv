@@ -6,14 +6,14 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 18:55:46 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 19:33:36 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
-: host("localhost"), port(4242), root("website"), index("index.html"), max_client_body_size(2048)
+: host("localhost"), port(PORT), root("website"), index("index.html"), max_client_body_size(2048)
 {}
 
 Server::Server(	list<Location>	locations,
