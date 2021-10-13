@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 23:26:39 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 12:16:30 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 bool	parse_location(string config, size_t *pos, Location *returned_location)
 {
 	// Locations's attributes:
-	string				location;
+	string			location;
 	list<string>	HTTP_methods;
-	string				HTTP_redirection;
-	string				location_root;
-	bool 					directory_listing = false;
-	string				default_answer;
+	string			HTTP_redirection;
+	string			location_root;
+	bool 			directory_listing = false;
+	string			default_answer;
 
 	location = get_str_before_char(config, " ", pos);
 	DEBUG("\t" << location << "\n\t{");
@@ -112,14 +112,14 @@ Webserv::Webserv(string config_file)
 				continue ;
 			DEBUG("{");
 			// Webserv's attributes:
-			list<Location>		locations;
+			list<Location>	locations;
 			list<string>	server_names;
 			list<string>	error_pages;
-			string				host;
-			unsigned int			port = 8080;
-			string				root = "website";
-			string				index = "index.html";
-			unsigned int			max_client_body_size = 2048;
+			string			host;
+			unsigned int	port = 8080;
+			string			root = "website";
+			string			index = "index.html";
+			unsigned int	max_client_body_size = 2048;
 
 			while (config[pos] && (str = get_str_before_char(config, " ;\n", &pos)) != "}")
 			{
@@ -207,9 +207,9 @@ void	Webserv::listen()
 	{
 		for (list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
 		{
-			std::cerr << "Run for port" << server->port;
+			std::cerr << "Run for port" << server->get_port();
 		// 	// DEBUG("\t---" << &server);
 			server->run();
 		}
-	}	
+	}
 }

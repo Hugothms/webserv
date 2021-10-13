@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 23:44:45 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 12:17:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 #include <stdio.h>
 
 Server::Server(	list<Location>	locations,
-		list<string>	server_names,
-		list<string>	error_pages,
+		list<string>			server_names,
+		list<string>			error_pages,
 		unsigned int			port,
-		string				root,
-		string				index,
+		string					root,
+		string					index,
 		unsigned int			max_client_body_size)
 		:locations(locations), server_names(server_names), error_pages(error_pages), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
 {
@@ -38,6 +38,11 @@ Server::~Server()
 	}
 	_clients.clear();
 	close(listen_fd);
+}
+
+unsigned int Server::get_port()
+{
+	return port;
 }
 
 Client Server::handle_new_conn()

@@ -6,12 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 21:08:33 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 12:11:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INCLUDES_HPP
-#define INCLUDES_HPP
+# define INCLUDES_HPP
 
 //STD INCLUDES
 # include <iostream>
@@ -24,6 +24,8 @@
 
 //NETWORK INCLUDES
 # include <netinet/in.h>
+# include <arpa/inet.h>
+# include <sys/select.h>
 
 // DATASTRUCTURE INCLUDES
 # include <vector>
@@ -36,20 +38,16 @@ using namespace std;
 
 class Location;
 
-bool		is_a_valid_server(	list<Location>		locations,
-								list<string>	server_names,
-								list<string>	error_pages,
-								unsigned int 			port,
-								string				root,
-								string				index,
-								unsigned int			max_client_body_size);
-bool		is_integer(const string &s);
+bool	is_a_valid_server(	list<Location>	locations,
+							list<string>	server_names,
+							list<string>	error_pages,
+							unsigned int 	port,
+							string			root,
+							string			index,
+							unsigned int	max_client_body_size);
+bool	is_integer(const string &s);
 string	get_content_file(const string filename);
 string	get_str_before_char(const string str, const string c, size_t *pos, const string skip = "\t 	");
 //NEW
-
-#include <arpa/inet.h>
-#include <sys/select.h>
-
 
 #endif
