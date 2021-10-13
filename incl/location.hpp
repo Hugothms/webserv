@@ -28,12 +28,12 @@ class Location
 
 	public:
 		Location();
-		Location(	string				location,
+		Location(	string			location,
 					list<string>	HTTP_methods,
-					string				HTTP_redirection,
-					string				location_root,
-					bool 					directory_listing,
-					string				default_answer);
+					string			HTTP_redirection,
+					string			location_root,
+					bool 			directory_listing,
+					string			default_answer);
 		~Location();
 };
 

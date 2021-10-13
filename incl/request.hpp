@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 12:12:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 class Request
 {
 	private :
-		string		type;			// GET or POST or DELETE
-		string		target;			// The URL requested
-		int				socket;			// ? i don't know
+		string				type;			// GET or POST or DELETE
+		string				target;			// The URL requested
+		int					socket;			// ? i don't know
 		map<string, string>	headers;
 		// string		body;			// Only for POST
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_parsing.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 22:14:49 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 12:09:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,13 @@ string get_str_before_char(const string str, const string stop, size_t *pos, con
 	return res;
 }
 
-bool	is_a_valid_server(	list<Location>		locations,
-							list<string>	server_names,
-							list<string>	error_pages,
-							unsigned int 			port,
-							string				root,
-							string				index,
-							unsigned int			max_client_body_size)
+bool is_a_valid_server(	list<Location>	locations,
+						list<string>	server_names,
+						list<string>	error_pages,
+						unsigned int 	port,
+						string			root,
+						string			index,
+						unsigned int	max_client_body_size)
 {
 	// TODO
 	return true;

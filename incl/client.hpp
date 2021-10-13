@@ -3,24 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 23:07:00 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 12:10:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
-#define CLIENT_HPP
-
+# define CLIENT_HPP
 
 class Client
 {
 	public :
-		int			fd;
-		struct 		sockaddr_in client_addr;
-		char		client_ipv4_str[INET_ADDRSTRLEN];
-		socklen_t 	client_len;
+		int					fd;
+		struct sockaddr_in	client_addr;
+		char				client_ipv4_str[INET_ADDRSTRLEN];
+		socklen_t			client_len;
 
 		Client()
 		{
