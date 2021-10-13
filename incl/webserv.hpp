@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 18:17:10 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 19:31:48 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Webserv
 		
 	public:
 		Webserv(string config_file = "");
+		~Webserv();
 		void	listen();
 		void 	build(void);
 		void 	process(Client *client);

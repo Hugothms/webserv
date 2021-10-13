@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 19:00:09 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 19:31:35 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,4 +295,13 @@ void	Webserv::listen()
 				process(&(*i));
 		}
 	}
+}
+
+Webserv::~Webserv()
+{
+	for (list<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
+	{
+		close(it->fd);
+	}
+	_servers.erase(_servers.begin(), _servers.end());
 }
