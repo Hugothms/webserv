@@ -6,14 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 12:43:16 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 12:50:07 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INCLUDES_HPP
 # define INCLUDES_HPP
-
-using namespace std;
 
 // STD INCLUDES
 # include <iostream>
@@ -34,8 +32,17 @@ using namespace std;
 # include <list>
 # include <map>
 
+using namespace std;
+
 // OTHERS INCLUDES
 # include "location.hpp"
+
+
+# if DEBUG_ACTIVE == 1
+#  define DEBUG(x) cout << x << endl;
+# else
+#  define DEBUG(x)
+# endif
 
 class Location;
 
