@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:36:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:44:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,12 @@ int Server::run(void)
 		{
 			if (i->fd > high_fd)
 				high_fd = i->fd;
+			else if (i->fd == -1)
+			{
+				i = _clients.erase(i);
+				if (i == _clients.end())
+					break;
+			}
 		}
 
 		select(high_fd + 1, &copy_set, NULL, NULL, NULL);
@@ -126,24 +132,24 @@ int Server::run(void)
 		{
 			if (FD_ISSET(i->fd, &copy_set))
 			{
-				i->identify();
 				char buff[BUFFER_SIZE];
 				int received_count = recv(i->fd, buff, BUFFER_SIZE, 0);
-				if (received_count == 0)
+				if (received_count <= 0)
 				{
-					cerr << "Client is done\n";
+					DEBUG("Client is done : ");
+					i->identify();
+					DEBUG("\n");
+					FD_CLR(i->fd, &master_set);
+					close(i->fd);
+					i->fd = -1;
 				}
-				else if(received_count == -1)
+				else
 				{
-					DEBUG("FAUT GERER CA");
-					DEBUG("-----received_count: " << received_count);
-					// exit(6);
-					perror("recv");
+					Request req(buff,received_count, i->fd);
+					// DEBUG(buff);
+					req.respond();
 				}
-				// DEBUG(buff);
-				// write(_clients[i].fd,buff , received_count);
-				Request req(buff,received_count, i->fd);
-				req.respond();
+
 			}
 		}
 	}
