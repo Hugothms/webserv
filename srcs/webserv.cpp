@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 19:31:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 21:00:26 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,6 +225,8 @@ void Webserv::build()
 	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
 		DEBUG("Run for port: " << server->get_port());
+		DEBUG(server->get_host());
+		DEBUG(server->get_host());
 		fd = server->setup();
 		FD_SET(fd, &master_set);
 		if (fd > high_fd)
@@ -236,10 +238,10 @@ void Webserv::build()
 void Webserv::process(Client *i)
 {
 	char buff[BUFFER_SIZE];
-	int received_count = recv(i->fd, buff, BUFFER_SIZE, 0);
-	if (received_count > 0)
+	int len = recv(i->fd, buff, BUFFER_SIZE, 0);
+	if (len > 0)
 	{
-		Request req(buff,received_count, i->fd);
+		Request req(buff,len, i->fd);
 		req.respond();					
 	}
 	else
@@ -280,7 +282,7 @@ void	Webserv::listen()
 		//Accept new clients on each server
 		for (list<Server>::iterator i = _servers.begin(); i != _servers.end(); i++)
 		{
-			if (FD_ISSET(i->listen_fd, &copy_set))
+			if (FD_ISSET(i->get_listen_fd(), &copy_set))
 			{
 				Client tmp = i->handle_new_conn();
 				// tmp.set_server(&(*i));
