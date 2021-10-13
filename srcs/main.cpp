@@ -3,15 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 13:23:22 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 21:51:52 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 #include "server.hpp"
+#include <signal.h>
+
+Webserv* ptr;
+
+
+void stop(int num)
+{
+	// DEBUG("KILL\n");
+	
+	// if (ptr)
+	// {
+	// while (1)
+	// {
+	write(2,"KILLING\n",8);
+		// int i = 1;
+	// }
+	ptr->stop();
+	write(2,"KILLED\n",7);
+	// 	// DEBUG("STOPPED\n");
+	// }
+	exit(0);
+	// return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -31,6 +54,12 @@ int main(int argc, char *argv[])
 		file.close();
 	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
+	ptr = &webserv;
+	
+	signal(SIGSTOP, &stop);
+	signal(SIGINT, &stop);
+	signal(SIGKILL, &stop);
+
 	webserv.listen();
 	return 0;
 }

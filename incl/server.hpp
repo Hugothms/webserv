@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 20:55:20 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 21:46:04 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # define BUFFER_SIZE 4096
 
 
-# define PORT 4242
+# define PORT 80
 
 class Server
 {
@@ -63,6 +63,7 @@ class Server
 
  		Client handle_new_conn();
 		int setup();
+
 		// Client handle_new_conn(int listen_sock);
 		// int port;
 

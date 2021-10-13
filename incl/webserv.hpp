@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 19:31:48 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 21:37:40 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ class Webserv
 		Webserv(string config_file = "");
 		~Webserv();
 		void	listen();
+		static void sig();
+		void 	stop();
 		void 	build(void);
 		void 	process(Client *client);
 		bool	is_a_valid_server(	list<Location>	locations,
