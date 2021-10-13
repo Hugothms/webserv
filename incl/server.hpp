@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 17:19:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:30:34 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,17 +75,17 @@ class Server
 
 		unsigned int	get_port();
 
-		void 			set_locations(list<Location> locations);
-		void 			push_back_location(Location location);
-		void 			set_server_names(list<string> server_names);
-		void 			push_back_server_name(string server_name);
-		void 			set_error_pages(list<string> error_pages);
-		void 			push_back_error_page(string error_page);
-		void 			set_host(string host);
-		void 			set_port(unsigned int port);
-		void 			set_root(string root);
-		void 			set_index(string index);
-		void 			set_max_client_body_size(unsigned int max_client_body_size);
+		void set_locations(list<Location> locations);
+		void push_back_location(Location location);
+		void set_server_names(list<string> server_names);
+		void push_back_server_name(string server_name);
+		void set_error_pages(list<string> error_pages);
+		void push_back_error_page(string error_page);
+		void set_host(string host);
+		void set_port(unsigned int port);
+		void set_root(string root);
+		void set_index(string index);
+		void set_max_client_body_size(unsigned int max_client_body_size);
 };
 
 #endif
