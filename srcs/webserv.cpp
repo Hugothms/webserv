@@ -6,11 +6,24 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 15:27:24 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:39:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
+
+bool Webserv::is_a_valid_server(	list<Location>	locations,
+						list<string>	server_names,
+						list<string>	error_pages,
+						unsigned int 	port,
+						string			root,
+						string			index,
+						unsigned int	max_client_body_size)
+{
+	// TODO
+
+	return true;
+}
 
 bool	parse_location(string config, size_t *pos, Location *returned_location)
 {
@@ -116,10 +129,10 @@ Webserv::Webserv(string config_file)
 			list<string>	server_names;
 			list<string>	error_pages;
 			string			host;
-			unsigned int	port = 80;
-			string			root = "website";
-			string			index = "index.html";
-			unsigned int	max_client_body_size = 2048;
+			unsigned int	port;
+			string			root;
+			string			index;
+			unsigned int	max_client_body_size;
 
 			while (config[pos] && (str = get_str_before_char(config, " ;\n", &pos)) != "}")
 			{

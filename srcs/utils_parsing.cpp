@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 12:09:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:39:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,4 @@ string get_str_before_char(const string str, const string stop, size_t *pos, con
 	res = str.substr(*pos , length);
 	*pos += length + 1;
 	return res;
-}
-
-bool is_a_valid_server(	list<Location>	locations,
-						list<string>	server_names,
-						list<string>	error_pages,
-						unsigned int 	port,
-						string			root,
-						string			index,
-						unsigned int	max_client_body_size)
-{
-	// TODO
-	return true;
 }

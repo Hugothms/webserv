@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 13:29:40 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:39:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,7 @@ using namespace std;
 
 class Location;
 
-bool	is_a_valid_server(	list<Location>	locations,
-							list<string>	server_names,
-							list<string>	error_pages,
-							unsigned int 	port,
-							string			root,
-							string			index,
-							unsigned int	max_client_body_size);
+
 bool	is_integer(const string &s);
 string	get_content_file(const string filename);
 string	get_str_before_char(const string str, const string c, size_t *pos, const string skip = "\t 	");
