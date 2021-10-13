@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 18:54:58 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 19:33:32 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 # define MAX_BACKLOG 10
 # define MAX_CLIENTS 10
 # define BUFFER_SIZE 4096
+
+
+# define PORT 4242
 
 class Server
 {
