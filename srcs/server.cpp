@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 12:17:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 12:25:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ unsigned int Server::get_port()
 
 Client Server::handle_new_conn()
 {
-	DEBUG("New conn incomming, need to accept it !\n");
+	DEBUG("New conn incomming, need to accept it !");
 
 	Client new_client;
 
@@ -55,7 +55,7 @@ Client Server::handle_new_conn()
 
 	inet_ntop(AF_INET, &(new_client.client_addr.sin_addr), new_client.client_ipv4_str, INET_ADDRSTRLEN);
 	// printf("Incoming connection from %s:%d.\n", new_client.v4str(), new_client.client_addr.sin_port);
-	DEBUG("Client created !\n");
+	DEBUG("Client created !");
 	// clients.push_back(new_client);
 	return (new_client);
 }
@@ -115,11 +115,11 @@ int Server::run(void)
 		{
 			Client tmp = handle_new_conn();
 			_clients.push_back(tmp);
-			DEBUG("Client added to the list : ");
+			DEBUG("Client added to the list: ");
 			// _clients.back().identify();
 			//Add the client FD to master for processing
 			FD_SET(tmp.fd, &master_set);
-			DEBUG("Client added to the FD_SET : ");
+			DEBUG("Client added to the FD_SET: ");
 		}
 		// //Loop through all the clients and find out if they sent
 		for (vector<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
