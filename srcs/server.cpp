@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:00:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:31:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,12 @@ int Server::run(void)
 		{
 			if (i->fd > high_fd)
 				high_fd = i->fd;
+			else if (i->fd == -1)
+			{
+				i = _clients.erase(i);
+				if (i == _clients.end())
+					break;
+			}
 		}
 
 		select(high_fd + 1, &copy_set, NULL, NULL, NULL);
@@ -129,16 +135,20 @@ int Server::run(void)
 				i->identify();
 				char buff[BUFFER_SIZE];
 				int received_count = recv(i->fd, buff, BUFFER_SIZE, 0);
-				if (received_count == 0)
+				switch (received_count)
 				{
-					cerr << "Client is done\n";
-				}
-				else if(received_count == -1)
-				{
-					DEBUG("FAUT GERER CA");
-					DEBUG("-----received_count: " << received_count);
-					// exit(6);
-					perror("recv");
+					case 0 :
+						cerr << "Client is done\n";
+						break;
+					case -1 :
+						FD_CLR(i->fd, &master_set);
+						close(i->fd);
+						i->fd = -1;
+						DEBUG("FAUT GERER CA");
+						DEBUG("-----received_count: " << received_count);
+						// exit(6);
+						perror("recv");
+						continue;	
 				}
 				write(1, buff, received_count);
 				// write(_clients[i].fd,buff , received_count);
