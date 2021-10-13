@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 19:33:32 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 20:55:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,11 @@ class Server
 		string				index; // file served when "/" is requested
 		unsigned int		max_client_body_size;
 		
+		int 				listen_fd;
 		struct sockaddr_in	hint;
 
 	public:
-		int 				listen_fd;
+		
 		Server();
 		Server(	list<Location>	locations,
 				list<string>	server_names,
