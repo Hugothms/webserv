@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 16:03:22 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:07:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,17 @@ class Server
 		unsigned int		max_client_body_size;
 
 		// * FOR "INTERNAL" USE *
-		list<Request>		requests;
+		// list<Request>		requests;
 		bool 				_setup;
 		int 				high_fd;
-		int 				listen_fd;
-		struct sockaddr_in	hint;
 		fd_set				copy_set;
 
 		vector<Client>		_clients;
 		fd_set				master_set;
+
+
+		int 				listen_fd;
+		struct sockaddr_in	hint;
 
 	public:
 		Server(	list<Location>	locations,
