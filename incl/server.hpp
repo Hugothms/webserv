@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:24:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 15:53:34 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,25 +32,32 @@ class Server
 {
 	private :
 		// * PARSED FROM CONFIG FILE *
-		unsigned int		port; // port to listen and send on ("listen" in config file)
-		list<string>		server_names; // "Host" header in HTTP request (domain names)
+		 // port to listen and send on ("listen" in config file)
+		 // "Host" header in HTTP request (domain names)
+		
+		
+
+		// * FOR "INTERNAL" USE *
+		// list<Request>		requests;
+		bool 				_setup;
+
+		// Enzo's attributes:
+		int 				high_fd;
+		fd_set				master_set;
+		fd_set				copy_set;
+		vector<Client>		_clients;
+
+		
+		unsigned int		port;
+		int 				listen_fd;
+		struct sockaddr_in	hint;
+
+		list<string>		server_names;
 		string				root; // directory where the webste is
 		string				index; // file served when "/" is requested
 		list<string>		error_pages; //
 		unsigned int		max_client_body_size;
 		list<Location>		locations;
-
-		// * FOR "INTERNAL" USE *
-		list<Request>		requests;
-		bool 				_setup;
-
-		// Enzo's attributes:
-		int 				high_fd;
-		int 				listen_fd;
-		struct sockaddr_in	hint;
-		fd_set				master_set;
-		fd_set				copy_set;
-		vector<Client>		_clients;
 
 	public:
 		Server(	list<Location>	locations,
