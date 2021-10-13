@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 12:24:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 12:28:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ void	Webserv::listen()
 	{
 		for (list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
 		{
-			DEBUG("Run for port: " << server->get_port());
+			DEBUG("Run for port: " << server->get_port() << "\n");
 			// DEBUG("\t---" << &server);
 			server->run();
 		}
