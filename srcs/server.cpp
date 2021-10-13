@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 13:28:34 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 13:52:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int Server::run(void)
 				{
 					DEBUG("FAUT GERER CA");
 					DEBUG("-----received_count: " << received_count);
-					exit(6);
+					// exit(6);
 				}
 				write(1, buff, received_count);
 				// write(_clients[i].fd,buff , received_count);

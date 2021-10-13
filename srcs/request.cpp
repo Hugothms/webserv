@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 14:01:16 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 	map<string, string>::iterator it = headers.begin();
 	while(it != headers.end())
 		DEBUG(it->first << ": " << it++->second);
-	DEBUG("");
+	DEBUG("************************\n");
 }
 
 string getdayofweek(int day)
