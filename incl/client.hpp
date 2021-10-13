@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 18:59:01 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 19:31:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ class Client
 		// Server 				*srv;
 		Client()
 		{
-			memset(&client_addr, 0, sizeof(client_addr));
+			// memset(&client_addr, 0, sizeof(client_addr));
 			client_len = sizeof(client_addr);
 			// srv = 0;
 		}
 		~Client()
 		{
-			if (fd > 0)
-				close(fd);
+			// if (fd > 0)
+			// 	close(fd);
 		}
 		// void set_server(Server *s)
 		// {
