@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 16:19:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:47:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,6 @@ Server::~Server()
 	}
 	_clients.clear();
 	close(listen_fd);
-}
-
-unsigned int Server::get_port()
-{
-	return port;
 }
 
 Client Server::handle_new_conn()
@@ -152,4 +147,49 @@ int Server::run(void)
 		}
 	}
 	// close(listen_fd);
+}
+
+unsigned int Server::get_port()
+{
+	return port;
+}
+
+void	set_locations(list<Location> locations)
+{
+	locations = locations;
+}
+
+void	set_server_names(list<string> server_names)
+{
+	server_names = server_names;
+}
+
+void	set_error_pages(list<string> error_pages)
+{
+	error_pages = error_pages;
+}
+
+void	set_host(string host)
+{
+	host = host;
+}
+
+void	set_port(unsigned int port)
+{
+	port = port;
+}
+
+void	set_root(string root)
+{
+	root = root;
+}
+
+void	set_index(string index)
+{
+	index = index;
+}
+
+void	set_max_client_body_size(unsigned int max_client_body_size)
+{
+	max_client_body_size = max_client_body_size;
 }

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 16:16:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:49:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ Webserv::Webserv(string config_file)
 		str = get_str_before_char(config, " ", &pos);
 		if (str == "server")
 		{
+			Server server;
 			str = get_str_before_char(config, "\n", &pos);
 			if (str != "{")
 				continue ;
@@ -138,7 +139,7 @@ Webserv::Webserv(string config_file)
 
 			while (config[pos] && (str = get_str_before_char(config, " ;\n", &pos)) != "}")
 			{
-				string	tmp;
+				string		tmp;
 				Location	location;
 
 				DEBUG("\t" << str);
