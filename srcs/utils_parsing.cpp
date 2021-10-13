@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_parsing.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 22:14:49 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool is_integer(const string &s)
 string get_content_file(const string filename)
 {
 	ifstream myfile;
-	myfile.open(filename);
+	myfile.open(filename.c_str());
 	string content("");
 	while (myfile)
 		content = content + (char)myfile.get();

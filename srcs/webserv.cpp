@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/12 21:08:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/12 23:26:39 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,14 +201,15 @@ Webserv::Webserv(string config_file)
 
 void	Webserv::listen()
 {
-	servers.begin()->setup();
-	servers.begin()->run();
-	// while (true)
-	// {
-		// for (list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
-		// {
+	// servers.begin()->setup();
+	// servers.begin()->run();
+	while (true)
+	{
+		for (list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
+		{
+			std::cerr << "Run for port" << server->port;
 		// 	// DEBUG("\t---" << &server);
-		// 	server->run();
-		// }
-	// }
+			server->run();
+		}
+	}	
 }
