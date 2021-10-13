@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 17:55:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 18:46:16 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,12 +205,12 @@ Webserv::Webserv(string config_file)
 				}
 			}
 			DEBUG("}");
-			if (!is_a_valid_server(locations, server_names, error_pages, host, port, root, index, max_client_body_size))
+			if (!is_a_valid_server(server.get_locations(), server.get_server_names(), server.get_error_pages(), server.get_host(), server.get_port(), server.get_root(), server.get_index(), server.get_max_client_body_size()))
 			{
 				cerr << "Wrong server configuration" << endl;
 				exit(5);
 			}
-			_servers.push_back(Server(locations, server_names, error_pages, host, port, root, index, max_client_body_size));
+			_servers.push_back(server);
 		}
 	}
 	DEBUG("******* CONFIG PARSED ******\n");
