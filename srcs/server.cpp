@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:44:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:03:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 Server::Server(	list<Location>	locations,
 		list<string>			server_names,
 		list<string>			error_pages,
+		string					host,
 		unsigned int			port,
 		string					root,
 		string					index,

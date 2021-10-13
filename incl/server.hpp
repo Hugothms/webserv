@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:42:55 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:03:22 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,14 @@ class Server
 {
 	private :
 		// * PARSED FROM CONFIG FILE *
-		unsigned int		port; // port to listen and send on ("listen" in config file)
+		list<Location>		locations;
 		list<string>		server_names; // "Host" header in HTTP request (domain names)
+		list<string>		error_pages; //
+		string				host;
+		unsigned int		port; // port to listen and send on ("listen" in config file)
 		string				root; // directory where the webste is
 		string				index; // file served when "/" is requested
-		list<string>		error_pages; //
 		unsigned int		max_client_body_size;
-		list<Location>		locations;
 
 		// * FOR "INTERNAL" USE *
 		list<Request>		requests;
@@ -55,6 +56,7 @@ class Server
 		Server(	list<Location>	locations,
 				list<string>	server_names,
 				list<string>	error_pages,
+				string			host = "localhost",
 				unsigned int	port = 80,
 				string			root = "website",
 				string			index = "index.html",
