@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 16:01:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:16:07 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ Webserv::Webserv(string config_file)
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
-		servers.push_back(Server(list<Location>(), list<string>(), list<string>()));
+		servers.push_back(Server());
 		return ;
 	}
 	const string config = get_content_file(config_file);

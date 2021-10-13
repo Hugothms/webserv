@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 16:07:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:21:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ class Server
 		list<Location>		locations;
 		list<string>		server_names; // "Host" header in HTTP request (domain names)
 		list<string>		error_pages; //
-		string				host;
-		unsigned int		port; // port to listen and send on ("listen" in config file)
-		string				root; // directory where the webste is
-		string				index; // file served when "/" is requested
-		unsigned int		max_client_body_size;
+		string				host = "localhost";
+		unsigned int		port = 80; // port to listen and send on ("listen" in config file)
+		string				root = "website"; // directory where the webste is
+		string				index = "index.html"; // file served when "/" is requested
+		unsigned int		max_client_body_size = 2048;
 
 		// * FOR "INTERNAL" USE *
 		// list<Request>		requests;
-		bool 				_setup;
+		bool 				_setup = false;
 		int 				high_fd;
 		fd_set				copy_set;
 
@@ -55,14 +55,15 @@ class Server
 		struct sockaddr_in	hint;
 
 	public:
+		Server();
 		Server(	list<Location>	locations,
 				list<string>	server_names,
 				list<string>	error_pages,
-				string			host = "localhost",
-				unsigned int	port = 80,
-				string			root = "website",
-				string			index = "index.html",
-				unsigned int	max_client_body_size = 2048);
+				string			host,
+				unsigned int	port,
+				string			root,
+				string			index,
+				unsigned int	max_client_body_size);
 		~Server();
 		unsigned int			get_port();
 		void s_listen();

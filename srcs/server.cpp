@@ -6,11 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 16:12:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:19:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
+
+Server::Server()
+{}
 
 Server::Server(	list<Location>	locations,
 		list<string>			server_names,
@@ -21,9 +24,7 @@ Server::Server(	list<Location>	locations,
 		string					index,
 		unsigned int			max_client_body_size)
 		:locations(locations), server_names(server_names), error_pages(error_pages), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
-{
-	_setup = false;
-}
+{}
 
 Server::~Server()
 {
