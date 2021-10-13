@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:31:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 15:38:25 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,28 +132,24 @@ int Server::run(void)
 		{
 			if (FD_ISSET(i->fd, &copy_set))
 			{
-				i->identify();
 				char buff[BUFFER_SIZE];
 				int received_count = recv(i->fd, buff, BUFFER_SIZE, 0);
-				switch (received_count)
+				if (received_count <= 0)
 				{
-					case 0 :
-						cerr << "Client is done\n";
-						break;
-					case -1 :
-						FD_CLR(i->fd, &master_set);
-						close(i->fd);
-						i->fd = -1;
-						DEBUG("FAUT GERER CA");
-						DEBUG("-----received_count: " << received_count);
-						// exit(6);
-						perror("recv");
-						continue;	
+					DEBUG("Client is done : ");
+					i->identify();
+					DEBUG("\n");
+					FD_CLR(i->fd, &master_set);
+					close(i->fd);
+					i->fd = -1;
 				}
-				write(1, buff, received_count);
-				// write(_clients[i].fd,buff , received_count);
-				Request req(buff,received_count, i->fd);
-				req.respond();
+				else
+				{
+					write(1, buff, received_count);	
+					Request req(buff,received_count, i->fd);
+					req.respond();
+				}
+				
 			}
 		}
 	}
