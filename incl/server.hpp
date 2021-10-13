@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 17:38:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 18:54:58 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,17 +40,6 @@ class Server
 		string				root; // directory where the webste is
 		string				index; // file served when "/" is requested
 		unsigned int		max_client_body_size;
-
-		// * FOR "INTERNAL" USE *
-		// list<Request>		requests;
-		bool 				_setup;
-		int 				high_fd;
-		fd_set				copy_set;
-
-		vector<Client>		_clients;
-		fd_set				master_set;
-
-
 		
 		struct sockaddr_in	hint;
 
@@ -70,7 +59,6 @@ class Server
 
  		Client handle_new_conn();
 		int setup();
-		int run(void);
 		// Client handle_new_conn(int listen_sock);
 		// int port;
 
