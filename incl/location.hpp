@@ -19,12 +19,12 @@ class Location
 {
 	private :
 		// * PARSED FROM CONFIG FILE *
-		string				location;
+		string			location;
 		list<string>	HTTP_methods;
-		string				HTTP_redirection;
-		string				location_root;
-		bool 					directory_listing;
-		string				default_answer;
+		string			HTTP_redirection;
+		string			location_root;
+		bool 			directory_listing;
+		string			default_answer;
 
 	public:
 		Location();

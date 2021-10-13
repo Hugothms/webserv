@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 12:28:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:20:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ Webserv::Webserv(string config_file)
 			list<string>	server_names;
 			list<string>	error_pages;
 			string			host;
-			unsigned int	port = 8080;
+			unsigned int	port = 80;
 			string			root = "website";
 			string			index = "index.html";
 			unsigned int	max_client_body_size = 2048;
