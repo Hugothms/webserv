@@ -28,7 +28,7 @@ class Location
 
 	public:
 		Location();
-		Location(	const string			location,
+		Location(	string			location,
 					list<string>	HTTP_methods,
 					string			HTTP_redirection,
 					string			location_root,

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 17:55:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:58:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,7 @@ Webserv::Webserv(string config_file)
 				}
 				else if (str == "listen")
 				{
+					// TODO: Check if is does'nt overlap with other hosts/ports
 					server.set_host(get_str_before_char(config, ":", &pos));
 					DEBUG("\t\thost " << server.get_host());
 					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
