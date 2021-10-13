@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 17:33:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:55:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,18 +116,17 @@ Webserv::Webserv(string config_file)
 		return ;
 	}
 	const string config = get_content_file(config_file);
-	DEBUG("Provided config:");
-	DEBUG(config);
+	DEBUG("Provided config:\n" << config);
 
 	// Parse and add multiple servers in "servers"
 	size_t pos = 0;
 	string str;
 	while (config[pos]) // config parsing loop
 	{
-		DEBUG("!!!!!!!!!!!! SERVER !!!!!!!!!!!!");
-		str = get_str_before_char(config, " ", &pos);
+		str = get_str_before_char(config, " \n", &pos);
 		if (str == "server")
 		{
+			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!");
 			Server server;
 			str = get_str_before_char(config, "\n", &pos);
 			if (str != "{")
