@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 21:00:26 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 21:40:15 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,9 +254,48 @@ void Webserv::process(Client *i)
 	}
 }
 
+void 	Webserv::sig()
+{
+	return ;
+}
 
 void	Webserv::listen()
 {
+
+
+
+	// struct sigaction	sig;
+
+	// sig.sa_sigaction = Webserv::stop;
+	// sig.sa_flags = SA_SIGINFO;
+
+
+	// if (sigaction(SIGINT, &sig, NULL) != 0)
+	// {
+	// 	return (write (1, "signal error\n", 13));
+	// }
+	// if (sigaction(SIGINT, &sig, NULL) != 0)
+	// {
+	// 	return (write (1, "signal error\n", 13));
+	// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	build();
 	copy_set = master_set;
 	while (true)
@@ -298,7 +337,10 @@ void	Webserv::listen()
 		}
 	}
 }
-
+void Webserv::stop()
+{
+	
+}
 Webserv::~Webserv()
 {
 	for (list<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
