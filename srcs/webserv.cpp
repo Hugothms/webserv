@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 18:46:16 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 19:00:09 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,9 +244,7 @@ void Webserv::process(Client *i)
 	}
 	else
 	{
-		// DEBUG("Client is done : ");
-		// i->identify();
-		// DEBUG("\n");
+		DEBUG("Client is done\n");
 		FD_CLR(i->fd, &master_set);
 		close(i->fd);
 		i->fd = -1;
@@ -260,8 +258,7 @@ void	Webserv::listen()
 	build();
 	copy_set = master_set;
 	while (true)
-	{
-		
+	{	
 		// DEBUG("START");
 		//This can be optimized
 		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
@@ -286,11 +283,11 @@ void	Webserv::listen()
 			if (FD_ISSET(i->listen_fd, &copy_set))
 			{
 				Client tmp = i->handle_new_conn();
+				// tmp.set_server(&(*i));
 				_clients.push_back(tmp);
 				FD_SET(tmp.fd, &master_set);
 			}
 		}
-		
 		// //Loop through all the clients and find out if they sent
 		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
 		{
