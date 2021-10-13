@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 12:46:32 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 12:51:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Client
 		}
 		void identify(void)
 		{
-			cout << client_ipv4_str <<":" <<client_addr.sin_port << endl;
+			cout << client_ipv4_str <<":" <<client_addr.sin_port << endl << endl;
 		}
 	private :
 };
