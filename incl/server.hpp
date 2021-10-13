@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 16:45:57 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:07:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ class Server
 		list<Location>		locations;
 		list<string>		server_names; // "Host" header in HTTP request (domain names)
 		list<string>		error_pages; //
-		string				host = "localhost";
-		unsigned int		port = 80; // port to listen and send on ("listen" in config file)
-		string				root = "website"; // directory where the webste is
-		string				index = "index.html"; // file served when "/" is requested
-		unsigned int		max_client_body_size = 2048;
+		string				host;
+		unsigned int		port; // port to listen and send on ("listen" in config file)
+		string				root; // directory where the webste is
+		string				index; // file served when "/" is requested
+		unsigned int		max_client_body_size;
 
 		// * FOR "INTERNAL" USE *
 		// list<Request>		requests;
-		bool 				_setup = false;
+		bool 				_setup;
 		int 				high_fd;
 		fd_set				copy_set;
 

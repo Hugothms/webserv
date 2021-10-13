@@ -6,13 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 16:47:03 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:07:20 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
+: host("localhost"), port(80), root("website"), index("index.html"), max_client_body_size(2048), _setup(false)
 {}
 
 Server::Server(	list<Location>	locations,
@@ -23,7 +24,7 @@ Server::Server(	list<Location>	locations,
 		string					root,
 		string					index,
 		unsigned int			max_client_body_size)
-		:locations(locations), server_names(server_names), error_pages(error_pages), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
+		:locations(locations), server_names(server_names), error_pages(error_pages), host(host), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
 {}
 
 Server::~Server()
@@ -149,47 +150,47 @@ int Server::run(void)
 	// close(listen_fd);
 }
 
-unsigned int Server::get_port()
+unsigned int	Server::get_port()
 {
 	return port;
 }
 
-void	set_locations(list<Location> locations)
+void	Server::set_locations(list<Location> locations)
 {
-	locations = locations;
+	this->locations = locations;
 }
 
-void	set_server_names(list<string> server_names)
+void	Server::set_server_names(list<string> server_names)
 {
-	server_names = server_names;
+	this->server_names = server_names;
 }
 
-void	set_error_pages(list<string> error_pages)
+void	Server::set_error_pages(list<string> error_pages)
 {
-	error_pages = error_pages;
+	this->error_pages = error_pages;
 }
 
-void	set_host(string host)
+void	Server::set_host(string host)
 {
-	host = host;
+	this->host = host;
 }
 
-void	set_port(unsigned int port)
+void	Server::set_port(unsigned int port)
 {
-	port = port;
+	this->port = port;
 }
 
-void	set_root(string root)
+void	Server::set_root(string root)
 {
-	root = root;
+	this->root = root;
 }
 
-void	set_index(string index)
+void	Server::set_index(string index)
 {
-	index = index;
+	this->index = index;
 }
 
-void	set_max_client_body_size(unsigned int max_client_body_size)
+void	Server::set_max_client_body_size(unsigned int max_client_body_size)
 {
-	max_client_body_size = max_client_body_size;
+	this->max_client_body_size = max_client_body_size;
 }
