@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 17:07:20 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:27:21 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,14 +160,29 @@ void	Server::set_locations(list<Location> locations)
 	this->locations = locations;
 }
 
+void	Server::push_back_location(Location location)
+{
+	this->locations.push_back(location);
+}
+
 void	Server::set_server_names(list<string> server_names)
 {
 	this->server_names = server_names;
 }
 
+void	Server::push_back_server_name(string server_name)
+{
+	this->server_names.push_back(server_name);
+}
+
 void	Server::set_error_pages(list<string> error_pages)
 {
 	this->error_pages = error_pages;
+}
+
+void	Server::push_back_error_page(string error_page)
+{
+	this->error_pages.push_back(error_page);
 }
 
 void	Server::set_host(string host)

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 16:49:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:21:31 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,55 +148,61 @@ Webserv::Webserv(string config_file)
 					if (str[1])
 						get_str_before_char(config, "\n", &pos);
 				}
-				else if (str == "listen")
-				{
-					host = get_str_before_char(config, ":", &pos);
-					DEBUG("\t\thost " << host);
-					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
-						port = atoi(tmp.c_str());
-					get_str_before_char(config, "\n", &pos);
-					DEBUG("\t\tport: " << port);
-				}
+				else if (str == "location" && parse_location(config, &pos, &location))
+					server.push_back_location(location);
 				else if (str == "server_name")
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
 					{
 						DEBUG("\t\t" << tmp);
-						server_names.push_back(tmp);
+						server.push_back_server_name(tmp);
 					}
 					get_str_before_char(config, "\n", &pos);
-				}
-				else if (str == "root")
-				{
-					if((root = get_str_before_char(config, ";", &pos)).length())
-						get_str_before_char(config, "\n", &pos);
-					DEBUG("\t\t" << root);
-				}
-				else if (str == "index")
-				{
-					if((index = get_str_before_char(config, ";", &pos)).length())
-						get_str_before_char(config, "\n", &pos);
-					DEBUG("\t\t" << index);
 				}
 				else if (str == "error_pages")
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
 					{
-						error_pages.push_back(tmp);
+						server.push_back_error_page(tmp);
 						get_str_before_char(config, "\n", &pos);
 					}
+				}
+				else if (str == "listen")
+				{
+					server.set_host(get_str_before_char(config, ":", &pos));
+					DEBUG("\t\thost " << host);
+					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
+						server.set_port(atoi(tmp.c_str()));
+					get_str_before_char(config, "\n", &pos);
+					DEBUG("\t\tport: " << port);
+				}
+				else if (str == "root")
+				{
+					if((tmp = get_str_before_char(config, ";", &pos)).length())
+						{
+							server.set_root(tmp);
+							get_str_before_char(config, "\n", &pos);
+						}
+					DEBUG("\t\t" << root);
+				}
+				else if (str == "index")
+				{
+					if((tmp = get_str_before_char(config, ";", &pos)).length())
+						{
+							server.set_index(tmp);
+							get_str_before_char(config, "\n", &pos);
+						}
+					DEBUG("\t\t" << index);
 				}
 				else if (str == "max_client_body_size")
 				{
 					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
 						get_str_before_char(config, "\n", &pos);
-						max_client_body_size = atoi(tmp.c_str());
+						server.set_max_client_body_size(atoi(tmp.c_str()));
 					}
 					DEBUG("\t\t" << max_client_body_size);
 				}
-				else if (str == "location" && parse_location(config, &pos, &location))
-					locations.push_back(location);
 				else
 				{
 					DEBUG("\t\t***OTHER: " << str);
