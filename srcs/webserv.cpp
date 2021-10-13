@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 18:19:48 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/13 17:55:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 	if (!locations.size() || !server_names.size() || !error_pages.size())
 		return false;
 	return true;
+}
+
+void	err_parsing_config()
+{
+	cerr << "Wrong server configuration" << endl;
+	exit(5);
 }
 
 bool	parse_location(string config, size_t *pos, Location *returned_location)
@@ -110,33 +116,22 @@ Webserv::Webserv(string config_file)
 		return ;
 	}
 	const string config = get_content_file(config_file);
-	DEBUG("Provided config:");
-	DEBUG(config);
+	DEBUG("Provided config:\n" << config);
 
 	// Parse and add multiple _servers in "_servers"
 	size_t pos = 0;
 	string str;
 	while (config[pos]) // config parsing loop
 	{
-		DEBUG("!!!!!!!!!!!! SERVER !!!!!!!!!!!!");
-		str = get_str_before_char(config, " ", &pos);
+		str = get_str_before_char(config, " \n", &pos);
 		if (str == "server")
 		{
+			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!");
 			Server server;
 			str = get_str_before_char(config, "\n", &pos);
 			if (str != "{")
 				continue ;
 			DEBUG("{");
-			// Webserv's attributes:
-			list<Location>	locations;
-			list<string>	server_names;
-			list<string>	error_pages;
-			string			host;
-			unsigned int	port;
-			string			root;
-			string			index;
-			unsigned int	max_client_body_size;
-
 			while (config[pos] && (str = get_str_before_char(config, " ;\n", &pos)) != "}")
 			{
 				string		tmp;
@@ -170,29 +165,29 @@ Webserv::Webserv(string config_file)
 				else if (str == "listen")
 				{
 					server.set_host(get_str_before_char(config, ":", &pos));
-					DEBUG("\t\thost " << host);
+					DEBUG("\t\thost " << server.get_host());
 					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
 						server.set_port(atoi(tmp.c_str()));
 					get_str_before_char(config, "\n", &pos);
-					DEBUG("\t\tport: " << port);
+					DEBUG("\t\tport: " << server.get_port());
 				}
 				else if (str == "root")
 				{
 					if((tmp = get_str_before_char(config, ";", &pos)).length())
-						{
-							server.set_root(tmp);
-							get_str_before_char(config, "\n", &pos);
-						}
-					DEBUG("\t\t" << root);
+					{
+						server.set_root(tmp);
+						get_str_before_char(config, "\n", &pos);
+					}
+					DEBUG("\t\t" << server.get_root());
 				}
 				else if (str == "index")
 				{
 					if((tmp = get_str_before_char(config, ";", &pos)).length())
-						{
-							server.set_index(tmp);
-							get_str_before_char(config, "\n", &pos);
-						}
-					DEBUG("\t\t" << index);
+					{
+						server.set_index(tmp);
+						get_str_before_char(config, "\n", &pos);
+					}
+					DEBUG("\t\t" << server.get_index());
 				}
 				else if (str == "max_client_body_size")
 				{
@@ -201,7 +196,7 @@ Webserv::Webserv(string config_file)
 						get_str_before_char(config, "\n", &pos);
 						server.set_max_client_body_size(atoi(tmp.c_str()));
 					}
-					DEBUG("\t\t" << max_client_body_size);
+					DEBUG("\t\t" << server.get_max_client_body_size());
 				}
 				else
 				{

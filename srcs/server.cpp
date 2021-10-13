@@ -149,10 +149,47 @@ int Server::run(void)
 	// close(listen_fd);
 }
 
+list<Location>	Server::get_locations()
+{
+	return locations;
+}
+
+list<string>	Server::get_server_names()
+{
+	return server_names;
+}
+
+list<string>	Server::get_error_pages()
+{
+	return error_pages;
+}
+
+string			Server::get_host()
+{
+	return host;
+}
+
 unsigned int	Server::get_port()
 {
 	return port;
 }
+
+string			Server::get_root()
+{
+	return root;
+}
+
+string			Server::get_index()
+{
+	return index;
+}
+
+unsigned int	Server::get_max_client_body_size()
+{
+	return max_client_body_size;
+}
+
+
 int Server::get_listen_fd(void)
 {
 	return listen_fd;
