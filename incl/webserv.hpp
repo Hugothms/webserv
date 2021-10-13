@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:40:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:01:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Webserv
 		bool	is_a_valid_server(	list<Location>	locations,
 							list<string>	server_names,
 							list<string>	error_pages,
+							string			host,
 							unsigned int 	port,
 							string			root,
 							string			index,

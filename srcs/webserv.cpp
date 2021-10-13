@@ -6,22 +6,24 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 15:39:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:01:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-bool Webserv::is_a_valid_server(	list<Location>	locations,
-						list<string>	server_names,
-						list<string>	error_pages,
-						unsigned int 	port,
-						string			root,
-						string			index,
-						unsigned int	max_client_body_size)
+bool Webserv::is_a_valid_server(list<Location>	locations,
+								list<string>	server_names,
+								list<string>	error_pages,
+								string			host,
+								unsigned int 	port,
+								string			root,
+								string			index,
+								unsigned int	max_client_body_size)
 {
 	// TODO
-
+	if (!locations.size() || !server_names.size() || !error_pages.size())
+		return false;
 	return true;
 }
 
@@ -201,12 +203,12 @@ Webserv::Webserv(string config_file)
 				}
 			}
 			DEBUG("}");
-			if (!is_a_valid_server(locations, server_names, error_pages, port, root, index, max_client_body_size))
+			if (!is_a_valid_server(locations, server_names, error_pages, host, port, root, index, max_client_body_size))
 			{
 				cerr << "Wrong server configuration" << endl;
 				exit(5);
 			}
-			servers.push_back(Server(locations, server_names, error_pages, port, root, index, max_client_body_size));
+			servers.push_back(Server(locations, server_names, error_pages, host, port, root, index, max_client_body_size));
 		}
 	}
 	DEBUG("******* CONFIG PARSED ******\n");
