@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 12:25:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 12:32:54 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ Server::~Server()
 {
 	// delete _clients;
 	close(listen_fd);
-	for (int i = 0; i < _clients.size(); i++)
+	for (unsigned int i = 0; i < _clients.size(); i++)
 	{
 		close(_clients[i].fd);
 	}
