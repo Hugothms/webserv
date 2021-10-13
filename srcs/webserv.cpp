@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 17:21:31 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 18:19:48 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,14 +106,14 @@ Webserv::Webserv(string config_file)
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
-		servers.push_back(Server());
+		_servers.push_back(Server());
 		return ;
 	}
 	const string config = get_content_file(config_file);
 	DEBUG("Provided config:");
 	DEBUG(config);
 
-	// Parse and add multiple servers in "servers"
+	// Parse and add multiple _servers in "_servers"
 	size_t pos = 0;
 	string str;
 	while (config[pos]) // config parsing loop
@@ -215,23 +215,92 @@ Webserv::Webserv(string config_file)
 				cerr << "Wrong server configuration" << endl;
 				exit(5);
 			}
-			servers.push_back(Server(locations, server_names, error_pages, host, port, root, index, max_client_body_size));
+			_servers.push_back(Server(locations, server_names, error_pages, host, port, root, index, max_client_body_size));
 		}
 	}
 	DEBUG("******* CONFIG PARSED ******\n");
 }
 
+void Webserv::build()
+{
+	FD_ZERO(&master_set);
+	high_fd = 0;
+	int fd;
+	//Setup the set for listening on different ports/IP
+	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
+	{
+		DEBUG("Run for port: " << server->get_port());
+		fd = server->setup();
+		FD_SET(fd, &master_set);
+		if (fd > high_fd)
+			high_fd = fd;
+		DEBUG("Port added to the FD_SET !\n");
+	}
+}
+
+void Webserv::process(Client *i)
+{
+	char buff[BUFFER_SIZE];
+	int received_count = recv(i->fd, buff, BUFFER_SIZE, 0);
+	if (received_count > 0)
+	{
+		Request req(buff,received_count, i->fd);
+		req.respond();					
+	}
+	else
+	{
+		// DEBUG("Client is done : ");
+		// i->identify();
+		// DEBUG("\n");
+		FD_CLR(i->fd, &master_set);
+		close(i->fd);
+		i->fd = -1;
+
+	}
+}
+
+
 void	Webserv::listen()
 {
-	// servers.begin()->setup();
-	// servers.begin()->run();
+	build();
+	copy_set = master_set;
 	while (true)
 	{
-		for (list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
+		
+		// DEBUG("START");
+		//This can be optimized
+		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
 		{
-			DEBUG("Run for port: " << server->get_port() << "\n");
-			// DEBUG("\t---" << &server);
-			server->run();
+			if (i->fd > high_fd)
+				high_fd = i->fd;
+			else if (i->fd == -1)
+			{
+				i = _clients.erase(i);
+				if (i == _clients.end())
+					break;
+			}
+		}
+
+		copy_set = master_set;
+		
+		select(high_fd + 1, &copy_set, NULL, NULL, 0);
+		
+		//Accept new clients on each server
+		for (list<Server>::iterator i = _servers.begin(); i != _servers.end(); i++)
+		{
+			if (FD_ISSET(i->listen_fd, &copy_set))
+			{
+				Client tmp = i->handle_new_conn();
+				_clients.push_back(tmp);
+				FD_SET(tmp.fd, &master_set);
+			}
+		}
+		
+		// //Loop through all the clients and find out if they sent
+		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
+		{
+			if (FD_ISSET(i->fd, &copy_set))
+				process(&(*i));
 		}
 	}
 }

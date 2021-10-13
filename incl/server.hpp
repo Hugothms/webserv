@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 17:19:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 17:55:47 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,11 @@ class Server
 		fd_set				master_set;
 
 
-		int 				listen_fd;
+		
 		struct sockaddr_in	hint;
 
 	public:
+		int 				listen_fd;
 		Server();
 		Server(	list<Location>	locations,
 				list<string>	server_names,
@@ -74,6 +75,7 @@ class Server
 		// int port;
 
 		unsigned int	get_port();
+		int 			get_listen_fd(void);
 
 		void 			set_locations(list<Location> locations);
 		void 			push_back_location(Location location);
