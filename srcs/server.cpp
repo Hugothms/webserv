@@ -6,15 +6,11 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 16:03:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 16:12:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
-#include <fcntl.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
 
 Server::Server(	list<Location>	locations,
 		list<string>			server_names,
