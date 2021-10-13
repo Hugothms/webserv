@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:20:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:40:57 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,13 @@ class Server
 		// * FOR "INTERNAL" USE *
 		list<Request>		requests;
 		bool 				_setup;
-
-		// Enzo's attributes:
 		int 				high_fd;
 		int 				listen_fd;
 		struct sockaddr_in	hint;
-		fd_set				master_set;
 		fd_set				copy_set;
+
 		vector<Client>		_clients;
+		fd_set				master_set;
 
 	public:
 		Server(	list<Location>	locations,
