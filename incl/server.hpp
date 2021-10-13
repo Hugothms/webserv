@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 12:43:55 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/13 15:20:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ class Server
 		Server(	list<Location>	locations,
 				list<string>	server_names,
 				list<string>	error_pages,
-				unsigned int	port = 8080,
+				unsigned int	port = 80,
 				string			root = "website",
 				string			index = "index.html",
 				unsigned int	max_client_body_size = 2048);
