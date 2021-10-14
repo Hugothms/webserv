@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 21:40:15 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/14 14:43:30 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 								unsigned int	max_client_body_size)
 {
 	// TODO
+	(void) host;
+	(void) port;
+	(void) root;
+	(void) index;
+	(void) max_client_body_size;
 	if (!locations.size() || !server_names.size() || !error_pages.size())
 		return false;
 	return true;
@@ -29,71 +34,73 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 
 void	err_parsing_config()
 {
-	cerr << "Wrong server configuration" << endl;
+	cerr << "Error: Wrong server configuration" << endl;
 	exit(5);
 }
 
-bool	parse_location(string config, size_t *pos, Location *returned_location)
+Location	parse_location(string config, size_t *pos)
 {
-	// Locations's attributes:
-	string			location;
-	list<string>	HTTP_methods;
-	string			HTTP_redirection;
-	string			location_root;
-	bool 			directory_listing = false;
-	string			default_answer;
+	Location	location;
+	string		tmp;
 
-	location = get_str_before_char(config, " ", pos);
-	DEBUG("\t" << location << "\n\t{");
+	tmp = get_str_before_char(config, " ", pos);
+	DEBUG("\t" << tmp << "\n\t{");
 	if (get_str_before_char(config, " ;\n", pos) != "{")
-		return false;
+		err_parsing_config();
 	string str;
 	while ((str = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
-		string tmp;
-
-		if (str[0] != '#')
-			DEBUG("\t\t" << str << ":");
 		if (str[0] == '#')
 		{
 			if (config[*pos-1] != '\n')
 				get_str_before_char(config, "\n", pos);
 		}
-		else if (str == "HTTP_methods")
+		else
+			DEBUG("\t\t" << str << ":");
+		if (str == "HTTP_methods")
 		{
 			while ((tmp = get_str_before_char(config, " ;", pos)).length())
 			{
 				DEBUG("\t\t\t" << tmp);
-				HTTP_methods.push_back(tmp);
+				location.push_back_HTTP_method(tmp);
 			}
 			get_str_before_char(config, "\n", pos);
 		}
 		else if (str == "HTTP_redirection")
 		{
-			DEBUG("\t\t\t" << HTTP_redirection);
-			if ((HTTP_redirection = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			{
+				location.set_HTTP_redirection(tmp);
+				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
+			}
 		}
 		else if (str == "location_root")
 		{
-			DEBUG("\t\t\t" << location_root);
-			if ((location_root = get_str_before_char(config, ";", pos)).length())
-				get_str_before_char(config, "\n", pos);
-		}
-		else if (str == "directory_listing")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
-				directory_listing = atoi(tmp.c_str());
-				DEBUG("\t\t\t" << directory_listing);
+				location.set_location_root(tmp);
+				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
 			}
 		}
 		else if (str == "default_answer")
 		{
-			DEBUG("\t\t\t" << default_answer);
-			if ((default_answer = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			{
+				location.set_default_answer(tmp);
+				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
+			}
+		}
+		else if (str == "directory_listing")
+		{
+			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
+			{
+				location.set_directory_listing(atoi(tmp.c_str()));
+				DEBUG("\t\t\t" << tmp);
+				get_str_before_char(config, "\n", pos);
+			}
 		}
 		else
 		{
@@ -103,8 +110,7 @@ bool	parse_location(string config, size_t *pos, Location *returned_location)
 		// sleep(1);
 	}
 	DEBUG("\t}");
-	*returned_location = Location(location, HTTP_methods, HTTP_redirection, location_root, directory_listing, default_answer);
-	return true;
+	return location;
 }
 
 Webserv::Webserv(string config_file)
@@ -120,10 +126,9 @@ Webserv::Webserv(string config_file)
 
 	// Parse and add multiple _servers in "_servers"
 	size_t pos = 0;
-	string str;
 	while (config[pos]) // config parsing loop
 	{
-		str = get_str_before_char(config, " \n", &pos);
+		string str = get_str_before_char(config, " \n", &pos);
 		if (str == "server")
 		{
 			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!");
@@ -143,8 +148,8 @@ Webserv::Webserv(string config_file)
 					if (str[1])
 						get_str_before_char(config, "\n", &pos);
 				}
-				else if (str == "location" && parse_location(config, &pos, &location))
-					server.push_back_location(location);
+				else if (str == "location")
+					server.push_back_location(parse_location(config, &pos));
 				else if (str == "server_name")
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
@@ -205,11 +210,8 @@ Webserv::Webserv(string config_file)
 				}
 			}
 			DEBUG("}");
-			if (!is_a_valid_server(server.get_locations(), server.get_server_names(), server.get_error_pages(), server.get_host(), server.get_port(), server.get_root(), server.get_index(), server.get_max_client_body_size()))
-			{
-				cerr << "Wrong server configuration" << endl;
-				exit(5);
-			}
+			// if (!is_a_valid_server(server.get_locations(), server.get_server_names(), server.get_error_pages(), server.get_host(), server.get_port(), server.get_root(), server.get_index(), server.get_max_client_body_size()))
+			// 	err_parsing_config();
 			_servers.push_back(server);
 		}
 	}
@@ -226,7 +228,6 @@ void Webserv::build()
 	{
 		DEBUG("Run for port: " << server->get_port());
 		DEBUG(server->get_host());
-		DEBUG(server->get_host());
 		fd = server->setup();
 		FD_SET(fd, &master_set);
 		if (fd > high_fd)
@@ -242,7 +243,7 @@ void Webserv::process(Client *i)
 	if (len > 0)
 	{
 		Request req(buff,len, i->fd);
-		req.respond();					
+		req.respond();
 	}
 	else
 	{
@@ -299,7 +300,7 @@ void	Webserv::listen()
 	build();
 	copy_set = master_set;
 	while (true)
-	{	
+	{
 		// DEBUG("START");
 		//This can be optimized
 		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
@@ -315,9 +316,9 @@ void	Webserv::listen()
 		}
 
 		copy_set = master_set;
-		
+
 		select(high_fd + 1, &copy_set, NULL, NULL, 0);
-		
+
 		//Accept new clients on each server
 		for (list<Server>::iterator i = _servers.begin(); i != _servers.end(); i++)
 		{
@@ -339,7 +340,7 @@ void	Webserv::listen()
 }
 void Webserv::stop()
 {
-	
+
 }
 Webserv::~Webserv()
 {

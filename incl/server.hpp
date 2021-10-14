@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 21:46:04 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/14 13:30:22 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,21 +43,13 @@ class Server
 		string				root; // directory where the webste is
 		string				index; // file served when "/" is requested
 		unsigned int		max_client_body_size;
-		
+
 		int 				listen_fd;
 		struct sockaddr_in	hint;
 
 	public:
-		
+
 		Server();
-		Server(	list<Location>	locations,
-				list<string>	server_names,
-				list<string>	error_pages,
-				string			host,
-				unsigned int	port,
-				string			root,
-				string			index,
-				unsigned int	max_client_body_size);
 		~Server();
 		void s_listen();
 
@@ -76,7 +68,6 @@ class Server
 		string			get_index();
 		unsigned int	get_max_client_body_size();
 		int 			get_listen_fd(void);
-
 
 		void set_locations(list<Location> locations);
 		void push_back_location(Location location);
