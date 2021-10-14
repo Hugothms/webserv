@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/13 17:58:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/14 14:45:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 								unsigned int	max_client_body_size)
 {
 	// TODO
+	(void) host;
+	(void) port;
+	(void) root;
+	(void) index;
+	(void) max_client_body_size;
 	if (!locations.size() || !server_names.size() || !error_pages.size())
 		return false;
 	return true;
@@ -29,71 +34,73 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 
 void	err_parsing_config()
 {
-	cerr << "Wrong server configuration" << endl;
+	cerr << "Error: Wrong server configuration" << endl;
 	exit(5);
 }
 
-bool	parse_location(string config, size_t *pos, Location *returned_location)
+Location	parse_location(string config, size_t *pos)
 {
-	// Locations's attributes:
-	string			location;
-	list<string>	HTTP_methods;
-	string			HTTP_redirection;
-	string			location_root;
-	bool 			directory_listing = false;
-	string			default_answer;
+	Location	location;
+	string		tmp;
 
-	location = get_str_before_char(config, " ", pos);
-	DEBUG("\t" << location << "\n\t{");
+	tmp = get_str_before_char(config, " ", pos);
+	DEBUG("\t" << tmp << "\n\t{");
 	if (get_str_before_char(config, " ;\n", pos) != "{")
-		return false;
+		err_parsing_config();
 	string str;
 	while ((str = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
-		string tmp;
-
-		if (str[0] != '#')
-			DEBUG("\t\t" << str << ":");
 		if (str[0] == '#')
 		{
 			if (config[*pos-1] != '\n')
 				get_str_before_char(config, "\n", pos);
 		}
-		else if (str == "HTTP_methods")
+		else
+			DEBUG("\t\t" << str << ":");
+		if (str == "HTTP_methods")
 		{
 			while ((tmp = get_str_before_char(config, " ;", pos)).length())
 			{
 				DEBUG("\t\t\t" << tmp);
-				HTTP_methods.push_back(tmp);
+				location.push_back_HTTP_method(tmp);
 			}
 			get_str_before_char(config, "\n", pos);
 		}
 		else if (str == "HTTP_redirection")
 		{
-			DEBUG("\t\t\t" << HTTP_redirection);
-			if ((HTTP_redirection = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			{
+				location.set_HTTP_redirection(tmp);
+				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
+			}
 		}
 		else if (str == "location_root")
 		{
-			DEBUG("\t\t\t" << location_root);
-			if ((location_root = get_str_before_char(config, ";", pos)).length())
-				get_str_before_char(config, "\n", pos);
-		}
-		else if (str == "directory_listing")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
-				directory_listing = atoi(tmp.c_str());
-				DEBUG("\t\t\t" << directory_listing);
+				location.set_location_root(tmp);
+				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
 			}
 		}
 		else if (str == "default_answer")
 		{
-			DEBUG("\t\t\t" << default_answer);
-			if ((default_answer = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			{
+				location.set_default_answer(tmp);
+				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
+			}
+		}
+		else if (str == "directory_listing")
+		{
+			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
+			{
+				location.set_directory_listing(atoi(tmp.c_str()));
+				DEBUG("\t\t\t" << tmp);
+				get_str_before_char(config, "\n", pos);
+			}
 		}
 		else
 		{
@@ -103,8 +110,7 @@ bool	parse_location(string config, size_t *pos, Location *returned_location)
 		// sleep(1);
 	}
 	DEBUG("\t}");
-	*returned_location = Location(location, HTTP_methods, HTTP_redirection, location_root, directory_listing, default_answer);
-	return true;
+	return location;
 }
 
 Webserv::Webserv(string config_file)
@@ -112,18 +118,17 @@ Webserv::Webserv(string config_file)
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
-		servers.push_back(Server());
+		_servers.push_back(Server());
 		return ;
 	}
 	const string config = get_content_file(config_file);
 	DEBUG("Provided config:\n" << config);
 
-	// Parse and add multiple servers in "servers"
+	// Parse and add multiple _servers in "_servers"
 	size_t pos = 0;
-	string str;
 	while (config[pos]) // config parsing loop
 	{
-		str = get_str_before_char(config, " \n", &pos);
+		string str = get_str_before_char(config, " \n", &pos);
 		if (str == "server")
 		{
 			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!");
@@ -143,8 +148,8 @@ Webserv::Webserv(string config_file)
 					if (str[1])
 						get_str_before_char(config, "\n", &pos);
 				}
-				else if (str == "location" && parse_location(config, &pos, &location))
-					server.push_back_location(location);
+				else if (str == "location")
+					server.push_back_location(parse_location(config, &pos));
 				else if (str == "server_name")
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
@@ -206,23 +211,143 @@ Webserv::Webserv(string config_file)
 				}
 			}
 			DEBUG("}");
-			servers.push_back(server);
+			// if (!is_a_valid_server(server.get_locations(), server.get_server_names(), server.get_error_pages(), server.get_host(), server.get_port(), server.get_root(), server.get_index(), server.get_max_client_body_size()))
+			// 	err_parsing_config();
+			_servers.push_back(server);
 		}
 	}
 	DEBUG("******* CONFIG PARSED ******\n");
 }
 
+void Webserv::build()
+{
+	FD_ZERO(&master_set);
+	high_fd = 0;
+	int fd;
+	//Setup the set for listening on different ports/IP
+	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
+	{
+		DEBUG("Run for port: " << server->get_port());
+		DEBUG(server->get_host());
+		fd = server->setup();
+		FD_SET(fd, &master_set);
+		if (fd > high_fd)
+			high_fd = fd;
+		DEBUG("Port added to the FD_SET !\n");
+	}
+}
+
+void Webserv::process(Client *i)
+{
+	char buff[BUFFER_SIZE];
+	int len = recv(i->fd, buff, BUFFER_SIZE, 0);
+	if (len > 0)
+	{
+		Request req(buff,len, i->fd);
+		req.respond();
+	}
+	else
+	{
+		DEBUG("Client is done\n");
+		FD_CLR(i->fd, &master_set);
+		close(i->fd);
+		i->fd = -1;
+
+	}
+}
+
+void 	Webserv::sig()
+{
+	return ;
+}
+
 void	Webserv::listen()
 {
-	// servers.begin()->setup();
-	// servers.begin()->run();
+
+
+
+	// struct sigaction	sig;
+
+	// sig.sa_sigaction = Webserv::stop;
+	// sig.sa_flags = SA_SIGINFO;
+
+
+	// if (sigaction(SIGINT, &sig, NULL) != 0)
+	// {
+	// 	return (write (1, "signal error\n", 13));
+	// }
+	// if (sigaction(SIGINT, &sig, NULL) != 0)
+	// {
+	// 	return (write (1, "signal error\n", 13));
+	// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	build();
+	copy_set = master_set;
 	while (true)
 	{
-		for (list<Server>::iterator server = servers.begin(); server != servers.end(); server++)
+		// DEBUG("START");
+		//This can be optimized
+		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
 		{
-			DEBUG("Run for port: " << server->get_port() << "\n");
-			// DEBUG("\t---" << &server);
-			server->run();
+			if (i->fd > high_fd)
+				high_fd = i->fd;
+			else if (i->fd == -1)
+			{
+				i = _clients.erase(i);
+				if (i == _clients.end())
+					break;
+			}
+		}
+
+		copy_set = master_set;
+
+		select(high_fd + 1, &copy_set, NULL, NULL, 0);
+
+		//Accept new clients on each server
+		for (list<Server>::iterator i = _servers.begin(); i != _servers.end(); i++)
+		{
+			if (FD_ISSET(i->get_listen_fd(), &copy_set))
+			{
+				Client tmp = i->handle_new_conn();
+				// tmp.set_server(&(*i));
+				_clients.push_back(tmp);
+				FD_SET(tmp.fd, &master_set);
+			}
+		}
+		// //Loop through all the clients and find out if they sent
+		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
+		{
+			if (FD_ISSET(i->fd, &copy_set))
+				process(&(*i));
 		}
 	}
+}
+void Webserv::stop()
+{
+
+}
+Webserv::~Webserv()
+{
+	for (list<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
+	{
+		close(it->fd);
+	}
+	_servers.erase(_servers.begin(), _servers.end());
 }

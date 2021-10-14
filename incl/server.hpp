@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 17:38:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/14 13:30:22 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@
 # define MAX_CLIENTS 10
 # define BUFFER_SIZE 4096
 
+
+# define PORT 80
+
 class Server
 {
 	private :
@@ -41,35 +44,18 @@ class Server
 		string				index; // file served when "/" is requested
 		unsigned int		max_client_body_size;
 
-		// * FOR "INTERNAL" USE *
-		// list<Request>		requests;
-		bool 				_setup;
-		int 				high_fd;
-		fd_set				copy_set;
-
-		vector<Client>		_clients;
-		fd_set				master_set;
-
-
 		int 				listen_fd;
 		struct sockaddr_in	hint;
 
 	public:
+
 		Server();
-		Server(	list<Location>	locations,
-				list<string>	server_names,
-				list<string>	error_pages,
-				string			host,
-				unsigned int	port,
-				string			root,
-				string			index,
-				unsigned int	max_client_body_size);
 		~Server();
 		void s_listen();
 
  		Client handle_new_conn();
 		int setup();
-		int run(void);
+
 		// Client handle_new_conn(int listen_sock);
 		// int port;
 
@@ -81,7 +67,7 @@ class Server
 		string			get_root();
 		string			get_index();
 		unsigned int	get_max_client_body_size();
-
+		int 			get_listen_fd(void);
 
 		void set_locations(list<Location> locations);
 		void push_back_location(Location location);
