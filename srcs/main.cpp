@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 21:51:52 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/14 14:42:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ Webserv* ptr;
 
 void stop(int num)
 {
+	(void) num;
 	// DEBUG("KILL\n");
-	
+
 	// if (ptr)
 	// {
 	// while (1)
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
 	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
 	ptr = &webserv;
-	
+
 	signal(SIGSTOP, &stop);
 	signal(SIGINT, &stop);
 	signal(SIGKILL, &stop);

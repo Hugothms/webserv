@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 19:33:36 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/14 13:31:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,6 @@
 
 Server::Server()
 : host("localhost"), port(PORT), root("website"), index("index.html"), max_client_body_size(2048)
-{}
-
-Server::Server(	list<Location>	locations,
-		list<string>			server_names,
-		list<string>			error_pages,
-		string					host,
-		unsigned int			port,
-		string					root,
-		string					index,
-		unsigned int			max_client_body_size)
-		:locations(locations), server_names(server_names), error_pages(error_pages), host(host), port(port), root(root), index(index), max_client_body_size(max_client_body_size)
 {}
 
 Server::~Server()
@@ -64,7 +53,6 @@ int Server::setup(void)
 	int opt = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 
-
 	if (bind(listen_fd, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
 	{
 		perror("bind");
@@ -72,7 +60,6 @@ int Server::setup(void)
 	}
 
 	listen(listen_fd, SOMAXCONN);
-
 
 	// _setup = true;
 	// high_fd = listen_fd;
