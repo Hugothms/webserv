@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/14 13:30:22 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 16:00:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@
 # define MAX_BACKLOG 10
 # define MAX_CLIENTS 10
 # define BUFFER_SIZE 4096
-
-
 # define PORT 80
 
 class Server
@@ -48,7 +46,6 @@ class Server
 		struct sockaddr_in	hint;
 
 	public:
-
 		Server();
 		~Server();
 		void s_listen();

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/17 15:52:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 15:54:26 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ bool Webserv::conflict_host_port_server_names(string new_host, unsigned int new_
 		if (server->get_host() == new_host && server->get_port() == new_port)
 		{
 			list<string> x = server->get_server_names();
-			for (list<string>::iterator other_server_name = x.begin(); other_server_name != x.end(); other_server_name++)
+			for (list<string>::iterator server_name = x.begin(); server_name != x.end(); server_name++)
 			{
 				for (list<string>::iterator new_server_name = new_server_names.begin(); new_server_name != new_server_names.end(); new_server_name++)
 				{
-					if (*other_server_name == *new_server_name)
+					if (*server_name == *new_server_name)
 						return true;
 				}
 			}
