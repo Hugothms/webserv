@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 19:31:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/17 14:13:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include "server.hpp"
 class Client
 {
+	private :
 	public :
 		int					fd;
 		struct sockaddr_in	client_addr;
@@ -54,7 +55,6 @@ class Client
 		{
 			cout << client_ipv4_str <<":" <<client_addr.sin_port << endl << endl;
 		}
-	private :
 };
 
-	#endif
+#endif
