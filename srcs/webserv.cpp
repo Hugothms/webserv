@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/17 14:57:43 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 15:52:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,22 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 	return true;
 }
 
-bool Webserv::conflict_host_port(string host, int port)
+bool Webserv::conflict_host_port_server_names(string new_host, unsigned int new_port, list<string> new_server_names)
 {
 	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		if (server->get_host() == host && server->get_port() == port)
-			return true;
+		if (server->get_host() == new_host && server->get_port() == new_port)
+		{
+			list<string> x = server->get_server_names();
+			for (list<string>::iterator other_server_name = x.begin(); other_server_name != x.end(); other_server_name++)
+			{
+				for (list<string>::iterator new_server_name = new_server_names.begin(); new_server_name != new_server_names.end(); new_server_name++)
+				{
+					if (*other_server_name == *new_server_name)
+						return true;
+				}
+			}
+		}
 	}
 	return false;
 }
@@ -179,19 +189,14 @@ Webserv::Webserv(string config_file)
 				}
 				else if (str == "listen")
 				{
-					string host = get_str_before_char(config, ":", &pos);
-					if (!host.length())
-						host = "localhost";
+					if (!(tmp = get_str_before_char(config, ":", &pos)).length())
+						tmp = "localhost";
+					server.set_host(tmp);
+					DEBUG("\t\thost: " << tmp);
 					if (is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
-						int port = atoi(tmp.c_str());
-						// TODO: It's mabe not an issue if it overlaps with other hosts/ports
-						if (conflict_host_port(host, port))
-							err_parsing_config("host:port conflict with another server");
-						server.set_host(host);
-						server.set_port(port);
-						DEBUG("\t\thost: " << host);
-						DEBUG("\t\tport: " << port);
+						server.set_port(atoi(tmp.c_str()));
+						DEBUG("\t\tport: " << atoi(tmp.c_str()));
 					}
 					get_str_before_char(config, "\n", &pos);
 				}
@@ -229,8 +234,8 @@ Webserv::Webserv(string config_file)
 				}
 			}
 			DEBUG("}");
-			// if (!is_a_valid_server(server.get_locations(), server.get_server_names(), server.get_error_pages(), server.get_host(), server.get_port(), server.get_root(), server.get_index(), server.get_max_client_body_size()))
-			// 	err_parsing_config();
+			if (conflict_host_port_server_names(server.get_host(), server.get_port(), server.get_server_names()))
+				err_parsing_config("host:port/server_names conflict with another server");
 			_servers.push_back(server);
 		}
 	}
