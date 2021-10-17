@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/14 14:45:02 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 14:33:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,8 +170,13 @@ Webserv::Webserv(string config_file)
 				else if (str == "listen")
 				{
 					// TODO: Check if is does'nt overlap with other hosts/ports
-					server.set_host(get_str_before_char(config, ":", &pos));
-					DEBUG("\t\thost " << server.get_host());
+					if ((tmp = get_str_before_char(config, ":", &pos)).length())
+					{
+						server.set_host(tmp);
+						DEBUG("\t\thost " << tmp);
+					}
+					// server.set_host(get_str_before_char(config, ":", &pos));
+					// DEBUG("\t\thost " << server.get_host());
 					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
 						server.set_port(atoi(tmp.c_str()));
 					get_str_before_char(config, "\n", &pos);
@@ -227,8 +232,7 @@ void Webserv::build()
 	//Setup the set for listening on different ports/IP
 	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		DEBUG("Run for port: " << server->get_port());
-		DEBUG(server->get_host());
+		DEBUG("Run for " << server->get_host() << ":" << server->get_port());
 		fd = server->setup();
 		FD_SET(fd, &master_set);
 		if (fd > high_fd)
@@ -263,9 +267,6 @@ void 	Webserv::sig()
 
 void	Webserv::listen()
 {
-
-
-
 	// struct sigaction	sig;
 
 	// sig.sa_sigaction = Webserv::stop;
@@ -280,17 +281,6 @@ void	Webserv::listen()
 	// {
 	// 	return (write (1, "signal error\n", 13));
 	// }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -339,10 +329,12 @@ void	Webserv::listen()
 		}
 	}
 }
+
 void Webserv::stop()
 {
 
 }
+
 Webserv::~Webserv()
 {
 	for (list<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
