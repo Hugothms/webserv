@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/14 13:31:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 20:30:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ Client Server::handle_new_conn()
 	Client new_client;
 
 	new_client.fd = accept(listen_fd, new_client.get_sockaddr(), new_client.get_addr_len());
+	// new_client.set_server(this);
 
 	inet_ntop(AF_INET, &(new_client.client_addr.sin_addr), new_client.client_ipv4_str, INET_ADDRSTRLEN);
 	printf("Incoming connection from %s:%d.\n", new_client.v4str(), new_client.client_addr.sin_port);

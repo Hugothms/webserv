@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 15:38:09 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 20:30:39 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,10 +151,46 @@ string gettype(string str)
 		ret = "text/css";
 	else if (str.find(".js", str.length() - 3) != string::npos)
 		ret = "application/javascript";
-	else
+	else if (str.find(".html", str.length() - 5) != string::npos)
 		ret = "text/html";
+	else
+		ret = "text/plain";
 	return ret;
 }
+
+// void Request::respond(Server server)
+// {
+// 	if (type == "GET")
+// 	{
+// 		if (target == "/")
+// 			target = "/index.html";
+// 		if (target == "/favicon.ico")
+// 			target = "";
+// 		string filename = "./" + server.get_root() + target;
+// 		string type = gettype(filename);
+// 		DEBUG("filename:" << filename);
+// 		DEBUG("type:" << type);
+// 		ifstream file(filename, ios::in | ios::binary);
+// 		if (file)
+// 		{
+// 			file.seekg(0, file.end);
+// 			int length = file.tellg();
+// 			file.seekg(0, file.beg);
+// 			char *data = new char[length];
+// 			file.read(data, length);
+// 			file.close();
+// 			string response = "HTTP/1.1 200 OK\nDate: " + gettimestamp() + "\nContent-Type: " + type + "\nContent-Length: " + to_string(length) + "\n\n";
+// 			send(socket, response.c_str(), response.length(), 0);
+// 			send(socket, data, length, 0);
+// 			delete[] data;
+// 		}
+// 		else
+// 		{
+// 			string response = "HTTP/1.1 404 Not Found\nDate: " + gettimestamp() + "\nContent-Type: text/plain\nContent-Length: 13\n\n404 Not Found";
+// 			send(socket, response.c_str(), response.length(), 0);
+// 		}
+// 	}
+// }
 
 void Request::respond()
 {
@@ -185,4 +221,3 @@ void Request::respond()
 	// DEBUG(response.str());
 	myfile.close();
 }
-

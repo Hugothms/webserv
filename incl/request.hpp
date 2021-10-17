@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 12:12:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 20:30:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 # define REQUEST_HPP
 
 # include "includes.hpp"
+# include "server.hpp"
+
+class Server;
 
 class Request
 {
@@ -56,6 +59,7 @@ class Request
 		Request(char *buffer, size_t size, int socket=80);
 		~Request();
 		void respond(void);
+		// void respond(Server server);
 };
 
 #endif

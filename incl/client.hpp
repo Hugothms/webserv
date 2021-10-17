@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/17 14:13:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 20:30:09 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "includes.hpp"
 # include "server.hpp"
+
+
 class Client
 {
 	private :
@@ -23,12 +25,12 @@ class Client
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
-		// Server 				*srv;
+		Server 				*server;
 		Client()
 		{
 			// memset(&client_addr, 0, sizeof(client_addr));
 			client_len = sizeof(client_addr);
-			// srv = 0;
+			// server = 0;
 		}
 		~Client()
 		{
@@ -37,7 +39,7 @@ class Client
 		}
 		// void set_server(Server *s)
 		// {
-		// 	srv = s;
+		// 	server = s;
 		// }
 		struct sockaddr* get_sockaddr(void)
 		{
