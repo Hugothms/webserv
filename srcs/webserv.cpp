@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/17 15:54:26 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 20:31:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,21 +259,22 @@ void Webserv::build()
 	}
 }
 
-void Webserv::process(Client *i)
+void Webserv::process(Client *client)
 {
 	char buff[BUFFER_SIZE];
-	int len = recv(i->fd, buff, BUFFER_SIZE, 0);
+	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
 	if (len > 0)
 	{
-		Request req(buff,len, i->fd);
+		Request req(buff,len, client->fd);
 		req.respond();
+		// req.respond(*client->server);
 	}
 	else
 	{
 		DEBUG("Client is done\n");
-		FD_CLR(i->fd, &master_set);
-		close(i->fd);
-		i->fd = -1;
+		FD_CLR(client->fd, &master_set);
+		close(client->fd);
+		client->fd = -1;
 
 	}
 }
@@ -328,22 +329,22 @@ void	Webserv::listen()
 
 		select(high_fd + 1, &copy_set, NULL, NULL, 0);
 
-		//Accept new clients on each server
-		for (list<Server>::iterator i = _servers.begin(); i != _servers.end(); i++)
+		// Accept new clients on each server
+		for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
 		{
-			if (FD_ISSET(i->get_listen_fd(), &copy_set))
+			if (FD_ISSET(server->get_listen_fd(), &copy_set))
 			{
-				Client tmp = i->handle_new_conn();
-				// tmp.set_server(&(*i));
+				Client tmp = server->handle_new_conn();
+				// tmp.set_server(&(*server));
 				_clients.push_back(tmp);
 				FD_SET(tmp.fd, &master_set);
 			}
 		}
-		// //Loop through all the clients and find out if they sent
-		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
+		// Loop through all the clients and find out if they sent
+		for (list<Client>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (FD_ISSET(i->fd, &copy_set))
-				process(&(*i));
+			if (FD_ISSET(client->fd, &copy_set))
+				process(&(*client));
 		}
 	}
 }
