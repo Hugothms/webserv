@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/17 14:33:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/17 14:57:43 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,19 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 	return true;
 }
 
-void	err_parsing_config()
+bool Webserv::conflict_host_port(string host, int port)
 {
-	cerr << "Error: Wrong server configuration" << endl;
+	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
+	{
+		if (server->get_host() == host && server->get_port() == port)
+			return true;
+	}
+	return false;
+}
+
+void	err_parsing_config(string error)
+{
+	cerr << "Error: Wrong server configuration: " << error << endl;
 	exit(5);
 }
 
@@ -46,7 +56,7 @@ Location	parse_location(string config, size_t *pos)
 	tmp = get_str_before_char(config, " ", pos);
 	DEBUG("\t" << tmp << "\n\t{");
 	if (get_str_before_char(config, " ;\n", pos) != "{")
-		err_parsing_config();
+		err_parsing_config("expecting '{' after 'server'");
 	string str;
 	while ((str = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
@@ -169,18 +179,21 @@ Webserv::Webserv(string config_file)
 				}
 				else if (str == "listen")
 				{
-					// TODO: Check if is does'nt overlap with other hosts/ports
-					if ((tmp = get_str_before_char(config, ":", &pos)).length())
+					string host = get_str_before_char(config, ":", &pos);
+					if (!host.length())
+						host = "localhost";
+					if (is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
-						server.set_host(tmp);
-						DEBUG("\t\thost " << tmp);
+						int port = atoi(tmp.c_str());
+						// TODO: It's mabe not an issue if it overlaps with other hosts/ports
+						if (conflict_host_port(host, port))
+							err_parsing_config("host:port conflict with another server");
+						server.set_host(host);
+						server.set_port(port);
+						DEBUG("\t\thost: " << host);
+						DEBUG("\t\tport: " << port);
 					}
-					// server.set_host(get_str_before_char(config, ":", &pos));
-					// DEBUG("\t\thost " << server.get_host());
-					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
-						server.set_port(atoi(tmp.c_str()));
 					get_str_before_char(config, "\n", &pos);
-					DEBUG("\t\tport: " << server.get_port());
 				}
 				else if (str == "root")
 				{

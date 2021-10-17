@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/13 21:37:40 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/17 14:50:16 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Webserv
 		fd_set 			master_set;
 		fd_set 			copy_set;
 		int 			high_fd;
-		
+
 	public:
 		Webserv(string config_file = "");
 		~Webserv();
@@ -45,6 +45,8 @@ class Webserv
 							string			root,
 							string			index,
 							unsigned int	max_client_body_size);
+		bool	conflict_host_port(string host, int port);
+
 };
 
 #endif
