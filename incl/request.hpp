@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/17 20:30:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/18 16:41:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 # define REQUEST_HPP
 
 # include "includes.hpp"
-# include "server.hpp"
+// # include "server.hpp"
 
-class Server;
+// class Server;
 
 class Request
 {

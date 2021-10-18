@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/17 20:31:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/18 16:49:21 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,16 @@ Location	parse_location(string config, size_t *pos)
 	DEBUG("\t" << tmp << "\n\t{");
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		err_parsing_config("expecting '{' after 'server'");
-	string str;
-	while ((str = get_str_before_char(config, " ;\n", pos)) != "}")
+	while ((tmp = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
-		if (str[0] == '#')
+		if (tmp[0] == '#')
 		{
 			if (config[*pos-1] != '\n')
 				get_str_before_char(config, "\n", pos);
 		}
 		else
-			DEBUG("\t\t" << str << ":");
-		if (str == "HTTP_methods")
+			DEBUG("\t\t" << tmp << ":");
+		if (tmp == "HTTP_methods")
 		{
 			while ((tmp = get_str_before_char(config, " ;", pos)).length())
 			{
@@ -86,7 +85,7 @@ Location	parse_location(string config, size_t *pos)
 			}
 			get_str_before_char(config, "\n", pos);
 		}
-		else if (str == "HTTP_redirection")
+		else if (tmp == "HTTP_redirection")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
@@ -95,7 +94,7 @@ Location	parse_location(string config, size_t *pos)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else if (str == "location_root")
+		else if (tmp == "location_root")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
@@ -104,7 +103,7 @@ Location	parse_location(string config, size_t *pos)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else if (str == "default_answer")
+		else if (tmp == "default_answer")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
@@ -113,7 +112,7 @@ Location	parse_location(string config, size_t *pos)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else if (str == "directory_listing")
+		else if (tmp == "directory_listing")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
 			{
