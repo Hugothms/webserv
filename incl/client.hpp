@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 18:40:13 by edal--ce         ###   ########.fr       */
+/*   Created: 2021/10/19 18:49:56 by edal--ce          #+#    #+#             */
+/*   Updated: 2021/10/19 18:50:00 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
@@ -25,13 +26,12 @@ class Client
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
-		Server 				*server;
+		list<Server*>		servers;
 		Client()
 		{
 			// memset(&client_addr, 0, sizeof(client_addr));
 			fd = 0;
 			client_len = sizeof(client_addr);
-			server = 0;
 		}
 		void set_fd(int nfd)
 		{
@@ -50,9 +50,9 @@ class Client
 				DEBUG("KILLED\n");
 			}
 		}
-		void set_server(Server *s)
+		void push_back_server(Server *s)
 		{
-			server = s;
+			servers.push_back(s);
 		}
 		struct sockaddr* get_sockaddr(void)
 		{
