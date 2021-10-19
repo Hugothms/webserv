@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 17:09:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 22:18:27 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ void Request::respond(list<Server*> servers)
 	{
 		myfile.close();
 		string target = server->get_root() + server->get_error_pages()[404];
-		myfile.open(target, ofstream::in);
+		myfile.open(target.c_str(), ofstream::in);
 		response << "HTTP/1.1 404 Not Found\n";
 	}
 	else
