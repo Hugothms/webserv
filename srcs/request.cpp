@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 14:42:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 14:45:09 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
 		if (header == "\0")
 			break ; // case empty line
-		// pos++;
 		if (header == "Host")
 		{
 			headers.insert(pair<string, string>("Host", get_str_before_char(request, ":", &pos)));
@@ -40,7 +39,6 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 		}
 		headers.insert(pair<string, string>(header, get_str_before_char(request, "\n", &pos)));
 	}
-	// pos += 2;
 	pos++;
 	if (headers.count("Content-Length"))
 		headers.insert(pair<string, string>("Body", &request[pos]));

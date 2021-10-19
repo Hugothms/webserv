@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 14:37:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 14:58:01 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,9 +179,10 @@ Webserv::Webserv(string config_file)
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
 					{
+						DEBUG("\t\t" << tmp);
 						server.push_back_error_page(tmp);
-						get_str_before_char(config, "\n", &pos);
 					}
+					get_str_before_char(config, "\n", &pos);
 				}
 				else if (tmp == "listen")
 				{
