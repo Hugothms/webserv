@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 20:16:41 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/19 22:29:58 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
                                          
@@ -287,7 +287,6 @@ void Webserv::process(Client *client)
 		FD_CLR(client->fd, &master_set);
 		close(client->fd);
 		client->fd = -1;
-
 	}
 }
 
@@ -340,6 +339,12 @@ void	Webserv::listen()
 		{
 			if (FD_ISSET((*client)->get_fd(), &copy_set))
 				process(*client);
+			if ((*client)->get_fd() == -1)
+			{
+				delete (*client);
+				client = _clients.erase(client);
+				--client;
+			}
 		}
 	}
 }
