@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 20:13:53 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/19 22:25:44 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,16 @@ Client* Server::handle_new_conn()
 	Client *new_client = new Client();
 
 	new_client->set_fd(accept(listen_fd, new_client->get_sockaddr(), new_client->get_addr_len()));
-	// new_client.set_server(this);
 
 	inet_ntop(AF_INET, &(new_client->client_addr.sin_addr), new_client->client_ipv4_str, INET_ADDRSTRLEN);
+
 	printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
 	DEBUG("Client created !");
-	// clients.push_back(new_client);
 	return (new_client);
 }
 
 int Server::setup(void)
 {
-	//Create IPV4 TCP socket;
 	listen_fd = socket(AF_INET, SOCK_STREAM , 0);
 	if (listen_fd == -1)
 	{
@@ -51,10 +49,13 @@ int Server::setup(void)
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
+	
 	DEBUG("TRYING TO BIND TO " << host << "\n");
-	if (host == "localhost")
-		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));		
-	inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
+	
+	if (host.compare("localhost") == 0)
+		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
+	else
+		inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
@@ -64,12 +65,8 @@ int Server::setup(void)
 		perror("bind");
 		exit(1);
 	}
-
 	listen(listen_fd, SOMAXCONN);
-
-	// _setup = true;
-	// high_fd = listen_fd;
-	return listen_fd;
+	return (listen_fd);
 }
 
 list<Location>	Server::get_locations()
