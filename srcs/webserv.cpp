@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 16:45:53 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 20:09:42 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
                                          
@@ -241,7 +241,10 @@ Webserv::Webserv(string config_file)
 			DEBUG("}");
 			if (conflict_host_port_server_names(server->get_host(), server->get_port(), server->get_server_names()))
 				err_parsing_config("host:port/server_names conflict with another server");
+		
 			_servers.push_back(server);
+			DEBUG(_servers.back()->get_root() << "\n");
+			DEBUG(_servers.back()->get_host() << "\n");
 		}
 	}
 	DEBUG("******* CONFIG PARSED ******\n");
@@ -268,6 +271,12 @@ void Webserv::process(Client *client)
 {
 	char buff[BUFFER_SIZE];
 	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
+	
+
+	Server *target = 0;
+
+	
+
 	if (len > 0)
 	{
 		Request req(buff,len, client->fd);
