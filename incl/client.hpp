@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 15:32:50 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 18:40:13 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,26 @@ class Client
 		Client()
 		{
 			// memset(&client_addr, 0, sizeof(client_addr));
+			fd = 0;
 			client_len = sizeof(client_addr);
 			server = 0;
 		}
+		void set_fd(int nfd)
+		{
+			fd = nfd;
+		}
+		int get_fd(void)
+		{
+			return fd;
+		}
 		~Client()
 		{
-			// if (fd > 0)
-			// 	close(fd);
+			DEBUG("KILLING CLIENT\n");
+			if (fd > 0)
+			{
+				close(fd);
+				DEBUG("KILLED\n");
+			}
 		}
 		void set_server(Server *s)
 		{
