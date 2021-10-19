@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/17 20:30:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 15:56:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ list<string>	Server::get_server_names()
 	return server_names;
 }
 
-list<string>	Server::get_error_pages()
+map<int, string>	Server::get_error_pages()
 {
 	return error_pages;
 }
@@ -132,14 +132,14 @@ void	Server::push_back_server_name(string server_name)
 	this->server_names.push_back(server_name);
 }
 
-void	Server::set_error_pages(list<string> error_pages)
+void	Server::set_error_pages(map<int, string> error_pages)
 {
 	this->error_pages = error_pages;
 }
 
-void	Server::push_back_error_page(string error_page)
+void	Server::push_back_error_page(pair<int, string> error_page)
 {
-	this->error_pages.push_back(error_page);
+	this->error_pages.insert(error_page);
 }
 
 void	Server::set_host(string host)
