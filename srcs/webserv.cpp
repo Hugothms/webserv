@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 14:58:01 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 16:16:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,12 +175,20 @@ Webserv::Webserv(string config_file)
 					}
 					get_str_before_char(config, "\n", &pos);
 				}
-				else if (tmp == "error_pages")
+				else if (tmp == "error_page")
 				{
-					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
+					if ((tmp = get_str_before_char(config, " =;", &pos)).length())
 					{
-						DEBUG("\t\t" << tmp);
-						server.push_back_error_page(tmp);
+						int error = atoi(tmp.c_str());
+						if (config[pos] != '=')
+							err_parsing_config("error page not well configured");
+						else
+							pos++;
+						if ((tmp = get_str_before_char(config, ";", &pos)).length())
+						{
+							server.push_back_error_page(pair<int, string>(error, tmp));
+							DEBUG("\t\t" << error << " = " << tmp);
+						}
 					}
 					get_str_before_char(config, "\n", &pos);
 				}
@@ -263,7 +271,7 @@ void Webserv::process(Client *client)
 	if (len > 0)
 	{
 		Request req(buff,len, client->fd);
-		req.respond();
+		req.respond(client->server);
 		// req.respond(*client->server);
 	}
 	else
@@ -331,10 +339,10 @@ void	Webserv::listen()
 		{
 			if (FD_ISSET(server->get_listen_fd(), &copy_set))
 			{
-				Client tmp = server->handle_new_conn();
-				// tmp.set_server(&(*server));
-				_clients.push_back(tmp);
-				FD_SET(tmp.fd, &master_set);
+				Client client = server->handle_new_conn();
+				client.set_server(&(*server));
+				_clients.push_back(client);
+				FD_SET(client.fd, &master_set);
 			}
 		}
 		// Loop through all the clients and find out if they sent
