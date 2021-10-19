@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 18:51:07 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/19 18:52:59 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
                                          
@@ -322,7 +322,7 @@ void	Webserv::listen()
 			{
 
 				Client *client = (*server)->handle_new_conn();
-				client->set_server(*server);
+				client->push_back_server(*server);
 
 				// Client client = server->handle_new_conn();
 				// client.push_back_server(&(*server));
