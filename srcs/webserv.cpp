@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 20:09:42 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/19 20:16:41 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
                                          
@@ -274,8 +274,6 @@ void Webserv::process(Client *client)
 	
 
 	Server *target = 0;
-
-	
 
 	if (len > 0)
 	{
