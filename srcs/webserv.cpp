@@ -6,10 +6,10 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 18:43:14 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/19 16:45:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
+                                         
 #include "webserv.hpp"
 
 bool Webserv::is_a_valid_server(list<Location>	locations,
@@ -271,7 +271,7 @@ void Webserv::process(Client *client)
 	if (len > 0)
 	{
 		Request req(buff,len, client->fd);
-		req.respond(client->server);
+		req.respond(client->servers);
 		// req.respond(*client->server);
 	}
 	else
@@ -320,8 +320,10 @@ void	Webserv::listen()
 		{
 			if (FD_ISSET((*server)->get_listen_fd(), &copy_set))
 			{
+
 				Client *client = (*server)->handle_new_conn();
-				client->set_server(*server);
+				client->push_back_server(*server);
+
 				_clients.push_back(client);
 				FD_SET(client->get_fd(), &master_set);
 			}
