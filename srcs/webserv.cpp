@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 16:16:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 16:45:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,7 +271,7 @@ void Webserv::process(Client *client)
 	if (len > 0)
 	{
 		Request req(buff,len, client->fd);
-		req.respond(client->server);
+		req.respond(client->servers);
 		// req.respond(*client->server);
 	}
 	else
@@ -340,7 +340,7 @@ void	Webserv::listen()
 			if (FD_ISSET(server->get_listen_fd(), &copy_set))
 			{
 				Client client = server->handle_new_conn();
-				client.set_server(&(*server));
+				client.push_back_server(&(*server));
 				_clients.push_back(client);
 				FD_SET(client.fd, &master_set);
 			}

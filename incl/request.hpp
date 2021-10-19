@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 15:39:26 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 16:45:27 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,9 @@ class Request
 		// Request();
 		Request(char *buffer, size_t size, int socket=80);
 		~Request();
-		void respond(void);
-		void respond(Server *server);
+		Server	*select_server(list<Server*> servers);
+		void	respond(void);
+		void	respond(list<Server*> servers);
 };
 
 #endif
