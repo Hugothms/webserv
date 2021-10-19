@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 16:48:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 17:09:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,8 @@ string gettype(string str)
 		ret = "image/jpg";
 	else if (str.find(".png", str.length() - 4) != string::npos)
 		ret = "image/x-icon";
+	else if (str.find(".ico", str.length() - 4) != string::npos)
+		ret = "image/x-icon";
 	else if (str.find(".css", str.length() - 4) != string::npos)
 		ret = "text/css";
 	else if (str.find(".js", str.length() - 3) != string::npos)
@@ -222,7 +224,8 @@ void Request::respond(list<Server*> servers)
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	if (filepath != "/favicon.ico")
+	DEBUG(gettype(filepath));
+	if (gettype(filepath) == "text/html")
 	{
 		DEBUG("********* RESPONSE *********");
 		DEBUG(response.str());
