@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 16:40:16 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 20:13:53 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ int Server::setup(void)
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
-	inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
+	DEBUG("TRYING TO BIND TO " << host << "\n");
+	if (host == "localhost")
+		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));		
+	inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
