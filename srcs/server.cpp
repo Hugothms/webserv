@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 15:56:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 18:42:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,22 @@ Server::Server()
 
 Server::~Server()
 {
+	DEBUG("KILLING SERVER\n");
 	close(listen_fd);
+	DEBUG("KILLED\n");
 }
 
-Client Server::handle_new_conn()
+Client* Server::handle_new_conn()
 {
 	DEBUG("New conn incomming, need to accept it !");
 
-	Client new_client;
+	Client *new_client = new Client();
 
-	new_client.fd = accept(listen_fd, new_client.get_sockaddr(), new_client.get_addr_len());
+	new_client->set_fd(accept(listen_fd, new_client->get_sockaddr(), new_client->get_addr_len()));
 	// new_client.set_server(this);
 
-	inet_ntop(AF_INET, &(new_client.client_addr.sin_addr), new_client.client_ipv4_str, INET_ADDRSTRLEN);
-	printf("Incoming connection from %s:%d.\n", new_client.v4str(), new_client.client_addr.sin_port);
+	inet_ntop(AF_INET, &(new_client->client_addr.sin_addr), new_client->client_ipv4_str, INET_ADDRSTRLEN);
+	printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
 	DEBUG("Client created !");
 	// clients.push_back(new_client);
 	return (new_client);
@@ -52,7 +54,7 @@ int Server::setup(void)
 	inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
 
 	int opt = 1;
-	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
+	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
 	if (bind(listen_fd, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
 	{

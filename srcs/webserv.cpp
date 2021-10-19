@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 16:16:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 18:43:14 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ bool Webserv::is_a_valid_server(list<Location>	locations,
 
 bool Webserv::conflict_host_port_server_names(string new_host, unsigned int new_port, list<string> new_server_names)
 {
-	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
+	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		if (server->get_host() == new_host && server->get_port() == new_port)
+		if ((*server)->get_host() == new_host && (*server)->get_port() == new_port)
 		{
-			list<string> x = server->get_server_names();
+			list<string> x = (*server)->get_server_names();
 			for (list<string>::iterator server_name = x.begin(); server_name != x.end(); server_name++)
 			{
 				for (list<string>::iterator new_server_name = new_server_names.begin(); new_server_name != new_server_names.end(); new_server_name++)
@@ -137,7 +137,7 @@ Webserv::Webserv(string config_file)
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
-		_servers.push_back(Server());
+		_servers.push_back(new Server());
 		return ;
 	}
 	const string config = get_content_file(config_file);
@@ -151,7 +151,7 @@ Webserv::Webserv(string config_file)
 		if (tmp == "server")
 		{
 			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!");
-			Server server;
+			Server *server = new Server();
 			tmp = get_str_before_char(config, "\n", &pos);
 			if (tmp != "{")
 				continue ;
@@ -165,13 +165,13 @@ Webserv::Webserv(string config_file)
 						get_str_before_char(config, "\n", &pos);
 				}
 				else if (tmp == "location")
-					server.push_back_location(parse_location(config, &pos));
+					server->push_back_location(parse_location(config, &pos));
 				else if (tmp == "server_name")
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
 					{
 						DEBUG("\t\t" << tmp);
-						server.push_back_server_name(tmp);
+						server->push_back_server_name(tmp);
 					}
 					get_str_before_char(config, "\n", &pos);
 				}
@@ -186,7 +186,7 @@ Webserv::Webserv(string config_file)
 							pos++;
 						if ((tmp = get_str_before_char(config, ";", &pos)).length())
 						{
-							server.push_back_error_page(pair<int, string>(error, tmp));
+							server->push_back_error_page(pair<int, string>(error, tmp));
 							DEBUG("\t\t" << error << " = " << tmp);
 						}
 					}
@@ -196,11 +196,11 @@ Webserv::Webserv(string config_file)
 				{
 					if (!(tmp = get_str_before_char(config, ":", &pos)).length())
 						tmp = "localhost";
-					server.set_host(tmp);
+					server->set_host(tmp);
 					DEBUG("\t\thost: " << tmp);
 					if (is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
-						server.set_port(atoi(tmp.c_str()));
+						server->set_port(atoi(tmp.c_str()));
 						DEBUG("\t\tport: " << atoi(tmp.c_str()));
 					}
 					get_str_before_char(config, "\n", &pos);
@@ -209,28 +209,28 @@ Webserv::Webserv(string config_file)
 				{
 					if((tmp = get_str_before_char(config, ";", &pos)).length())
 					{
-						server.set_root(tmp);
+						server->set_root(tmp);
 						get_str_before_char(config, "\n", &pos);
 					}
-					DEBUG("\t\t" << server.get_root());
+					DEBUG("\t\t" << server->get_root());
 				}
 				else if (tmp == "index")
 				{
 					if((tmp = get_str_before_char(config, ";", &pos)).length())
 					{
-						server.set_index(tmp);
+						server->set_index(tmp);
 						get_str_before_char(config, "\n", &pos);
 					}
-					DEBUG("\t\t" << server.get_index());
+					DEBUG("\t\t" << server->get_index());
 				}
 				else if (tmp == "max_client_body_size")
 				{
 					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
 						get_str_before_char(config, "\n", &pos);
-						server.set_max_client_body_size(atoi(tmp.c_str()));
+						server->set_max_client_body_size(atoi(tmp.c_str()));
 					}
-					DEBUG("\t\t" << server.get_max_client_body_size());
+					DEBUG("\t\t" << server->get_max_client_body_size());
 				}
 				else if (tmp.length())
 				{
@@ -239,7 +239,7 @@ Webserv::Webserv(string config_file)
 				}
 			}
 			DEBUG("}");
-			if (conflict_host_port_server_names(server.get_host(), server.get_port(), server.get_server_names()))
+			if (conflict_host_port_server_names(server->get_host(), server->get_port(), server->get_server_names()))
 				err_parsing_config("host:port/server_names conflict with another server");
 			_servers.push_back(server);
 		}
@@ -253,10 +253,10 @@ void Webserv::build()
 	high_fd = 0;
 	int fd;
 	//Setup the set for listening on different ports/IP
-	for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
+	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		DEBUG("Run for " << server->get_host() << ":" << server->get_port());
-		fd = server->setup();
+		DEBUG("Run for " << (*server)->get_host() << ":" << (*server)->get_port());
+		fd = (*server)->setup();
 		FD_SET(fd, &master_set);
 		if (fd > high_fd)
 			high_fd = fd;
@@ -291,26 +291,6 @@ void 	Webserv::sig()
 
 void	Webserv::listen()
 {
-	// struct sigaction	sig;
-
-	// sig.sa_sigaction = Webserv::stop;
-	// sig.sa_flags = SA_SIGINFO;
-
-
-	// if (sigaction(SIGINT, &sig, NULL) != 0)
-	// {
-	// 	return (write (1, "signal error\n", 13));
-	// }
-	// if (sigaction(SIGINT, &sig, NULL) != 0)
-	// {
-	// 	return (write (1, "signal error\n", 13));
-	// }
-
-
-
-
-
-
 
 	build();
 	copy_set = master_set;
@@ -318,14 +298,15 @@ void	Webserv::listen()
 	{
 		// DEBUG("START");
 		//This can be optimized
-		for (list<Client>::iterator i = _clients.begin(); i != _clients.end(); i++)
+		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (i->fd > high_fd)
-				high_fd = i->fd;
-			else if (i->fd == -1)
+			int tmpfd = (*client)->get_fd();
+			if (tmpfd > high_fd)
+				high_fd = tmpfd;
+			else if (tmpfd == -1)
 			{
-				i = _clients.erase(i);
-				if (i == _clients.end())
+				client = _clients.erase(client);
+				if (client == _clients.end())
 					break;
 			}
 		}
@@ -335,35 +316,48 @@ void	Webserv::listen()
 		select(high_fd + 1, &copy_set, NULL, NULL, 0);
 
 		// Accept new clients on each server
-		for (list<Server>::iterator server = _servers.begin(); server != _servers.end(); server++)
+		for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 		{
-			if (FD_ISSET(server->get_listen_fd(), &copy_set))
+			if (FD_ISSET((*server)->get_listen_fd(), &copy_set))
 			{
-				Client client = server->handle_new_conn();
-				client.set_server(&(*server));
+				Client *client = (*server)->handle_new_conn();
+				client->set_server(*server);
 				_clients.push_back(client);
-				FD_SET(client.fd, &master_set);
+				FD_SET(client->get_fd(), &master_set);
 			}
 		}
 		// Loop through all the clients and find out if they sent
-		for (list<Client>::iterator client = _clients.begin(); client != _clients.end(); client++)
+		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (FD_ISSET(client->fd, &copy_set))
-				process(&(*client));
+			if (FD_ISSET((*client)->get_fd(), &copy_set))
+				process(*client);
 		}
 	}
 }
 
 void Webserv::stop()
 {
-
+	DEBUG("CLOSING");
+	for (list<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++)
+	{
+		delete (*it);
+		*it = 0;	
+	}
+	for (list<Client *>::iterator it = _clients.begin(); it != _clients.end(); it++)
+	{
+		delete (*it);
+		*it = 0;	
+	}
+	// _servers.clear();
+	// _clients.clear();
+	DEBUG("CLOSED");
 }
 
 Webserv::~Webserv()
 {
-	for (list<Client>::iterator it = _clients.begin(); it != _clients.end(); it++)
-	{
-		close(it->fd);
-	}
-	_servers.erase(_servers.begin(), _servers.end());
+	// for (list<Client*>::iterator it = _clients.begin(); it != _clients.end(); it++)
+	// {
+	// 	close(it->fd);
+	// }
+	// _servers.erase(_servers.begin(), _servers.end());
 }
