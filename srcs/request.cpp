@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 16:22:09 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 16:48:52 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,8 +190,14 @@ string gettype(string str)
 // 	}
 // }
 
-void Request::respond(Server *server)
+Server *Request::select_server(list<Server*> servers)
 {
+	return servers.front();
+}
+
+void Request::respond(list<Server*> servers)
+{
+	Server *server = select_server(servers);
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
 		target += server->get_index();
@@ -216,8 +222,11 @@ void Request::respond(Server *server)
 	response << "\nConnection: Closed\n\n";
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	DEBUG("********* RESPONSE *********");
-	DEBUG(response.str());
+	if (filepath != "/favicon.ico")
+	{
+		DEBUG("********* RESPONSE *********");
+		DEBUG(response.str());
+	}
 	myfile.close();
 }
 
