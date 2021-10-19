@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/18 16:49:21 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/19 14:37:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ Location	parse_location(string config, size_t *pos)
 			if (config[*pos-1] != '\n')
 				get_str_before_char(config, "\n", pos);
 		}
-		else
+		else if (tmp.length())
 			DEBUG("\t\t" << tmp << ":");
 		if (tmp == "HTTP_methods")
 		{
@@ -121,9 +121,9 @@ Location	parse_location(string config, size_t *pos)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else
+		else if (tmp.length())
 		{
-			// DEBUG("\t\t***OTHER_LOCATION: " << str);
+			// DEBUG("\t\t***OTHER_LOCATION: " << tmp);
 			get_str_before_char(config, ";\n", pos);
 		}
 		// sleep(1);
@@ -147,29 +147,26 @@ Webserv::Webserv(string config_file)
 	size_t pos = 0;
 	while (config[pos]) // config parsing loop
 	{
-		string str = get_str_before_char(config, " \n", &pos);
-		if (str == "server")
+		string tmp = get_str_before_char(config, " \n", &pos);
+		if (tmp == "server")
 		{
 			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!");
 			Server server;
-			str = get_str_before_char(config, "\n", &pos);
-			if (str != "{")
+			tmp = get_str_before_char(config, "\n", &pos);
+			if (tmp != "{")
 				continue ;
 			DEBUG("{");
-			while (config[pos] && (str = get_str_before_char(config, " ;\n", &pos)) != "}")
+			while (config[pos] && (tmp = get_str_before_char(config, " ;\n", &pos)) != "}")
 			{
-				string		tmp;
-				Location	location;
-
-				DEBUG("\t" << str);
-				if (str.empty() || (str[0] == '#'))
+				DEBUG("\t" << tmp);
+				if (tmp.empty() || (tmp[0] == '#'))
 				{
-					if (str[1])
+					if (tmp[1])
 						get_str_before_char(config, "\n", &pos);
 				}
-				else if (str == "location")
+				else if (tmp == "location")
 					server.push_back_location(parse_location(config, &pos));
-				else if (str == "server_name")
+				else if (tmp == "server_name")
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
 					{
@@ -178,7 +175,7 @@ Webserv::Webserv(string config_file)
 					}
 					get_str_before_char(config, "\n", &pos);
 				}
-				else if (str == "error_pages")
+				else if (tmp == "error_pages")
 				{
 					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
 					{
@@ -186,7 +183,7 @@ Webserv::Webserv(string config_file)
 						get_str_before_char(config, "\n", &pos);
 					}
 				}
-				else if (str == "listen")
+				else if (tmp == "listen")
 				{
 					if (!(tmp = get_str_before_char(config, ":", &pos)).length())
 						tmp = "localhost";
@@ -199,7 +196,7 @@ Webserv::Webserv(string config_file)
 					}
 					get_str_before_char(config, "\n", &pos);
 				}
-				else if (str == "root")
+				else if (tmp == "root")
 				{
 					if((tmp = get_str_before_char(config, ";", &pos)).length())
 					{
@@ -208,7 +205,7 @@ Webserv::Webserv(string config_file)
 					}
 					DEBUG("\t\t" << server.get_root());
 				}
-				else if (str == "index")
+				else if (tmp == "index")
 				{
 					if((tmp = get_str_before_char(config, ";", &pos)).length())
 					{
@@ -217,7 +214,7 @@ Webserv::Webserv(string config_file)
 					}
 					DEBUG("\t\t" << server.get_index());
 				}
-				else if (str == "max_client_body_size")
+				else if (tmp == "max_client_body_size")
 				{
 					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
@@ -226,10 +223,10 @@ Webserv::Webserv(string config_file)
 					}
 					DEBUG("\t\t" << server.get_max_client_body_size());
 				}
-				else
+				else if (tmp.length())
 				{
-					DEBUG("\t\t***OTHER: " << str);
-					str = get_str_before_char(config, "\n", &pos);
+					DEBUG("\t\t***OTHER: " << tmp);
+					tmp = get_str_before_char(config, "\n", &pos);
 				}
 			}
 			DEBUG("}");
