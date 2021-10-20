@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 08:05:27 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/20 12:36:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ class Server
 	public:
 		Server();
 		~Server();
-		void s_listen();
+		void	s_listen();
 
- 		Client *handle_new_conn();
-		int setup();
+ 		Client	*handle_new_conn();
+		int		setup();
 
 		// Client handle_new_conn(int listen_sock);
 		// int port;
@@ -65,17 +65,17 @@ class Server
 		unsigned int		get_max_client_body_size();
 		int 				get_listen_fd(void);
 
-		void set_locations(list<Location> locations);
-		void push_back_location(Location location);
-		void set_server_names(list<string> server_names);
-		void push_back_server_name(string server_name);
-		void set_error_pages(map<int, string> error_pages);
-		void push_back_error_page(pair<int, string> error_page);
-		void set_host(string host);
-		void set_port(unsigned int port);
-		void set_root(string root);
-		void set_index(string index);
-		void set_max_client_body_size(unsigned int max_client_body_size);
+		void set_locations(const list<Location> locations);
+		void push_back_location(const Location location);
+		void set_server_names(const list<string> server_names);
+		void push_back_server_name(const string server_name);
+		void set_error_pages(const map<int, string> error_pages);
+		void push_back_error_page(const pair<int, string> error_page);
+		void set_host(const string host);
+		void set_port(const unsigned int port);
+		void set_root(const string root);
+		void set_index(const string index);
+		void set_max_client_body_size(const unsigned int max_client_body_size);
 };
 
 #endif

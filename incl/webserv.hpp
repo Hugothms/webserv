@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 18:27:21 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/20 12:42:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,22 @@ class Webserv
 		int 			high_fd;
 
 	public:
-		Webserv(string config_file = "");
+		Webserv(const string config_file = "");
 		~Webserv();
 		void	listen();
 		static void sig();
 		void 	stop();
 		void 	build(void);
 		void 	process(Client *client);
-		bool	is_a_valid_server(	list<Location>	locations,
-							list<string>	server_names,
-							list<string>	error_pages,
-							string			host,
-							unsigned int 	port,
-							string			root,
-							string			index,
-							unsigned int	max_client_body_size);
-		bool	conflict_host_port_server_names(string host, unsigned int port, list<string> server_names);
+		bool	is_a_valid_server(	const list<Location>	locations,
+									const list<string>		server_names,
+									const map<int, string>	error_pages,
+									const string			host,
+									const unsigned int 		port,
+									const string			root,
+									const string			index,
+									const unsigned int		max_client_body_size);
+		bool	conflict_host_port_server_names(const string host, const unsigned int port, const list<string> server_names);
 
 };
 

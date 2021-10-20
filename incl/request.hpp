@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 16:45:27 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/20 12:33:22 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ class Request
 
 	public :
 		// Request();
-		Request(char *buffer, size_t size, int socket=80);
+		Request(const char *buffer, const size_t size, const int socket=80);
 		~Request();
-		Server	*select_server(list<Server*> servers);
+		Server	*select_server(const list<Server*> servers);
 		void	respond(void);
-		void	respond(list<Server*> servers);
+		void	respond(const list<Server*> servers);
 };
 
 #endif
