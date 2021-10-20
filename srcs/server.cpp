@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/19 22:25:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/20 08:18:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
-: host("localhost"), port(PORT), root("website"), index("index.html"), max_client_body_size(2048)
+: host("0.0.0.0"), port(80), root("website"), index("index.html"), max_client_body_size(2048)
 {}
 
 Server::~Server()
@@ -49,13 +49,10 @@ int Server::setup(void)
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
-	
-	DEBUG("TRYING TO BIND TO " << host << "\n");
-	
-	if (host.compare("localhost") == 0)
-		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
-	else
-		inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
+
+	DEBUG("TRYING TO BIND TO " << host << endl);
+
+	inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
