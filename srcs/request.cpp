@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 08:22:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/20 12:33:28 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 
 Request::~Request() {}
 
-Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_length(0), port(0)
+Request::Request(const char *buffer, const size_t size, const int sock)
+: socket(sock)//, content_length(0), port(0)
 {
 	size_t pos = 0;
 	string request(buffer, size);
@@ -43,7 +44,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 	if (headers.count("Content-Length"))
 		headers.insert(pair<string, string>("Body", &request[pos]));
 
-	DEBUG("* << endl***** REQUEST PARSED ******");
+	DEBUG("\n****** REQUEST PARSED ******");
 	DEBUG("type:" << type);
 	DEBUG("target:" << target);
 	DEBUG("socket:" << socket);
@@ -54,7 +55,7 @@ Request::Request(char *buffer, size_t size, int sock) : socket(sock)//, content_
 	DEBUG("****************************" << endl);
 }
 
-string getdayofweek(int day)
+string	getdayofweek(const int day)
 {
 	switch(day)
 	{
@@ -77,7 +78,7 @@ string getdayofweek(int day)
 	}
 }
 
-string getmonth(int month)
+string	getmonth(const int month)
 {
 	switch(month)
 	{
@@ -110,7 +111,7 @@ string getmonth(int month)
 	}
 }
 
-string get_time_stamp()
+string	get_time_stamp()
 {
 	time_t now = time(0);
 
@@ -136,7 +137,7 @@ string get_time_stamp()
 	return (output.str());
 }
 
-string get_type(string str)
+string	get_type(const string str)
 {
 	string ret;
 	if (str.find(".png", str.length() - 4) != string::npos)
@@ -192,12 +193,12 @@ string get_type(string str)
 // 	}
 // }
 
-Server *Request::select_server(list<Server*> servers)
+Server	*Request::select_server(const list<Server*> servers)
 {
 	return servers.front();
 }
 
-void Request::respond(list<Server*> servers)
+void	Request::respond(const list<Server*> servers)
 {
 	stringstream response;
 	Server *server = select_server(servers);
@@ -249,7 +250,7 @@ void Request::respond(list<Server*> servers)
 
 }
 
-void Request::respond()
+void	Request::respond()
 {
 	string filepath("website");
 	if (target.compare("/") == 0)

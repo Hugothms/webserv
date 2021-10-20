@@ -37,13 +37,13 @@ class Location
 		string			get_default_answer();
 		bool			get_directory_listing();
 
-		void set_HTTP_methods(list<string> HTTP_methods);
-		void push_back_HTTP_method(string HTTP_method);
-		void set_location(string location);
-		void set_HTTP_redirection(string HTTP_redirection);
-		void set_location_root(string location_root);
-		void set_default_answer(string default_answer);
-		void set_directory_listing(bool directory_listing);
+		void set_HTTP_methods(const list<string> HTTP_methods);
+		void push_back_HTTP_method(const string HTTP_method);
+		void set_location(const string location);
+		void set_HTTP_redirection(const string HTTP_redirection);
+		void set_location_root(const string location_root);
+		void set_default_answer(const string default_answer);
+		void set_directory_listing(const bool directory_listing);
 };
 
 #endif

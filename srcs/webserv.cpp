@@ -6,20 +6,20 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/20 08:20:14 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/20 12:42:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-bool Webserv::is_a_valid_server(list<Location>	locations,
-								list<string>	server_names,
-								list<string>	error_pages,
-								string			host,
-								unsigned int 	port,
-								string			root,
-								string			index,
-								unsigned int	max_client_body_size)
+bool Webserv::is_a_valid_server(const list<Location>	locations,
+								const list<string>		server_names,
+								const map<int, string>	error_pages,
+								const string			host,
+								const unsigned int 		port,
+								const string			root,
+								const string			index,
+								const unsigned int		max_client_body_size)
 {
 	// TODO
 	(void) host;
@@ -243,8 +243,6 @@ Webserv::Webserv(string config_file)
 				err_parsing_config("host:port/server_names conflict with another server");
 
 			_servers.push_back(server);
-			DEBUG(_servers.back()->get_root() << "\n");
-			DEBUG(_servers.back()->get_host() << "\n");
 		}
 	}
 	DEBUG("******* CONFIG PARSED ******\n");
