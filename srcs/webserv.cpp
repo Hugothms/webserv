@@ -3,13 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/19 22:29:58 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/20 08:20:14 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-                                         
+
 #include "webserv.hpp"
 
 bool Webserv::is_a_valid_server(list<Location>	locations,
@@ -195,7 +195,7 @@ Webserv::Webserv(string config_file)
 				else if (tmp == "listen")
 				{
 					if (!(tmp = get_str_before_char(config, ":", &pos)).length())
-						tmp = "localhost";
+						tmp = "0.0.0.0";
 					server->set_host(tmp);
 					DEBUG("\t\thost: " << tmp);
 					if (is_integer(tmp = get_str_before_char(config, ";", &pos)))
@@ -241,7 +241,7 @@ Webserv::Webserv(string config_file)
 			DEBUG("}");
 			if (conflict_host_port_server_names(server->get_host(), server->get_port(), server->get_server_names()))
 				err_parsing_config("host:port/server_names conflict with another server");
-		
+
 			_servers.push_back(server);
 			DEBUG(_servers.back()->get_root() << "\n");
 			DEBUG(_servers.back()->get_host() << "\n");
@@ -271,7 +271,6 @@ void Webserv::process(Client *client)
 {
 	char buff[BUFFER_SIZE];
 	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
-	
 
 	Server *target = 0;
 
@@ -352,15 +351,15 @@ void	Webserv::listen()
 void Webserv::stop()
 {
 	DEBUG("CLOSING");
-	for (list<Server *>::iterator it = _servers.begin(); it != _servers.end(); it++)
+	for (list<Server *>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		delete (*it);
-		*it = 0;	
+		delete (*server);
+		*server = 0;
 	}
-	for (list<Client *>::iterator it = _clients.begin(); it != _clients.end(); it++)
+	for (list<Client *>::iterator client = _clients.begin(); client != _clients.end(); client++)
 	{
-		delete (*it);
-		*it = 0;	
+		delete (*client);
+		*client = 0;
 	}
 	// _servers.clear();
 	// _clients.clear();
