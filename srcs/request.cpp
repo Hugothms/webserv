@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 12:33:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/21 16:21:19 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Request::~Request() {}
 Request::Request(const char *buffer, const size_t size, const int sock)
 : socket(sock)//, content_length(0), port(0)
 {
+	DEBUG(buffer);
 	size_t pos = 0;
 	string request(buffer, size);
 	type = get_str_before_char(request, " ", &pos);
@@ -34,8 +35,17 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			break ; // case empty line
 		if (header == "Host")
 		{
-			headers.insert(pair<string, string>("Host", get_str_before_char(request, ":", &pos)));
-			headers.insert(pair<string, string>("Port", get_str_before_char(request, "\n", &pos)));
+			string tmp;
+			if ((tmp = get_str_before_char(request, ":", &pos)).length())
+			{
+				headers.insert(pair<string, string>("Host", tmp));
+				headers.insert(pair<string, string>("Port", get_str_before_char(request, "\n", &pos)));
+			}
+			else
+			{
+				headers.insert(pair<string, string>("Host", get_str_before_char(request, "\n", &pos)));
+				headers.insert(pair<string, string>("Port", "80"));
+			}
 			continue;
 		}
 		headers.insert(pair<string, string>(header, get_str_before_char(request, "\n", &pos)));
@@ -195,6 +205,7 @@ string	get_type(const string str)
 
 Server	*Request::select_server(const list<Server*> servers)
 {
+	//TODO : select server
 	return servers.front();
 }
 
