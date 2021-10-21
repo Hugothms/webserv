@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/20 12:42:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/21 17:31:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,8 @@ Webserv::Webserv(string config_file)
 				{
 					if (!(tmp = get_str_before_char(config, ":", &pos)).length())
 						tmp = "0.0.0.0";
+					if (tmp == "localhost")
+						tmp = "127.0.0.1";
 					server->set_host(tmp);
 					DEBUG("\t\thost: " << tmp);
 					if (is_integer(tmp = get_str_before_char(config, ";", &pos)))

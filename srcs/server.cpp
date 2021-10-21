@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 12:38:14 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/21 17:24:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ Server::Server()
 
 Server::~Server()
 {
-	DEBUG("KILLING SERVER\n");
+	DEBUG("KILLING SERVER");
 	close(listen_fd);
-	DEBUG("KILLED\n");
+	DEBUG("KILLED");
 }
 
 Client* Server::handle_new_conn()
@@ -50,7 +50,7 @@ int Server::setup(void)
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
 
-	DEBUG("TRYING TO BIND TO " << host << endl);
+	DEBUG("TRYING TO BIND TO " << host);
 
 	inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
 

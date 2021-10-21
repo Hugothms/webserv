@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/21 16:21:19 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/21 17:26:54 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,17 +35,19 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			break ; // case empty line
 		if (header == "Host")
 		{
-			string tmp;
-			if ((tmp = get_str_before_char(request, ":", &pos)).length())
-			{
-				headers.insert(pair<string, string>("Host", tmp));
-				headers.insert(pair<string, string>("Port", get_str_before_char(request, "\n", &pos)));
-			}
+			string host;
+			string port;
+			if ((host = get_str_before_char(request, ":", &pos)).length())
+				port = get_str_before_char(request, "\n", &pos);
 			else
 			{
-				headers.insert(pair<string, string>("Host", get_str_before_char(request, "\n", &pos)));
-				headers.insert(pair<string, string>("Port", "80"));
+				host =get_str_before_char(request, "\n", &pos);
+				port = "80";
 			}
+			if (host == "localhost")
+				host = "127.0.0.1";
+			headers.insert(pair<string, string>("Host", host));
+			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
 		headers.insert(pair<string, string>(header, get_str_before_char(request, "\n", &pos)));
@@ -169,50 +171,42 @@ string	get_type(const string str)
 	return ret;
 }
 
-// void Request::respond(Server server)
-// {
-// 	if (type == "GET")
-// 	{
-// 		if (target == "/")
-// 			target = "/index.html";
-// 		if (target == "/favicon.ico")
-// 			target = "";
-// 		string filename = "./" + server.get_root() + target;
-// 		string type = get_type(filename);
-// 		DEBUG("filename:" << filename);
-// 		DEBUG("type:" << type);
-// 		ifstream file(filename, ios::in | ios::binary);
-// 		if (file)
-// 		{
-// 			file.seekg(0, file.end);
-// 			int length = file.tellg();
-// 			file.seekg(0, file.beg);
-// 			char *data = new char[length];
-// 			file.read(data, length);
-// 			file.close();
-// 			string response = "HTTP/1.1 200 OKD << endlate: " + get_time_stamp() + "C << endlontent-Type: " + type + "C << endlontent-Length: " + to_string(length) + "" << endl;
-// 			send(socket, response.c_str(), response.length(), 0);
-// 			send(socket, data, length, 0);
-// 			delete[] data;
-// 		}
-// 		else
-// 		{
-// 			string response = "HTTP/1.1 404 Not FoundD << endlate: " + get_time_stamp() + "C << endlontent-Type: text/plainC << endlontent-Length: 134 << endl04 Not Found";
-// 			send(socket, response.c_str(), response.length(), 0);
-// 		}
-// 	}
-// }
-
-Server	*Request::select_server(const list<Server*> servers)
+//TODO : select server
+Server	*Request::select_server(const list<Server*> servers, string host, unsigned int port)
 {
-	//TODO : select server
-	return servers.front();
+	DEBUG("Looking for " << host << ":" << port);
+	list<Server*>::const_iterator it = servers.begin();
+	while (it != servers.end())
+	{
+		DEBUG((*it)->get_host() << ":" << (*it)->get_port());
+		if (((*it)->get_host() == "0.0.0.0" || (*it)->get_host() == host) && (*it)->get_port() == port)
+			return (*it);
+		it++;
+	}
+	return NULL;
+}
+
+void 	not_found(int socket)
+{
+	stringstream response;
+	response << "HTTP/1.1 404 Not Found" << endl;
+	response << "Date: " << get_time_stamp() << endl;
+	response << "Server: my_httpd/1.0" << endl;
+	response << "Content-Type: text/html" << endl;
+	response << "Content-Length: " << 48 << endl;
+	response << endl;
+	response << "<html><body><h1>404 Not Found</h1></body></html>";
+	DEBUG("\n********* RESPONSE *********");
+	DEBUG(response.str());
+	send(socket, response.str().c_str(), response.str().length(), 0);
 }
 
 void	Request::respond(const list<Server*> servers)
 {
 	stringstream response;
-	Server *server = select_server(servers);
+	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
+	if (!server)
+		return (not_found(socket));
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
 		target += server->get_index();
@@ -229,22 +223,22 @@ void	Request::respond(const list<Server*> servers)
 		}
 		else
 			response << "HTTP/1.1 200 OK" << endl;
-		string file((istreambuf_iterator<char>(myfile)),
-					istreambuf_iterator<char>());
+		string file((istreambuf_iterator<char>(myfile)), istreambuf_iterator<char>());
 		response << "Server: webserv/0.01" << endl;
 		response << "Date: " << get_time_stamp() << endl;
 		response << "Content-Type: " << get_type(target) << endl;
 		response << "Content-Length: " << file.length() << endl;
-		response << "Connection: Closed" << endl << endl;
+		response << "Connection: Cosed" << endl << endl;
 		response << file;
 		send(socket, response.str().c_str(), response.str().length(), 0);
 		if (get_type(filepath) == "text/html")
 		{
-			DEBUG("********* RESPONSE *********");
+			DEBUG("\n********* RESPONSE *********");
 			DEBUG(response.str());
 		}
 		myfile.close();
 	}
+
 	else if (type == "POST")
 	{
 
@@ -280,13 +274,13 @@ void	Request::respond()
 	string file((istreambuf_iterator<char>(myfile)),
                  istreambuf_iterator<char>());
 	response << "Server: webserv/0.01" << endl;
-	response << "Date: " << get_time_stamp();
-	response << "Content-Type: " << get_type(target);
-	response << "C << endlontent-Length: " << file.length();
-	response << "C << endlonnection: Closed" << endl;
+	response << "Date: " << get_time_stamp() << endl;
+	response << "Content-Type: " << get_type(target) << endl;
+	response << "Content-Length: " << file.length() << endl;
+	response << "Connection: Cosed" << endl;
 	response << file;
 	send(socket, response.str().c_str(), response.str().length(), 0);
-	// DEBUG("********* RESPONSE *********");
+	// DEBUG("\n********* RESPONSE *********");
 	// DEBUG(response.str());
 	myfile.close();
 }
