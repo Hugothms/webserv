@@ -1,6 +1,6 @@
 In this config file we should be able to
 	choose the port and host of each "server"
-	<!-- setup the server_names or not -->
+	setup the server_names or not
 	The first server for a host:port will be the default for this host:port (meaning it will answer to all request that doesn’t belong to an other server)
 	setup default error pages
 	limit client body size
