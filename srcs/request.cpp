@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/21 17:26:54 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/22 14:39:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,16 +186,16 @@ Server	*Request::select_server(const list<Server*> servers, string host, unsigne
 	return NULL;
 }
 
-void 	not_found(int socket)
+void 	send_socket(int socket, string message, string page)
 {
 	stringstream response;
-	response << "HTTP/1.1 404 Not Found" << endl;
+	response << "HTTP/1.1 " << message << endl;
 	response << "Date: " << get_time_stamp() << endl;
 	response << "Server: my_httpd/1.0" << endl;
 	response << "Content-Type: text/html" << endl;
-	response << "Content-Length: " << 48 << endl;
+	response << "Content-Length: " << page.length() << endl;
 	response << endl;
-	response << "<html><body><h1>404 Not Found</h1></body></html>";
+	response << page;
 	DEBUG("\n********* RESPONSE *********");
 	DEBUG(response.str());
 	send(socket, response.str().c_str(), response.str().length(), 0);
@@ -206,13 +206,24 @@ void	Request::respond(const list<Server*> servers)
 	stringstream response;
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (not_found(socket));
+		return (send_socket(socket, "404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
 		target += server->get_index();
 	filepath += target;
 	if (type == "GET")
 	{
+		bool method_found = false;
+		list<Location> locations = server->get_locations();
+		for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+		{
+			list<string> HTTP_methods = location->get_HTTP_methods();
+			for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+				if (*HTTP_method == "GET")
+					method_found = true;
+		}
+		if (!method_found)
+			return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
 		ifstream myfile(filepath.c_str(), ofstream::in);
 		if (!myfile)
 		{
