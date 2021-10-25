@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/21 17:31:33 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/25 22:57:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,7 +252,8 @@ Webserv::Webserv(string config_file)
 
 void Webserv::build()
 {
-	FD_ZERO(&master_set);
+	FD_ZERO(&listen_set);
+	FD_ZERO(&write_set);
 	high_fd = 0;
 	int fd;
 	//Setup the set for listening on different ports/IP
@@ -260,7 +261,7 @@ void Webserv::build()
 	{
 		DEBUG("Run for " << (*server)->get_host() << ":" << (*server)->get_port());
 		fd = (*server)->setup();
-		FD_SET(fd, &master_set);
+		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
 		DEBUG("Port added to the FD_SET !\n");
@@ -270,8 +271,19 @@ void Webserv::build()
 void Webserv::process(Client *client)
 {
 	char buff[BUFFER_SIZE];
-	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
+	
 
+
+	int done = 0;
+
+	// if (client->get_rec_buff() = 0)
+
+	client->receive();
+
+	return ;
+
+	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
+	DEBUG("LEN IS " << len);
 	Server *target = 0;
 
 	if (len > 0)
@@ -283,8 +295,9 @@ void Webserv::process(Client *client)
 	else
 	{
 		DEBUG("Client is done\n");
-		FD_CLR(client->fd, &master_set);
-		close(client->fd);
+		FD_CLR(client->get_fd(), &listen_set);
+		FD_CLR(client->get_fd(), &write_set);
+		close(client->get_fd());
 		client->fd = -1;
 	}
 }
@@ -298,7 +311,9 @@ void	Webserv::listen()
 {
 
 	build();
-	copy_set = master_set;
+	// lcopy_set = listen_set;
+	// wcopy_set = write_set;
+	
 	while (true)
 	{
 		// DEBUG("START");
@@ -316,27 +331,30 @@ void	Webserv::listen()
 			}
 		}
 
-		copy_set = master_set;
+		lcopy_set = listen_set;
+		wcopy_set = write_set;
 
-		select(high_fd + 1, &copy_set, NULL, NULL, 0);
-
+		// DEBUG("ENTREING SELECT\n");
+		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
+		// DEBUG("RETURNING SELECT\n");
 		// Accept new clients on each server
 		for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 		{
-			if (FD_ISSET((*server)->get_listen_fd(), &copy_set))
+			if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
 			{
 
 				Client *client = (*server)->handle_new_conn();
 				client->push_back_server(*server);
 
 				_clients.push_back(client);
-				FD_SET(client->get_fd(), &master_set);
+				FD_SET(client->get_fd(), &listen_set);
+				FD_SET(client->get_fd(), &write_set);
 			}
 		}
 		// Loop through all the clients and find out if they sent
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (FD_ISSET((*client)->get_fd(), &copy_set))
+			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
 				process(*client);
 			if ((*client)->get_fd() == -1)
 			{
