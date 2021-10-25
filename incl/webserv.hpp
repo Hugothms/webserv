@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 12:42:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/25 21:17:45 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,12 @@ class Webserv
 		list<Server*>	_servers;
 		list<Client*>	_clients;
 
-		fd_set 			master_set;
-		fd_set 			copy_set;
+		fd_set 			listen_set;
+		fd_set 			lcopy_set;
+
+		fd_set 			write_set;
+		fd_set 			wcopy_set;
+
 		int 			high_fd;
 
 	public:
