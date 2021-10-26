@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 13:46:47 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:19:10 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,36 +30,46 @@ class Client
 		bool 				_done_recv;
 		bool 				_done_send;
 
+		string				rec_buffer;
+		string				send_buffer;
 
 	public :
 		
-		//TODEL
-		int rcount;
+	
 
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
 		list<Server*>		servers;
-
-
-		string				rec_buffer;
-		string				write_buffer;
-			
+		
 		int 				write_pos;
 		bool 				read_done;
 
-		// string 				buffer;
 		
 
 		Client();
-		~Client();
 		Client(Server *srv);
-		int receive();
+
+		~Client();
+
+		
 		void set_fd(const int nfd);
 		int get_fd(void) const;
+
+		int receive();
+
 		bool is_done_recv(void) const;
 		void set_done_recv(bool t);
 		void clear_recv(void);
+		string *get_rec_buff(void);
+
+
+		// int send();
+
+		bool is_done_send(void) const;
+		void set_done_send(bool t);
+		void clear_send(void);
+		string *get_send_buff(void);
 
 		void push_back_server(Server *s);
 		
