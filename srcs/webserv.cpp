@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/26 13:30:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 13:49:33 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,8 +380,11 @@ void	Webserv::listen()
 			{
 				Request req((*client)->rec_buffer.c_str(),(*client)->rec_buffer.length(), (*client)->get_fd());
 				req.respond((*client)->servers);
+				
 				(*client)->set_done_recv(0);
 				(*client)->clear_recv();
+				
+
 				// DEBUG("RESPOND TIME\n");
 			}
 			
