@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 13:36:08 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 13:45:29 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,30 +66,23 @@ int Client::receive()
 	char buff[tmps];			
 	int len;
 
-	// do 
-	// {
 		len = recv(_fd, buff, tmps, 0);
-		DEBUG("LEN IS " << len);
 		if (len < tmps && len > 0)
 		{
 			rec_buffer += string(buff, len);
 			_done_recv = 1;
 			DEBUG("FINISHED READING\n");
-			rcount = 0;
 			return 1;
 		}
 		else if (len == tmps)
 		{
 			rec_buffer += string(buff, len);
 			_done_recv = 0;
-			DEBUG("STILL MORE TO READ" << rcount++ << "\n");	
 			return 0;
 		}
 		else
 		{
 			_done_recv = 1;
-			// close(_fd);
-			// _fd = -1;
 			DEBUG("FINISHED READING OR DC\n");	
 			return -1;
 		}
@@ -105,8 +98,8 @@ int Client::receive()
 	// 	}
 	// }
 	// while (len == tmps);
-	if (_done_recv)
-		DEBUG("FULLY RECEIVED\n" << rec_buffer);
+	// if (_done_recv)
+	// 	DEBUG("FULLY RECEIVED\n" << rec_buffer);
 	return (1);
 }
 

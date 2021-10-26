@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 13:34:59 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 13:46:47 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <sys/socket.h>
 
 
-#define tmps 10
+#define tmps 1024
 
 
 class Client
@@ -43,9 +43,7 @@ class Client
 
 
 		string				rec_buffer;
-		char*				write_buffer;
-		
-		int 				blen;
+		string				write_buffer;
 			
 		int 				write_pos;
 		bool 				read_done;
