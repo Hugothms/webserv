@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/25 22:57:20 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 13:30:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,41 +270,57 @@ void Webserv::build()
 
 void Webserv::process(Client *client)
 {
-	char buff[BUFFER_SIZE];
 	
-
-
-	int done = 0;
-
-	// if (client->get_rec_buff() = 0)
-
-	client->receive();
-
-	return ;
-
-	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
-	DEBUG("LEN IS " << len);
-	Server *target = 0;
-
-	if (len > 0)
+	if (!client->is_done_recv())
 	{
-		Request req(buff,len, client->fd);
-		req.respond(client->servers);
-		// req.respond(*client->server);
+		client->receive();	
 	}
 	else
 	{
-		DEBUG("Client is done\n");
-		FD_CLR(client->get_fd(), &listen_set);
-		FD_CLR(client->get_fd(), &write_set);
-		close(client->get_fd());
-		client->fd = -1;
+		DEBUG("RESPONDING\n");
+		Request req(client->rec_buffer.c_str(),client->rec_buffer.size(), client->get_fd());
+		req.respond(client->servers);
+		// DEBUG("WE DONE BUD\n");
+		// write(2, client->rec_buffer.c_str(),client->rec_buffer.size() );
+		// DEBUG(client->rec_buffer);
 	}
+	
+
+	// if (client->receive())
+	// {
+	// 	Request req(client->rec_buffer.c_str(),client->rec_buffer.length(), client->get_fd());
+	// 	req.respond(client->servers);
+	// }
+	// else
+	// {
+	// 	DEBUG("Client is done\n");
+	// 	FD_CLR(client->get_fd(), &listen_set);
+	// 	FD_CLR(client->get_fd(), &write_set);
+	// 	close(client->get_fd());
+	// 	client->set_fd(-1);
+	// }
 }
 
 void 	Webserv::sig()
 {
 	return ;
+}
+
+void Webserv::accept_new_conn(void)
+{
+	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
+		{
+			if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
+			{
+				Client *client = new Client(*server);
+
+				client->push_back_server(*server);
+
+				_clients.push_back(client);
+				FD_SET(client->get_fd(), &listen_set);
+				FD_SET(client->get_fd(), &write_set);
+			}
+		}
 }
 
 void	Webserv::listen()
@@ -334,28 +350,41 @@ void	Webserv::listen()
 		lcopy_set = listen_set;
 		wcopy_set = write_set;
 
+
+
+
 		// DEBUG("ENTREING SELECT\n");
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		// DEBUG("RETURNING SELECT\n");
+
 		// Accept new clients on each server
-		for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
-		{
-			if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
-			{
+		accept_new_conn();
+		
 
-				Client *client = (*server)->handle_new_conn();
-				client->push_back_server(*server);
-
-				_clients.push_back(client);
-				FD_SET(client->get_fd(), &listen_set);
-				FD_SET(client->get_fd(), &write_set);
-			}
-		}
 		// Loop through all the clients and find out if they sent
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
-				process(*client);
+			{
+				//Case where there is stuff to read
+				if ((*client)->receive() == -1)
+				{
+					close((*client)->get_fd());
+					FD_CLR((*client)->get_fd(), &listen_set);
+					FD_CLR((*client)->get_fd(), &write_set);
+					(*client)->set_fd(-1);
+				}
+				// process(*client);
+			}
+			else if ((*client)->is_done_recv() && (*client)->get_fd() != -1)
+			{
+				Request req((*client)->rec_buffer.c_str(),(*client)->rec_buffer.length(), (*client)->get_fd());
+				req.respond((*client)->servers);
+				(*client)->set_done_recv(0);
+				(*client)->clear_recv();
+				// DEBUG("RESPOND TIME\n");
+			}
+			
 			if ((*client)->get_fd() == -1)
 			{
 				delete (*client);

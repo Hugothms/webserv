@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/21 17:24:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/26 12:24:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,20 @@ Server::~Server()
 	DEBUG("KILLED");
 }
 
-Client* Server::handle_new_conn()
-{
-	DEBUG("New conn incomming, need to accept it !");
+// Client* Server::handle_new_conn()
+// {
+// 	DEBUG("New conn incomming, need to accept it !");
 
-	Client *new_client = new Client();
+// 	Client *new_client = new Client();
 
-	new_client->set_fd(accept(listen_fd, new_client->get_sockaddr(), new_client->get_addr_len()));
+// 	new_client->set_fd(accept(listen_fd, new_client->get_sockaddr(), new_client->get_addr_len()));
 
-	inet_ntop(AF_INET, &(new_client->client_addr.sin_addr), new_client->client_ipv4_str, INET_ADDRSTRLEN);
+// 	inet_ntop(AF_INET, &(new_client->client_addr.sin_addr), new_client->client_ipv4_str, INET_ADDRSTRLEN);
 
-	printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
-	DEBUG("Client created !");
-	return (new_client);
-}
+// 	printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
+// 	DEBUG("Client created !");
+// 	return (new_client);
+// }
 
 int Server::setup(void)
 {

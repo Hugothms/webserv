@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/25 21:17:45 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 13:20:45 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 # include "includes.hpp"
 # include "server.hpp"
+# include "client.hpp"
 
 class Server;
 
@@ -37,6 +38,7 @@ class Webserv
 		Webserv(const string config_file = "");
 		~Webserv();
 		void	listen();
+		void 	accept_new_conn(void);
 		static void sig();
 		void 	stop();
 		void 	build(void);
