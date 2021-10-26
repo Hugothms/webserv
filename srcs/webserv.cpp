@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/26 14:13:06 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:00:12 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,16 +378,15 @@ void	Webserv::listen()
 			}
 			else if ((*client)->is_done_recv() && (*client)->get_fd() != -1)
 			{
-				if ((*client)->get_send_buff()->empty())
+				if ((*client)->send_rdy == 0)
 				{
-					
+					Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
+					(*client)->set_response(req.respond((*client)->servers));
 				}
-
-				Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
-				req.respond((*client)->servers);
-					
-				(*client)->set_done_recv(0);
-				(*client)->clear_recv();
+				else
+				{
+					(*client)->send();
+				}		
 				
 
 				// DEBUG("RESPOND TIME\n");

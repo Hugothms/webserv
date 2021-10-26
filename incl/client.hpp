@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 14:19:10 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:55:45 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,15 @@ class Client
 		bool 				_done_recv;
 		bool 				_done_send;
 
+
+
 		string				rec_buffer;
 		string				send_buffer;
 
 	public :
 		
-	
-
+		int send_offset;
+		bool 				send_rdy;
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
@@ -62,8 +64,9 @@ class Client
 		void set_done_recv(bool t);
 		void clear_recv(void);
 		string *get_rec_buff(void);
+		void set_response(string str);
 
-
+		int send();
 		// int send();
 
 		bool is_done_send(void) const;

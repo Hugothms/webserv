@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/22 14:39:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/26 14:52:37 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ Server	*Request::select_server(const list<Server*> servers, string host, unsigne
 	return NULL;
 }
 
-void 	send_socket(int socket, string message, string page)
+string 	send_socket(int socket, string message, string page)
 {
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
@@ -198,10 +198,12 @@ void 	send_socket(int socket, string message, string page)
 	response << page;
 	DEBUG("\n********* RESPONSE *********");
 	DEBUG(response.str());
-	send(socket, response.str().c_str(), response.str().length(), 0);
+	return (response.str());
+	// cl->set_response(&(response.str()));
+	// send(socket, response.str().c_str(), response.str().length(), 0);
 }
 
-void	Request::respond(const list<Server*> servers)
+string	Request::respond(const list<Server*> servers)
 {
 	stringstream response;
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
@@ -241,13 +243,16 @@ void	Request::respond(const list<Server*> servers)
 		response << "Content-Length: " << file.length() << endl;
 		response << "Connection: Cosed" << endl << endl;
 		response << file;
-		send(socket, response.str().c_str(), response.str().length(), 0);
+
+		// send(socket, response.str().c_str(), response.str().length(), 0);
+		// cl->set_response(&(response.str()));
 		if (get_type(filepath) == "text/html")
 		{
 			DEBUG("\n********* RESPONSE *********");
 			DEBUG(response.str());
 		}
 		myfile.close();
+		return (response.str());
 	}
 
 	else if (type == "POST")
@@ -266,7 +271,7 @@ void	Request::respond(const list<Server*> servers)
 
 }
 
-void	Request::respond()
+string	Request::respond()
 {
 	string filepath("website");
 	if (target.compare("/") == 0)
@@ -290,8 +295,10 @@ void	Request::respond()
 	response << "Content-Length: " << file.length() << endl;
 	response << "Connection: Cosed" << endl;
 	response << file;
-	send(socket, response.str().c_str(), response.str().length(), 0);
+	// cl->set_response(&(response.str()));
+	// send(socket, response.str().c_str(), response.str().length(), 0);
 	// DEBUG("\n********* RESPONSE *********");
 	// DEBUG(response.str());
 	myfile.close();
+	return response.str();
 }
