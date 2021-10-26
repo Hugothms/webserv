@@ -6,12 +6,11 @@
 
 ## Assigned tasks:
 
-
 	Enzo:
 		- Select, non blocking networking : OK
 		- Port management : WIP
 
 	Hugo:
 		- HTTP 1.1 Compliant : What is it, and do it
-		- Parsing of HTTP requests
+		- Parsing HTTP requests
 		- Config file : Define available options, parse the file and apply changes
