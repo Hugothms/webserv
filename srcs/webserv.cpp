@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/21 17:31:33 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/26 16:27:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ Webserv::Webserv(string config_file)
 		string tmp = get_str_before_char(config, " \n", &pos);
 		if (tmp == "server")
 		{
-			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!");
+			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!!");
 			Server *server = new Server();
 			tmp = get_str_before_char(config, "\n", &pos);
 			if (tmp != "{")
@@ -247,7 +247,7 @@ Webserv::Webserv(string config_file)
 			_servers.push_back(server);
 		}
 	}
-	DEBUG("******* CONFIG PARSED ******\n");
+	DEBUG("!!!!!!! CONFIG PARSED !!!!!!\n");
 }
 
 void Webserv::build()
@@ -271,8 +271,7 @@ void Webserv::process(Client *client)
 {
 	char buff[BUFFER_SIZE];
 	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
-
-	Server *target = 0;
+	buff[len] = '\0';
 
 	if (len > 0)
 	{
