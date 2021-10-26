@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/21 16:27:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/26 14:51:08 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "includes.hpp"
 # include "server.hpp"
+
 
 class Server;
 
@@ -59,8 +60,8 @@ class Request
 		Request(const char *buffer, const size_t size, const int socket=80);
 		~Request();
 		Server	*select_server(const list<Server*> servers, string host, unsigned int port);
-		void	respond(void);
-		void	respond(const list<Server*> servers);
+		string	respond(void);
+		string	respond(const list<Server*> servers);
 };
 
 #endif

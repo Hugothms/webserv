@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 14:19:16 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 15:02:52 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ Client::Client()
 	_fd = 0;
 	_done_recv = 0;
 	_done_send = 0;
+	send_rdy = 0;
 	client_len = sizeof(client_addr);
 }
 
@@ -24,6 +25,7 @@ Client::Client(Server *srv)
 {
 	_done_recv = 0;
 	_done_send = 0;
+	send_rdy = 0;
 	client_len = sizeof(client_addr);
 
 	
@@ -62,6 +64,13 @@ string* Client::get_rec_buff(void)
 string* Client::get_send_buff(void)
 {
 	return (&send_buffer);
+}
+
+void Client::set_response(string str)
+{
+	send_buffer = str;
+	send_rdy = 1;
+	send_offset = 0;
 }
 
 void Client::clear_recv(void)
@@ -111,6 +120,22 @@ int Client::receive()
 	return (1);
 }
 
+int Client::send()
+{
+	int actual = tmps;
+	if (send_offset + actual > send_buffer.size())
+	{
+		actual = send_buffer.size() - send_offset;
+	}
+	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
+	send_offset += actual;
+	if (send_offset == send_buffer.size())
+	{
+		_done_send = 1;
+		send_buffer.clear();
+		send_rdy = 0;
+	}
+}
 
 void Client::set_fd(const int fd)
 {
