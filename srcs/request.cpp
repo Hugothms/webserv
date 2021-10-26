@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/22 14:39:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/26 16:29:16 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Request::~Request() {}
 Request::Request(const char *buffer, const size_t size, const int sock)
 : socket(sock)//, content_length(0), port(0)
 {
+	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
 	size_t pos = 0;
 	string request(buffer, size);
@@ -55,16 +56,14 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 	pos++;
 	if (headers.count("Content-Length"))
 		headers.insert(pair<string, string>("Body", &request[pos]));
-
-	DEBUG("\n****** REQUEST PARSED ******");
+	DEBUG("****** PARSING REQUEST ******");
 	DEBUG("type:" << type);
 	DEBUG("target:" << target);
 	DEBUG("socket:" << socket);
-	DEBUG("----------------------------");
 	map<string, string>::iterator it = headers.begin();
 	while(it != headers.end())
 		DEBUG(it->first << ": " << it++->second);
-	DEBUG("****************************" << endl);
+	DEBUG("****** REQUEST PARSED *******");
 }
 
 string	getdayofweek(const int day)
@@ -186,70 +185,67 @@ Server	*Request::select_server(const list<Server*> servers, string host, unsigne
 	return NULL;
 }
 
-void 	send_socket(int socket, string message, string page)
+void 	send_socket(int socket, string message, string page, string type = "text/html")
 {
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
 	response << "Date: " << get_time_stamp() << endl;
-	response << "Server: my_httpd/1.0" << endl;
-	response << "Content-Type: text/html" << endl;
+	response << "Server: webserv/0.01" << endl;
+	response << "Content-Type: " << type << endl;
 	response << "Content-Length: " << page.length() << endl;
+	response << "Connection: Cosed" << endl;
 	response << endl;
 	response << page;
-	DEBUG("\n********* RESPONSE *********");
-	DEBUG(response.str());
+	if (type == "text/html")
+	{
+		DEBUG("********* RESPONSE *********");
+		DEBUG(response.str());
+	}
 	send(socket, response.str().c_str(), response.str().length(), 0);
+}
+
+bool Request::method_allowed(Server *server, string method)
+{
+	list<Location> locations = server->get_locations();
+	if (locations.size() == 0)
+		return false;
+	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	{
+		list<string> HTTP_methods = location->get_HTTP_methods();
+		for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+			if (*HTTP_method == method)
+				return true;
+	}
+	return false;
 }
 
 void	Request::respond(const list<Server*> servers)
 {
-	stringstream response;
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_socket(socket, "404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
+	string message;
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
 		target += server->get_index();
 	filepath += target;
 	if (type == "GET")
 	{
-		bool method_found = false;
-		list<Location> locations = server->get_locations();
-		for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
-		{
-			list<string> HTTP_methods = location->get_HTTP_methods();
-			for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
-				if (*HTTP_method == "GET")
-					method_found = true;
-		}
-		if (!method_found)
+		if (!method_allowed(server, "GET"))
 			return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
-		ifstream myfile(filepath.c_str(), ofstream::in);
-		if (!myfile)
+		ifstream file(filepath.c_str(), ofstream::in);
+		if (!file)
 		{
-			myfile.close();
-			string target = server->get_root() + server->get_error_pages()[404];
-			myfile.open(target.c_str(), ofstream::in);
-			response << "HTTP/1.1 404 Not Found" << endl;
+			file.close();
+			file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
+			message = "404 Not Found";
 		}
 		else
-			response << "HTTP/1.1 200 OK" << endl;
-		string file((istreambuf_iterator<char>(myfile)), istreambuf_iterator<char>());
-		response << "Server: webserv/0.01" << endl;
-		response << "Date: " << get_time_stamp() << endl;
-		response << "Content-Type: " << get_type(target) << endl;
-		response << "Content-Length: " << file.length() << endl;
-		response << "Connection: Cosed" << endl << endl;
-		response << file;
-		send(socket, response.str().c_str(), response.str().length(), 0);
-		if (get_type(filepath) == "text/html")
-		{
-			DEBUG("\n********* RESPONSE *********");
-			DEBUG(response.str());
-		}
-		myfile.close();
+			message = "200 OK";
+		string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+		send_socket(socket, message, page, get_type(filepath));
+		file.close();
 	}
-
 	else if (type == "POST")
 	{
 
@@ -259,39 +255,6 @@ void	Request::respond(const list<Server*> servers)
 
 	}
 	else
-	{
-		response << "HTTP/1.1 403 Forbidden" << endl;
-
-	}
-
-}
-
-void	Request::respond()
-{
-	string filepath("website");
-	if (target.compare("/") == 0)
-		target += "index.html";
-	filepath += target;
-	ifstream myfile(filepath.c_str(), ofstream::in);
-	stringstream response;
-	if (!myfile)
-	{
-		myfile.close();
-		myfile.open("website/404.html", ofstream::in);
-		response << "HTTP/1.1 404 Not Found" << endl;
-	}
-	else
-		response << "HTTP/1.1 200 OK" << endl;
-	string file((istreambuf_iterator<char>(myfile)),
-                 istreambuf_iterator<char>());
-	response << "Server: webserv/0.01" << endl;
-	response << "Date: " << get_time_stamp() << endl;
-	response << "Content-Type: " << get_type(target) << endl;
-	response << "Content-Length: " << file.length() << endl;
-	response << "Connection: Cosed" << endl;
-	response << file;
-	send(socket, response.str().c_str(), response.str().length(), 0);
-	// DEBUG("\n********* RESPONSE *********");
-	// DEBUG(response.str());
-	myfile.close();
+		return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
+	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 }
