@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 13:29:50 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 13:36:08 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Client::Client()
 	_done_recv = 0;
 	_done_send = 0;
 	client_len = sizeof(client_addr);
+	rcount = 0;
 }
 
 Client::Client(Server *srv)
@@ -25,6 +26,7 @@ Client::Client(Server *srv)
 	_done_recv = 0;
 	_done_send = 0;
 	client_len = sizeof(client_addr);
+	rcount = 0;
 	
 	DEBUG("New conn incomming, need to accept it !");
 
@@ -73,13 +75,14 @@ int Client::receive()
 			rec_buffer += string(buff, len);
 			_done_recv = 1;
 			DEBUG("FINISHED READING\n");
+			rcount = 0;
 			return 1;
 		}
 		else if (len == tmps)
 		{
 			rec_buffer += string(buff, len);
 			_done_recv = 0;
-			DEBUG("STILL MORE TO READ\n");	
+			DEBUG("STILL MORE TO READ" << rcount++ << "\n");	
 			return 0;
 		}
 		else
