@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 13:45:29 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:19:16 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ Client::Client()
 	_done_recv = 0;
 	_done_send = 0;
 	client_len = sizeof(client_addr);
-	rcount = 0;
 }
 
 Client::Client(Server *srv)
@@ -26,11 +25,11 @@ Client::Client(Server *srv)
 	_done_recv = 0;
 	_done_send = 0;
 	client_len = sizeof(client_addr);
-	rcount = 0;
+
 	
 	DEBUG("New conn incomming, need to accept it !");
 
-	_fd = (accept(srv->get_listen_fd(), get_sockaddr(), get_addr_len()));
+	_fd = accept(srv->get_listen_fd(), get_sockaddr(), get_addr_len());
 
 	// inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
 
@@ -55,10 +54,33 @@ void Client::set_done_recv(bool t)
 {
 	_done_recv = t;
 }
+string* Client::get_rec_buff(void)
+{
+	return (&rec_buffer);
+}
+
+string* Client::get_send_buff(void)
+{
+	return (&send_buffer);
+}
 
 void Client::clear_recv(void)
 {
 	rec_buffer.clear();
+}
+
+bool Client::is_done_send(void) const
+{
+	return _done_send;
+}
+void Client::set_done_send(bool t)
+{
+	_done_send = t;
+}
+
+void Client::clear_send(void)
+{
+	send_buffer.clear();
 }
 
 int Client::receive()
@@ -86,20 +108,6 @@ int Client::receive()
 			DEBUG("FINISHED READING OR DC\n");	
 			return -1;
 		}
-	// 	if (len > 0)
-	// 	{
-	// 		rec_buffer += string(buff, len);
-	// 		_done_recv = 0;
-	// 	}
-	// 	else
-	// 	{
-	// 		_done_recv = 1;
-	// 		return (0);
-	// 	}
-	// }
-	// while (len == tmps);
-	// if (_done_recv)
-	// 	DEBUG("FULLY RECEIVED\n" << rec_buffer);
 	return (1);
 }
 

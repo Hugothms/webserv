@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/26 13:49:33 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 14:13:06 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ void Webserv::process(Client *client)
 	else
 	{
 		DEBUG("RESPONDING\n");
-		Request req(client->rec_buffer.c_str(),client->rec_buffer.size(), client->get_fd());
+		Request req(client->get_rec_buff()->c_str(),client->get_rec_buff()->size(), client->get_fd());
 		req.respond(client->servers);
 		// DEBUG("WE DONE BUD\n");
 		// write(2, client->rec_buffer.c_str(),client->rec_buffer.size() );
@@ -378,9 +378,14 @@ void	Webserv::listen()
 			}
 			else if ((*client)->is_done_recv() && (*client)->get_fd() != -1)
 			{
-				Request req((*client)->rec_buffer.c_str(),(*client)->rec_buffer.length(), (*client)->get_fd());
+				if ((*client)->get_send_buff()->empty())
+				{
+					
+				}
+
+				Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
 				req.respond((*client)->servers);
-				
+					
 				(*client)->set_done_recv(0);
 				(*client)->clear_recv();
 				
