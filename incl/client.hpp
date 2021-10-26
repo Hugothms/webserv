@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 13:30:00 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/26 13:34:59 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <sys/socket.h>
 
 
-#define tmps 50
+#define tmps 10
 
 
 class Client
@@ -30,8 +30,12 @@ class Client
 		bool 				_done_recv;
 		bool 				_done_send;
 
+
 	public :
 		
+		//TODEL
+		int rcount;
+
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
