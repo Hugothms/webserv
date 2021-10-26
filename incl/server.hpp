@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 12:36:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/26 12:29:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
+# ifndef SERVER_HPP
 # define SERVER_HPP
 
 # include "includes.hpp"
 # include "location.hpp"
 # include "request.hpp"
-# include "client.hpp"
-# include "webserv.hpp"
+// # include "client.hpp"
+// # include "webserv.hpp"
 
 # define V4 AF_INET
 # define V6 AF_INET6
@@ -49,7 +49,7 @@ class Server
 		~Server();
 		void	s_listen();
 
- 		Client	*handle_new_conn();
+ 		// Client	*handle_new_conn();
 		int		setup();
 
 		// Client handle_new_conn(int listen_sock);

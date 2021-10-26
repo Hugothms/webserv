@@ -1,3 +1,4 @@
+
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
@@ -24,10 +25,11 @@ INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 				$(INCLUDE)/webserv.hpp
 
 SRC			=	main.cpp			\
-				location.cpp			\
+				location.cpp		\
 				request.cpp			\
 				server.cpp			\
 				utils_parsing.cpp	\
+				client.cpp			\
 				webserv.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
