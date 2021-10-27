@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/27 13:13:40 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:37:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,7 +252,8 @@ Webserv::Webserv(string config_file)
 
 void Webserv::build()
 {
-	FD_ZERO(&master_set);
+	FD_ZERO(&listen_set);
+	FD_ZERO(&write_set);
 	high_fd = 0;
 	int fd;
 	//Setup the set for listening on different ports/IP
@@ -260,7 +261,7 @@ void Webserv::build()
 	{
 		DEBUG("Run for " << (*server)->get_host() << ":" << (*server)->get_port());
 		fd = (*server)->setup();
-		FD_SET(fd, &master_set);
+		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
 		DEBUG("Port added to the FD_SET !\n");
@@ -269,23 +270,35 @@ void Webserv::build()
 
 void Webserv::process(Client *client)
 {
-	char buff[BUFFER_SIZE];
-	int len = recv(client->fd, buff, BUFFER_SIZE, 0);
-	buff[len] = '\0';
 
-	if (len > 0)
+	if (!client->is_done_recv())
 	{
-		Request req(buff,len, client->fd);
-		req.respond(client->servers);
-		// req.respond(*client->server);
+		client->receive();
 	}
 	else
 	{
-		DEBUG("Client is done");
-		FD_CLR(client->fd, &master_set);
-		close(client->fd);
-		client->fd = -1;
+		DEBUG("RESPONDING\n");
+		Request req(client->get_rec_buff()->c_str(),client->get_rec_buff()->size(), client->get_fd());
+		req.respond(client->servers);
+		// DEBUG("WE DONE BUD\n");
+		// write(2, client->rec_buffer.c_str(),client->rec_buffer.size() );
+		// DEBUG(client->rec_buffer);
 	}
+
+
+	// if (client->receive())
+	// {
+	// 	Request req(client->rec_buffer.c_str(),client->rec_buffer.length(), client->get_fd());
+	// 	req.respond(client->servers);
+	// }
+	// else
+	// {
+	// 	DEBUG("Client is done\n");
+	// 	FD_CLR(client->get_fd(), &listen_set);
+	// 	FD_CLR(client->get_fd(), &write_set);
+	// 	close(client->get_fd());
+	// 	client->set_fd(-1);
+	// }
 }
 
 void 	Webserv::sig()
@@ -293,11 +306,30 @@ void 	Webserv::sig()
 	return ;
 }
 
+void Webserv::accept_new_conn(void)
+{
+	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
+		{
+			if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
+			{
+				Client *client = new Client(*server);
+
+				client->push_back_server(*server);
+
+				_clients.push_back(client);
+				FD_SET(client->get_fd(), &listen_set);
+				FD_SET(client->get_fd(), &write_set);
+			}
+		}
+}
+
 void	Webserv::listen()
 {
 
 	build();
-	copy_set = master_set;
+	// lcopy_set = listen_set;
+	// wcopy_set = write_set;
+
 	while (true)
 	{
 		// DEBUG("START");
@@ -315,28 +347,49 @@ void	Webserv::listen()
 			}
 		}
 
-		copy_set = master_set;
+		lcopy_set = listen_set;
+		wcopy_set = write_set;
 
-		select(high_fd + 1, &copy_set, NULL, NULL, 0);
+
+
+
+		// DEBUG("ENTREING SELECT\n");
+		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
+		// DEBUG("RETURNING SELECT\n");
 
 		// Accept new clients on each server
-		for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
-		{
-			if (FD_ISSET((*server)->get_listen_fd(), &copy_set))
-			{
+		accept_new_conn();
 
-				Client *client = (*server)->handle_new_conn();
-				client->push_back_server(*server);
 
-				_clients.push_back(client);
-				FD_SET(client->get_fd(), &master_set);
-			}
-		}
 		// Loop through all the clients and find out if they sent
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (FD_ISSET((*client)->get_fd(), &copy_set))
-				process(*client);
+			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
+			{
+				//Case where there is stuff to read
+				if ((*client)->receive() == -1)
+				{
+					close((*client)->get_fd());
+					FD_CLR((*client)->get_fd(), &listen_set);
+					FD_CLR((*client)->get_fd(), &write_set);
+					(*client)->set_fd(-1);
+				}
+				// process(*client);
+			}
+			else if ((*client)->is_done_recv() && (*client)->get_fd() != -1)
+			{
+				if ((*client)->send_rdy == 0)
+				{
+					Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
+					(*client)->set_response(req.respond((*client)->servers));
+				}
+				else
+				{
+					(*client)->send();
+				}
+				// DEBUG("RESPOND TIME\n");
+			}
+
 			if ((*client)->get_fd() == -1)
 			{
 				delete (*client);
