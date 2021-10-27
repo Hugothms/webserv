@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/27 13:37:03 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 14:24:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 bool Webserv::is_a_valid_server(const list<Location>	locations,
 								const list<string>		server_names,
 								const map<int, string>	error_pages,
-								const string			host,
+								const string			ip_address,
 								const unsigned int 		port,
 								const string			root,
 								const string			index,
 								const unsigned int		max_client_body_size)
 {
 	// TODO
-	(void) host;
+	(void) ip_address;
 	(void) port;
 	(void) root;
 	(void) index;
@@ -32,11 +32,11 @@ bool Webserv::is_a_valid_server(const list<Location>	locations,
 	return true;
 }
 
-bool Webserv::conflict_host_port_server_names(string new_host, unsigned int new_port, list<string> new_server_names)
+bool Webserv::conflict_ip_address_port_server_names(string new_ip_address, unsigned int new_port, list<string> new_server_names)
 {
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		if ((*server)->get_host() == new_host && (*server)->get_port() == new_port)
+		if ((*server)->get_ip_address() == new_ip_address && (*server)->get_port() == new_port)
 		{
 			list<string> x = (*server)->get_server_names();
 			for (list<string>::iterator server_name = x.begin(); server_name != x.end(); server_name++)
@@ -198,8 +198,8 @@ Webserv::Webserv(string config_file)
 						tmp = "0.0.0.0";
 					if (tmp == "localhost")
 						tmp = "127.0.0.1";
-					server->set_host(tmp);
-					DEBUG("\t\thost: " << tmp);
+					server->set_ip_address(tmp);
+					DEBUG("\t\tip_address: " << tmp);
 					if (is_integer(tmp = get_str_before_char(config, ";", &pos)))
 					{
 						server->set_port(atoi(tmp.c_str()));
@@ -241,8 +241,8 @@ Webserv::Webserv(string config_file)
 				}
 			}
 			DEBUG("}");
-			if (conflict_host_port_server_names(server->get_host(), server->get_port(), server->get_server_names()))
-				err_parsing_config("host:port/server_names conflict with another server");
+			if (conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
+				err_parsing_config("ip_address:port/server_names conflict with another server");
 
 			_servers.push_back(server);
 		}
@@ -259,7 +259,7 @@ void Webserv::build()
 	//Setup the set for listening on different ports/IP
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		DEBUG("Run for " << (*server)->get_host() << ":" << (*server)->get_port());
+		DEBUG("Run for " << (*server)->get_ip_address() << ":" << (*server)->get_port());
 		fd = (*server)->setup();
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)

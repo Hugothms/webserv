@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 12:29:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/10/27 14:22:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Server
 		list<Location>		locations;
 		list<string>		server_names; // "Host" header in HTTP request (domain names)
 		map<int, string>	error_pages; //
-		string				host;
+		string				ip_address;
 		unsigned int		port; // port to listen and send on ("listen" in config file)
 		string				root; // directory where the webste is
 		string				index; // file served when "/" is requested
@@ -58,7 +58,7 @@ class Server
 		list<Location>		get_locations();
 		list<string>		get_server_names();
 		map<int, string>	get_error_pages();
-		string				get_host();
+		string				get_ip_address();
 		unsigned int		get_port();
 		string				get_root();
 		string				get_index();
@@ -71,7 +71,7 @@ class Server
 		void push_back_server_name(const string server_name);
 		void set_error_pages(const map<int, string> error_pages);
 		void push_back_error_page(const pair<int, string> error_page);
-		void set_host(const string host);
+		void set_ip_address(const string ip_address);
 		void set_port(const unsigned int port);
 		void set_root(const string root);
 		void set_index(const string index);

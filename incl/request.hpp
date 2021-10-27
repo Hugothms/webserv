@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:37:01 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 14:23:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class Request
 		Request(const char *buffer, const size_t size, const int socket=80);
 		~Request();
 		bool	method_allowed(Server *server, string method);
-		Server	*select_server(const list<Server*> servers, string host, unsigned int port);
+		Server	*select_server(const list<Server*> servers, string ip_address, unsigned int port);
 		string	respond(void);
 		string	respond(const list<Server*> servers);
 };
