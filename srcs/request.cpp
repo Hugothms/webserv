@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:15:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:36:54 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ Server	*Request::select_server(const list<Server*> servers, string host, unsigne
 	return NULL;
 }
 
-void 	send_socket(int socket, string message, string page, string type = "text/html")
+string 	send_socket(int socket, string message, string page, string type = "text/html")
 {
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
@@ -199,7 +199,8 @@ void 	send_socket(int socket, string message, string page, string type = "text/h
 		DEBUG("********* RESPONSE *********");
 		DEBUG(response.str());
 	}
-	send(socket, response.str().c_str(), response.str().length(), 0);
+	// send(socket, response.str().c_str(), response.str().length(), 0);
+	return (response.str());
 }
 
 bool Request::method_allowed(Server *server, string method)
@@ -217,7 +218,7 @@ bool Request::method_allowed(Server *server, string method)
 	return false;
 }
 
-void	Request::respond(const list<Server*> servers)
+string	Request::respond(const list<Server*> servers)
 {
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
@@ -241,8 +242,8 @@ void	Request::respond(const list<Server*> servers)
 		else
 			message = "200 OK";
 		string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-		send_socket(socket, message, page, get_type(filepath));
 		file.close();
+		return(send_socket(socket, message, page, get_type(filepath)));
 	}
 	else if (type == "POST")
 	{

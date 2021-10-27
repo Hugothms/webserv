@@ -6,70 +6,87 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:14:01 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:36:57 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#ifndef CLIENT_HPP
+# ifndef CLIENT_HPP
 # define CLIENT_HPP
 
 # include "includes.hpp"
 # include "server.hpp"
+#include <sys/socket.h>
+
+
+#define tmps 1024
 
 
 class Client
 {
 	private :
+
+		int					_fd;
+		bool 				_done_recv;
+		bool 				_done_send;
+
+
+
+		string				rec_buffer;
+		string				send_buffer;
+
 	public :
-		int					fd;
+
+		int send_offset;
+		bool 				send_rdy;
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
 		list<Server*>		servers;
-		Client()
-		{
-			// memset(&client_addr, 0, sizeof(client_addr));
-			fd = 0;
-			client_len = sizeof(client_addr);
-		}
-		void set_fd(const int nfd)
-		{
-			fd = nfd;
-		}
-		int get_fd(void)
-		{
-			return fd;
-		}
-		~Client()
-		{
-			DEBUG("KILLING CLIENT");
-			if (fd > 0)
-			{
-				close(fd);
-				DEBUG("KILLED\n");
-			}
-		}
-		void push_back_server(Server *s)
-		{
-			servers.push_back(s);
-		}
-		struct sockaddr* get_sockaddr(void)
-		{
-			return (struct sockaddr*)(&client_addr);
-		}
-		socklen_t *get_addr_len(void)
-		{
-			return (&client_len);
-		}
+
+		int 				write_pos;
+		bool 				read_done;
+
+
+
+		Client();
+		Client(Server *srv);
+
+		~Client();
+
+
+		void set_fd(const int nfd);
+		int get_fd(void) const;
+
+		int receive();
+
+		bool is_done_recv(void) const;
+		void set_done_recv(bool t);
+		void clear_recv(void);
+		string *get_rec_buff(void);
+		void set_response(string str);
+
+		int send();
+		// int send();
+
+		bool is_done_send(void) const;
+		void set_done_send(bool t);
+		void clear_send(void);
+		string *get_send_buff(void);
+
+		void push_back_server(Server *s);
+
+
+		struct sockaddr* get_sockaddr(void);
+		socklen_t *get_addr_len(void);
 		char *v4str(void)
 		{
 			return client_ipv4_str;
 		}
-		void identify(void)
-		{
-			cout << client_ipv4_str <<":" <<client_addr.sin_port << endl << endl;
-		}
+		// void identify(void)
+		// {
+		// 	cout << client_ipv4_str <<":" <<client_addr.sin_port << endl << endl;
+		// }
 };
 
 #endif

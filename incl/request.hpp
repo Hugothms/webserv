@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:02:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:37:01 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "includes.hpp"
 # include "server.hpp"
+
 
 class Server;
 
@@ -59,8 +60,8 @@ class Request
 		~Request();
 		bool	method_allowed(Server *server, string method);
 		Server	*select_server(const list<Server*> servers, string host, unsigned int port);
-		void	respond(void);
-		void	respond(const list<Server*> servers);
+		string	respond(void);
+		string	respond(const list<Server*> servers);
 };
 
 #endif
