@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:36:53 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 14:22:19 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
-// : host("0.0.0.0"), port(80), root("website"), index("index.html"), max_client_body_size(2048)
+// : ip_address("0.0.0.0"), port(80), root("website"), index("index.html"), max_client_body_size(2048)
 {}
 
 Server::~Server()
@@ -50,9 +50,9 @@ int Server::setup(void)
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
 
-	DEBUG("TRYING TO BIND TO " << host);
+	DEBUG("TRYING TO BIND TO " << ip_address);
 
-	inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
+	inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
@@ -81,9 +81,9 @@ map<int, string>	Server::get_error_pages()
 	return error_pages;
 }
 
-string			Server::get_host()
+string			Server::get_ip_address()
 {
-	return host;
+	return ip_address;
 }
 
 unsigned int	Server::get_port()
@@ -141,9 +141,9 @@ void	Server::push_back_error_page(pair<int, string> error_page)
 	this->error_pages.insert(error_page);
 }
 
-void	Server::set_host(const string host)
+void	Server::set_ip_address(const string ip_address)
 {
-	this->host = host;
+	this->ip_address = ip_address;
 }
 
 void	Server::set_port(const unsigned int port)

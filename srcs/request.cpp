@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:36:54 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 14:25:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,18 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			break ; // case empty line
 		if (header == "Host")
 		{
-			string host;
+			string ip_address;
 			string port;
-			if ((host = get_str_before_char(request, ":", &pos)).length())
+			if ((ip_address = get_str_before_char(request, ":", &pos)).length())
 				port = get_str_before_char(request, "\n", &pos);
 			else
 			{
-				host = get_str_before_char(request, "\n", &pos);
+				ip_address = get_str_before_char(request, "\n", &pos);
 				port = "80";
 			}
-			// if (host == "localhost")
-			// 	host = "127.0.0.1";
-			headers.insert(pair<string, string>("Host", host));
+			// if (ip_address == "localhost")
+			// 	ip_address = "127.0.0.1";
+			headers.insert(pair<string, string>("Ip_address", ip_address));
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
@@ -169,21 +169,24 @@ string	get_type(const string str)
 }
 
 //TODO : select server
-Server	*Request::select_server(const list<Server*> servers, string host, unsigned int port)
+Server	*Request::select_server(const list<Server*> servers, string ip_address, unsigned int port)
 {
-	DEBUG("Looking for " << host << ":" << port);
-	list<Server*>::const_iterator it = servers.begin();
-	while (it != servers.end())
+	DEBUG("Looking for " << ip_address << ":" << port);
+	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
-		DEBUG((*it)->get_host() << ":" << (*it)->get_port());
-		if (((*it)->get_host() == "0.0.0.0" || (*it)->get_host() == host) && (*it)->get_port() == port)
-			return (*it);
-		it++;
+		DEBUG((*server)->get_server_names().size());
+		DEBUG((*server)->get_server_names().front());
+		for (list<string>::iterator server_name = (*server)->get_server_names().begin(); server_name != (*server)->get_server_names().end(); server_name++)
+		{
+			DEBUG(*server_name << ":" << (*server)->get_port());
+			if ((*server_name == "0.0.0.0" || *server_name == ip_address) && (*server)->get_port() == port)
+				return (*server);
+		}
 	}
 	return NULL;
 }
 
-string 	send_socket(int socket, string message, string page, string type = "text/html")
+string 	send_socket(string message, string page, string type = "text/html")
 {
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
@@ -200,6 +203,7 @@ string 	send_socket(int socket, string message, string page, string type = "text
 		DEBUG(response.str());
 	}
 	// send(socket, response.str().c_str(), response.str().length(), 0);
+	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 	return (response.str());
 }
 
@@ -220,9 +224,9 @@ bool Request::method_allowed(Server *server, string method)
 
 string	Request::respond(const list<Server*> servers)
 {
-	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
+	Server *server = select_server(servers, headers["Ip_address"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_socket(socket, "404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
+		return (send_socket("404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
 	string message;
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
@@ -231,7 +235,7 @@ string	Request::respond(const list<Server*> servers)
 	if (type == "GET")
 	{
 		if (!method_allowed(server, "GET"))
-			return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
+			return (send_socket("405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
 		ifstream file(filepath.c_str(), ofstream::in);
 		if (!file)
 		{
@@ -243,7 +247,7 @@ string	Request::respond(const list<Server*> servers)
 			message = "200 OK";
 		string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 		file.close();
-		return(send_socket(socket, message, page, get_type(filepath)));
+		return(send_socket(message, page, get_type(filepath)));
 	}
 	else if (type == "POST")
 	{
@@ -253,7 +257,6 @@ string	Request::respond(const list<Server*> servers)
 	{
 
 	}
-	else
-		return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
+	return (send_socket("405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 }
