@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/18 16:58:44 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 12:56:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ void stop(int num)
 	// {
 	// while (1)
 	// {
-	write(2,"KILLING\n",8);
+	DEBUG("KILLING");
 		// int i = 1;
 	// }
 	ptr->stop();
-	write(2,"KILLED\n",7);
+	DEBUG("KILLED");
 	// 	// DEBUG("STOPPED\n");
 	// }
 	exit(0);
