@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 12:42:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:02:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ class Webserv
 									const string			index,
 									const unsigned int		max_client_body_size);
 		bool	conflict_host_port_server_names(const string host, const unsigned int port, const list<string> server_names);
-
 };
 
 #endif
