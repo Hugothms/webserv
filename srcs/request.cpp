@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 14:25:03 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 14:27:47 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			}
 			// if (ip_address == "localhost")
 			// 	ip_address = "127.0.0.1";
-			headers.insert(pair<string, string>("Ip_address", ip_address));
+			headers.insert(pair<string, string>("IP_address", ip_address));
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
@@ -224,7 +224,7 @@ bool Request::method_allowed(Server *server, string method)
 
 string	Request::respond(const list<Server*> servers)
 {
-	Server *server = select_server(servers, headers["Ip_address"], atoi(headers["Port"].c_str()));
+	Server *server = select_server(servers, headers["IP_address"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_socket("404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
 	string message;
