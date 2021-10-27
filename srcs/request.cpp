@@ -6,14 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 16:29:16 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:02:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 #include "request.hpp"
-
-// Request::Request(){}
 
 Request::~Request() {}
 

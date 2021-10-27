@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/25 18:07:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:02:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ class Request
 		*/
 
 	public :
-		// Request();
 		Request(const char *buffer, const size_t size, const int socket=80);
 		~Request();
 		bool	method_allowed(Server *server, string method);
