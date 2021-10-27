@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+         #
+#    By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#              #
-#    Updated: 2021/10/12 23:13:43 by edal--ce         ###   ########.fr        #
+#    Updated: 2021/10/27 12:54:48 by hthomas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,10 +61,13 @@ fclean		:	clean
 				$(RM) $(NAME) $(LIB)
 
 run			:	all
-				./webserv
-
-run_config_base:	all
 				./webserv config/base.conf
+
+run_config	:	all
+				./webserv config/$(filter-out $@, $(MAKECMDGOALS)).conf
+
+%:
+	@:
 
 bonus		:	all
 
