@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:02:32 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:15:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,11 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 				port = get_str_before_char(request, "\n", &pos);
 			else
 			{
-				host =get_str_before_char(request, "\n", &pos);
+				host = get_str_before_char(request, "\n", &pos);
 				port = "80";
 			}
-			if (host == "localhost")
-				host = "127.0.0.1";
+			// if (host == "localhost")
+			// 	host = "127.0.0.1";
 			headers.insert(pair<string, string>("Host", host));
 			headers.insert(pair<string, string>("Port", port));
 			continue;

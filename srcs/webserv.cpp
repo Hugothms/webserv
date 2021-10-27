@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/26 16:27:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:13:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,7 @@ void Webserv::process(Client *client)
 	}
 	else
 	{
-		DEBUG("Client is done\n");
+		DEBUG("Client is done");
 		FD_CLR(client->fd, &master_set);
 		close(client->fd);
 		client->fd = -1;

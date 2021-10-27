@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 12:38:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/27 13:14:01 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Client
 		}
 		~Client()
 		{
-			DEBUG("KILLING CLIENT\n");
+			DEBUG("KILLING CLIENT");
 			if (fd > 0)
 			{
 				close(fd);
