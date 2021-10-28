@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/28 15:38:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 16:32:24 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,33 @@
 
 bool is_a_valid_server(Server* server)
 {
-	// TODO
-	if (server->get_ip_address() == "" || server->get_port() == 0 || server->get_root() == "" || server->get_index() == "" || server->get_max_client_body_size() == 0)
+	// TODO: determine what is mandatory for a server to exist
+	if (server->get_ip_address() == "")
+		return false;
+	if (server->get_port() == 0)
+		return false;
+	if (server->get_root() == "")
+		return false;
+	if (server->get_index() == "")
+		return false;
+	if (server->get_max_client_body_size() == 0)
+		return false;
+	if (!server->get_error_pages().size())
 		return false;
 	list<Location> locations = server->get_locations();
 	if (!locations.size())
 		return false;
 	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 	{
-		if (location->get_location() == "" || location->get_HTTP_methods().size() == 0 || location->get_HTTP_redirection() == "" || location->get_location_root() == "")
+		if (location->get_location() == "")
+			return false;
+		if (location->get_HTTP_methods().size() == 0)
+			return false;
+		if (location->get_HTTP_redirection() == "")
+			return false;
+		if (location->get_location_root() == "")
 			return false;
 	}
-	if (!server->get_error_pages().size())
-		return false;
 	return true;
 }
 
@@ -63,6 +77,7 @@ Location	parse_location(string config, size_t *pos)
 
 	tmp = get_str_before_char(config, " ", pos);
 	DEBUG("\t" << tmp << "\n\t{");
+	location.set_location(tmp);
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		err_parsing_config("expecting '{' after 'server'");
 	while ((tmp = get_str_before_char(config, " ;\n", pos)) != "}")
@@ -92,7 +107,7 @@ Location	parse_location(string config, size_t *pos)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else if (tmp == "location_root")
+		else if (tmp == "root")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
@@ -106,6 +121,15 @@ Location	parse_location(string config, size_t *pos)
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
 				location.set_default_answer(tmp);
+				DEBUG("\t\t\t" << tmp);
+				get_str_before_char(config, "\n", pos);
+			}
+		}
+		else if (tmp == "index")
+		{
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			{
+				location.set_index(tmp);
 				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
 			}
