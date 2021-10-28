@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 14:27:47 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 13:32:07 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,15 +174,17 @@ Server	*Request::select_server(const list<Server*> servers, string ip_address, u
 	DEBUG("Looking for " << ip_address << ":" << port);
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
-		DEBUG((*server)->get_server_names().size());
-		DEBUG((*server)->get_server_names().front());
-		for (list<string>::iterator server_name = (*server)->get_server_names().begin(); server_name != (*server)->get_server_names().end(); server_name++)
+		list<string> server_names = (*server)->get_server_names();
+		for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 		{
-			DEBUG(*server_name << ":" << (*server)->get_port());
 			if ((*server_name == "0.0.0.0" || *server_name == ip_address) && (*server)->get_port() == port)
+			{
+				DEBUG("Found " << *server_name << ":" << (*server)->get_port());
 				return (*server);
+			}
 		}
 	}
+	DEBUG("Not found !");
 	return NULL;
 }
 
