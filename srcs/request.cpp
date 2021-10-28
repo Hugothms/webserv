@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 13:47:10 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 13:57:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,30 +170,34 @@ string	get_type(const string str)
 
 /**
  * @param servers	list of server in which to search for the corresponding one
- * @param host	specified in the conf by the 'server_name' keyword
- * @param port	specified in the conf by the 'listen' keyword (ip_address:port)
- * @return the server correspnding to the couple (host, port)
+ * @param host		specified in the conf by the 'server_name' keyword
+ * @param port		specified in the conf by the 'listen' keyword (ip_address:port)
+ * @return			a pointer to the server corresponding to the couple (host, port) or the default server for this port if it exist, null overwise.
 **/
 Server	*Request::select_server(const list<Server*> servers, string host, unsigned int port)
 {
 	DEBUG("Looking for " << host << ":" << port);
+	Server *default_server = NULL;
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
-		list<string> server_names = (*server)->get_server_names();
-		for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
+		if ((*server)->get_port() == port)
 		{
-			if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
+			if (default_server == NULL)
+				default_server = *server;
+			list<string> server_names = (*server)->get_server_names();
+			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 			{
-				DEBUG("Found " << *server_name << ":" << (*server)->get_port());
-				return (*server);
+				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
+				{
+					DEBUG("Found " << *server_name << ":" << (*server)->get_port());
+					return (*server);
+				}
 			}
 		}
 	}
-	DEBUG("Not found ! But looking for default server...");
-	// TODO: default server search
-
-	DEBUG("Default server not found !");
-	return NULL;
+	if (default_server)
+		DEBUG("Found default server for port: " << port);
+	return default_server;
 }
 
 string 	send_socket(string message, string page, string type = "text/html")
