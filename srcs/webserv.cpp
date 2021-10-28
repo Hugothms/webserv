@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/27 14:24:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 15:12:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,8 +161,8 @@ Webserv::Webserv(string config_file)
 				DEBUG("\t" << tmp);
 				if (tmp.empty() || (tmp[0] == '#'))
 				{
-					if (tmp[1])
-						get_str_before_char(config, "\n", &pos);
+					if (config[pos - 1] == ' ' || config[pos - 1] == ';')
+						(get_str_before_char(config, "\n", &pos));
 				}
 				else if (tmp == "location")
 					server->push_back_location(parse_location(config, &pos));
