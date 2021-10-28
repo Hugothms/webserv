@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 13:57:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 13:59:14 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ string	get_type(const string str)
  * @param port		specified in the conf by the 'listen' keyword (ip_address:port)
  * @return			a pointer to the server corresponding to the couple (host, port) or the default server for this port if it exist, null overwise.
 **/
-Server	*Request::select_server(const list<Server*> servers, string host, unsigned int port)
+Server	*select_server(const list<Server*> servers, string host, unsigned int port)
 {
 	DEBUG("Looking for " << host << ":" << port);
 	Server *default_server = NULL;
