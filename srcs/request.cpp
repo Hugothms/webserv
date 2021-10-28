@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 13:32:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 13:47:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			}
 			// if (ip_address == "localhost")
 			// 	ip_address = "127.0.0.1";
-			headers.insert(pair<string, string>("IP_address", ip_address));
+			headers.insert(pair<string, string>("Host", ip_address));
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
@@ -168,23 +168,31 @@ string	get_type(const string str)
 	return ret;
 }
 
-//TODO : select server
-Server	*Request::select_server(const list<Server*> servers, string ip_address, unsigned int port)
+/**
+ * @param servers	list of server in which to search for the corresponding one
+ * @param host	specified in the conf by the 'server_name' keyword
+ * @param port	specified in the conf by the 'listen' keyword (ip_address:port)
+ * @return the server correspnding to the couple (host, port)
+**/
+Server	*Request::select_server(const list<Server*> servers, string host, unsigned int port)
 {
-	DEBUG("Looking for " << ip_address << ":" << port);
+	DEBUG("Looking for " << host << ":" << port);
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
 		list<string> server_names = (*server)->get_server_names();
 		for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 		{
-			if ((*server_name == "0.0.0.0" || *server_name == ip_address) && (*server)->get_port() == port)
+			if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
 			{
 				DEBUG("Found " << *server_name << ":" << (*server)->get_port());
 				return (*server);
 			}
 		}
 	}
-	DEBUG("Not found !");
+	DEBUG("Not found ! But looking for default server...");
+	// TODO: default server search
+
+	DEBUG("Default server not found !");
 	return NULL;
 }
 
@@ -226,7 +234,7 @@ bool Request::method_allowed(Server *server, string method)
 
 string	Request::respond(const list<Server*> servers)
 {
-	Server *server = select_server(servers, headers["IP_address"], atoi(headers["Port"].c_str()));
+	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_socket("404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
 	string message;
