@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 13:59:14 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 15:38:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,17 +221,22 @@ string 	send_socket(string message, string page, string type = "text/html")
 	return (response.str());
 }
 
-bool Request::method_allowed(Server *server, string method)
+bool method_allowed(Server *server, string filepath, string method)
 {
 	list<Location> locations = server->get_locations();
 	if (locations.size() == 0)
 		return false;
+	//TODO: decompose filepath
 	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 	{
-		list<string> HTTP_methods = location->get_HTTP_methods();
-		for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
-			if (*HTTP_method == method)
-				return true;
+		// if (filepath == location->get_location())
+		// {
+			list<string> HTTP_methods = location->get_HTTP_methods();
+			for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+				if (*HTTP_method == method)
+					return true;
+			// return false;
+		// }
 	}
 	return false;
 }
@@ -248,12 +253,13 @@ string	Request::respond(const list<Server*> servers)
 	filepath += target;
 	if (type == "GET")
 	{
-		if (!method_allowed(server, "GET"))
+		if (!method_allowed(server, filepath, "GET"))
 			return (send_socket("405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
 		ifstream file(filepath.c_str(), ofstream::in);
 		if (!file)
 		{
 			file.close();
+			DEBUG("OOOOOOOOOOOOOOOO" << server->get_root() + server->get_error_pages()[404]);
 			file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
 			message = "404 Not Found";
 		}

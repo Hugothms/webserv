@@ -6,28 +6,26 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/28 15:12:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 15:38:28 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-bool Webserv::is_a_valid_server(const list<Location>	locations,
-								const list<string>		server_names,
-								const map<int, string>	error_pages,
-								const string			ip_address,
-								const unsigned int 		port,
-								const string			root,
-								const string			index,
-								const unsigned int		max_client_body_size)
+bool is_a_valid_server(Server* server)
 {
 	// TODO
-	(void) ip_address;
-	(void) port;
-	(void) root;
-	(void) index;
-	(void) max_client_body_size;
-	if (!locations.size() || !server_names.size() || !error_pages.size())
+	if (server->get_ip_address() == "" || server->get_port() == 0 || server->get_root() == "" || server->get_index() == "" || server->get_max_client_body_size() == 0)
+		return false;
+	list<Location> locations = server->get_locations();
+	if (!locations.size())
+		return false;
+	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	{
+		if (location->get_location() == "" || location->get_HTTP_methods().size() == 0 || location->get_HTTP_redirection() == "" || location->get_location_root() == "")
+			return false;
+	}
+	if (!server->get_error_pages().size())
 		return false;
 	return true;
 }
@@ -244,6 +242,11 @@ Webserv::Webserv(string config_file)
 			if (conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 				err_parsing_config("ip_address:port/server_names conflict with another server");
 
+			if (!is_a_valid_server(server))
+			{
+				DEBUG("server config isn't valid !");
+				exit(EXIT_FAILURE);
+			}
 			_servers.push_back(server);
 		}
 	}
