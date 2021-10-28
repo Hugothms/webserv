@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/28 16:32:24 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 16:40:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ bool is_a_valid_server(Server* server)
 	if (server->get_max_client_body_size() == 0)
 		return false;
 	if (!server->get_error_pages().size())
+		return false;
+	if (server->get_error_pages()[404] == "")
 		return false;
 	list<Location> locations = server->get_locations();
 	if (!locations.size())
@@ -265,10 +267,9 @@ Webserv::Webserv(string config_file)
 			DEBUG("}");
 			if (conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 				err_parsing_config("ip_address:port/server_names conflict with another server");
-
 			if (!is_a_valid_server(server))
 			{
-				DEBUG("server config isn't valid !");
+				DEBUG("Server configuration is invalid !");
 				exit(EXIT_FAILURE);
 			}
 			_servers.push_back(server);
