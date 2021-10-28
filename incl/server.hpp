@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 14:22:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 16:15:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Server
 		string				index; // file served when "/" is requested
 		unsigned int		max_client_body_size;
 
+		// * FOR INTERNAL USE *
 		int 				listen_fd;
 		struct sockaddr_in	hint;
 
