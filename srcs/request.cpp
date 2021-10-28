@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 15:38:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/28 16:53:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,7 @@ string	Request::respond(const list<Server*> servers)
 {
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_socket("404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
+		return (send_socket(code_404, "<html><body><h1>404 Not Found</h1></body></html>"));
 	string message;
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
@@ -261,7 +261,7 @@ string	Request::respond(const list<Server*> servers)
 			file.close();
 			DEBUG("OOOOOOOOOOOOOOOO" << server->get_root() + server->get_error_pages()[404]);
 			file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
-			message = "404 Not Found";
+			message = code_404;
 		}
 		else
 			message = "200 OK";
