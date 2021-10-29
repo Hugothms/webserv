@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/29 13:00:24 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/29 17:43:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,8 +200,26 @@ Server	*select_server(const list<Server*> servers, string host, unsigned int por
 	return default_server;
 }
 
-string 	send_socket(string message, string page, string type = "text/html")
+string 	send_socket(string message, string filepath, Server *server)
 {
+	if (filepath[filepath.length() - 1] == '/')
+	{
+		DEBUG("File is a directory");
+		filepath += server->get_index();
+	}
+	DEBUG(filepath);
+	ifstream file(filepath.c_str(), ofstream::in);
+	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
+	{
+		file.close();
+		file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
+		message = code_404;
+	}
+	else if (message == "")
+		message = "200 OK";
+	string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	file.close();
+	string type = get_type(filepath);
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
 	response << "Date: " << get_time_stamp() << endl;
@@ -216,7 +234,6 @@ string 	send_socket(string message, string page, string type = "text/html")
 		DEBUG("********* RESPONSE *********");
 		DEBUG(response.str());
 	}
-	// send(socket, response.str().c_str(), response.str().length(), 0);
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 	return (response.str());
 }
@@ -245,8 +262,7 @@ string	Request::respond(const list<Server*> servers)
 {
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_socket(code_404, server->get_error_pages()[404]));
-	string message;
+		return (send_socket(code_404, server->get_error_pages()[404], server));
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
 		target += server->get_index();
@@ -254,20 +270,8 @@ string	Request::respond(const list<Server*> servers)
 	if (type == "GET")
 	{
 		if (!method_allowed(server, filepath, "GET"))
-			return (send_socket(code_405, server->get_error_pages()[405]));
-		ifstream file(filepath.c_str(), ofstream::in);
-		if (!file)
-		{
-			file.close();
-			DEBUG("OOOOOOOOOOOOOOOO" << server->get_root() + server->get_error_pages()[404]);
-			file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
-			message = code_404;
-		}
-		else
-			message = "200 OK";
-		string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-		file.close();
-		return(send_socket(message, page, get_type(filepath)));
+			return (send_socket(code_405, server->get_error_pages()[405], server));
+		return(send_socket("", filepath, server));
 	}
 	else if (type == "POST")
 	{
@@ -277,6 +281,6 @@ string	Request::respond(const list<Server*> servers)
 	{
 
 	}
-	return (send_socket(code_405, server->get_error_pages()[405]));
+	return (send_socket(code_405, server->get_error_pages()[405], server));
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 }
