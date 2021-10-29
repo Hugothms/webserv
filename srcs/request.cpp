@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 16:53:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/29 13:00:24 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,7 @@ string	Request::respond(const list<Server*> servers)
 {
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_socket(code_404, "<html><body><h1>404 Not Found</h1></body></html>"));
+		return (send_socket(code_404, server->get_error_pages()[404]));
 	string message;
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
@@ -254,7 +254,7 @@ string	Request::respond(const list<Server*> servers)
 	if (type == "GET")
 	{
 		if (!method_allowed(server, filepath, "GET"))
-			return (send_socket("405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
+			return (send_socket(code_405, server->get_error_pages()[405]));
 		ifstream file(filepath.c_str(), ofstream::in);
 		if (!file)
 		{
@@ -277,6 +277,6 @@ string	Request::respond(const list<Server*> servers)
 	{
 
 	}
-	return (send_socket("405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
+	return (send_socket(code_405, server->get_error_pages()[405]));
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 }
