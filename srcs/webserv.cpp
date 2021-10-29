@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/28 16:40:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/29 13:00:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ bool is_a_valid_server(Server* server)
 	if (!server->get_error_pages().size())
 		return false;
 	if (server->get_error_pages()[404] == "")
+		return false;
+	if (server->get_error_pages()[405] == "")
 		return false;
 	list<Location> locations = server->get_locations();
 	if (!locations.size())
