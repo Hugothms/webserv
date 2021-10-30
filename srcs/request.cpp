@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/30 21:36:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 22:08:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,7 @@ Location	*select_location(const Server *server, const string target)
 			if (searched_path == location->get_path())
 			{
 				DEBUG("Location found: " << location->get_path());
-				return (&(*location));
+				return ((new Location(*location)));
 			}
 		}
 		size_t pos = searched_path.find_last_of("/");
@@ -280,8 +280,14 @@ bool method_allowed(const Server *server, const string target, const string meth
 		return false;
 	list<string> HTTP_methods = location->get_HTTP_methods();
 	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+	{
 		if (*HTTP_method == method)
+		{
+			delete location;
 			return true;
+		}
+	}
+	delete location;
 	return false;
 }
 
@@ -290,14 +296,10 @@ string	Request::respond(const list<Server*> servers)
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_socket(code_404, server->get_error_pages()[404], server));
-	string filepath = string(server->get_root());
-	string tmp = "";
+	string filepath = string(server->get_root() + target);
 	if (target.compare("/") == 0)
-		tmp += server->get_index();
-	filepath += target + tmp;
-	tmp = &filepath[server->get_root().length()];
-	tmp.resize(tmp.length() - server->get_index().length());
-	if (!method_allowed(server, tmp, type))
+		filepath += server->get_index();
+	if (!method_allowed(server, target, type))
 		return (send_socket(code_405, server->get_error_pages()[405], server));
 	if (type == "GET")
 		return(send_socket("", filepath, server));
