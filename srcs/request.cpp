@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/30 17:48:57 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 21:36:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,23 +245,43 @@ string 	send_socket(string message, string filepath, Server *server)
 	return (response.str());
 }
 
-bool method_allowed(Server *server, string filepath, string method)
+Location	*select_location(const Server *server, const string target)
 {
 	list<Location> locations = server->get_locations();
 	if (locations.size() == 0)
-		return false;
+		return NULL;
 	//TODO: decompose filepath
-	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	string searched_path = target;
+	DEBUG("tmp: " << target);
+	while (searched_path != "")
 	{
-		// if (filepath == location->get_location())
-		// {
-			list<string> HTTP_methods = location->get_HTTP_methods();
-			for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
-				if (*HTTP_method == method)
-					return true;
-			// return false;
-		// }
+		DEBUG(searched_path);
+		for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+		{
+			DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
+			if (searched_path == location->get_path())
+			{
+				DEBUG("Location found: " << location->get_path());
+				return (&(*location));
+			}
+		}
+		size_t pos = searched_path.find_last_of("/");
+		if (pos == string::npos)
+			break;
+		searched_path = searched_path.substr(0, pos);
 	}
+	return NULL;
+}
+
+bool method_allowed(const Server *server, const string target, const string method)
+{
+	Location *location;
+	if (!(location = select_location(server, target)))
+		return false;
+	list<string> HTTP_methods = location->get_HTTP_methods();
+	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+		if (*HTTP_method == method)
+			return true;
 	return false;
 }
 
@@ -270,16 +290,17 @@ string	Request::respond(const list<Server*> servers)
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_socket(code_404, server->get_error_pages()[404], server));
-	string filepath(server->get_root());
+	string filepath = string(server->get_root());
+	string tmp = "";
 	if (target.compare("/") == 0)
-		target += server->get_index();
-	filepath += target;
+		tmp += server->get_index();
+	filepath += target + tmp;
+	tmp = &filepath[server->get_root().length()];
+	tmp.resize(tmp.length() - server->get_index().length());
+	if (!method_allowed(server, tmp, type))
+		return (send_socket(code_405, server->get_error_pages()[405], server));
 	if (type == "GET")
-	{
-		if (!method_allowed(server, filepath, "GET"))
-			return (send_socket(code_405, server->get_error_pages()[405], server));
 		return(send_socket("", filepath, server));
-	}
 	else if (type == "POST")
 	{
 
