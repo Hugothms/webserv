@@ -17,4 +17,4 @@
 
 
 Issues:
-- Sometimes ( not systematicly) a broken pipe occurs when requesting big files
+- Sometimes (not systematicly) a broken pipe occurs when requesting big files
