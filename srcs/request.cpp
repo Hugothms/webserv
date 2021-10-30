@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/29 17:43:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 17:48:57 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,20 +204,27 @@ string 	send_socket(string message, string filepath, Server *server)
 {
 	if (filepath[filepath.length() - 1] == '/')
 	{
-		DEBUG("File is a directory");
+		DEBUG("Target is a directory");
 		filepath += server->get_index();
 	}
 	DEBUG(filepath);
 	ifstream file(filepath.c_str(), ofstream::in);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 	{
+		message = code_404;
 		file.close();
 		file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
-		message = code_404;
 	}
 	else if (message == "")
-		message = "200 OK";
+		message = code_200;
 	string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	if (page == "") // if file is a directory or is empty
+	{
+		message = code_404;
+		file.close();
+		file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
+		page = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	}
 	file.close();
 	string type = get_type(filepath);
 	stringstream response;
@@ -226,7 +233,7 @@ string 	send_socket(string message, string filepath, Server *server)
 	response << "Server: webserv/0.01" << endl;
 	response << "Content-Type: " << type << endl;
 	response << "Content-Length: " << page.length() << endl;
-	response << "Connection: Cosed" << endl;
+	response << "Connection: Closed" << endl;
 	response << endl;
 	response << page;
 	if (type == "text/html")
