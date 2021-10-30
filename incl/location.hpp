@@ -19,7 +19,7 @@ class Location
 {
 	private :
 		// * PARSED FROM CONFIG FILE *
-		string			location;
+		string			path;
 		list<string>	HTTP_methods;
 		string			HTTP_redirection;
 		string			location_root;
@@ -31,17 +31,17 @@ class Location
 		Location();
 		~Location();
 
-		list<string>	get_HTTP_methods();
-		string			get_location();
-		string			get_HTTP_redirection();
-		string			get_location_root();
-		string			get_default_answer();
-		string			get_index();
-		bool			get_directory_listing();
+		list<string>	get_HTTP_methods() const;
+		string			get_path() const;
+		string			get_HTTP_redirection() const;
+		string			get_location_root() const;
+		string			get_default_answer() const;
+		string			get_index() const;
+		bool			get_directory_listing() const;
 
 		void set_HTTP_methods(const list<string> HTTP_methods);
 		void push_back_HTTP_method(const string HTTP_method);
-		void set_location(const string location);
+		void set_path(const string location);
 		void set_HTTP_redirection(const string HTTP_redirection);
 		void set_location_root(const string location_root);
 		void set_default_answer(const string default_answer);

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 16:29:34 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 20:05:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,37 +18,37 @@ Location::Location()
 
 Location::~Location() {}
 
-list<string>	Location::get_HTTP_methods()
+list<string>	Location::get_HTTP_methods() const
 {
 	return (this->HTTP_methods);
 }
 
-string			Location::get_location()
+string			Location::get_path() const
 {
-	return (this->location);
+	return (this->path);
 }
 
-string			Location::get_HTTP_redirection()
+string			Location::get_HTTP_redirection() const
 {
 	return (this->HTTP_redirection);
 }
 
-string			Location::get_location_root()
+string			Location::get_location_root() const
 {
 	return (this->location_root);
 }
 
-string			Location::get_default_answer()
+string			Location::get_default_answer() const
 {
 	return (this->default_answer);
 }
 
-string			Location::get_index()
+string			Location::get_index() const
 {
 	return (this->index);
 }
 
-bool			Location::get_directory_listing()
+bool			Location::get_directory_listing() const
 {
 	return (this->directory_listing);
 }
@@ -62,9 +62,9 @@ void Location::push_back_HTTP_method(const string HTTP_method)
 {
 	this->HTTP_methods.push_back(HTTP_method);
 }
-void Location::set_location(const string location)
+void Location::set_path(const string path)
 {
-	this->location = location;
+	this->path = path;
 }
 
 void Location::set_HTTP_redirection(const string HTTP_redirection)

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 16:15:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 20:02:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,15 @@ class Server
 		// Client handle_new_conn(int listen_sock);
 		// int port;
 
-		list<Location>		get_locations();
-		list<string>		get_server_names();
-		map<int, string>	get_error_pages();
-		string				get_ip_address();
-		unsigned int		get_port();
-		string				get_root();
-		string				get_index();
-		unsigned int		get_max_client_body_size();
-		int 				get_listen_fd(void);
+		list<Location>		get_locations() const;
+		list<string>		get_server_names() const;
+		map<int, string>	get_error_pages() const;
+		string				get_ip_address() const;
+		unsigned int		get_port() const;
+		string				get_root() const;
+		string				get_index() const;
+		unsigned int		get_max_client_body_size() const;
+		int 				get_listen_fd(void) const;
 
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);

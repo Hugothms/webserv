@@ -6,13 +6,13 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/29 13:00:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 21:38:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-bool is_a_valid_server(Server* server)
+bool is_a_valid_server(const Server* server)
 {
 	// TODO: determine what is mandatory for a server to exist
 	if (server->get_ip_address() == "")
@@ -36,7 +36,7 @@ bool is_a_valid_server(Server* server)
 		return false;
 	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 	{
-		if (location->get_location() == "")
+		if (location->get_path() == "")
 			return false;
 		if (location->get_HTTP_methods().size() == 0)
 			return false;
@@ -48,16 +48,16 @@ bool is_a_valid_server(Server* server)
 	return true;
 }
 
-bool Webserv::conflict_ip_address_port_server_names(string new_ip_address, unsigned int new_port, list<string> new_server_names)
+bool Webserv::conflict_ip_address_port_server_names(const string new_ip_address, const unsigned int new_port, const list<string> new_server_names) const
 {
-	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
+	for (list<Server*>::const_iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
 		if ((*server)->get_ip_address() == new_ip_address && (*server)->get_port() == new_port)
 		{
 			list<string> x = (*server)->get_server_names();
 			for (list<string>::iterator server_name = x.begin(); server_name != x.end(); server_name++)
 			{
-				for (list<string>::iterator new_server_name = new_server_names.begin(); new_server_name != new_server_names.end(); new_server_name++)
+				for (list<string>::const_iterator new_server_name = new_server_names.begin(); new_server_name != new_server_names.end(); new_server_name++)
 				{
 					if (*server_name == *new_server_name)
 						return true;
@@ -68,20 +68,22 @@ bool Webserv::conflict_ip_address_port_server_names(string new_ip_address, unsig
 	return false;
 }
 
-void	err_parsing_config(string error)
+void	err_parsing_config(const string error)
 {
 	cerr << "Error: Wrong server configuration: " << error << endl;
 	exit(5);
 }
 
-Location	parse_location(string config, size_t *pos)
+Location	parse_location(const string config, size_t *pos)
 {
 	Location	location;
 	string		tmp;
 
 	tmp = get_str_before_char(config, " ", pos);
+	if (tmp.length() > 1 && tmp.back() == '/')
+		tmp.resize(tmp.length() - 1);
 	DEBUG("\t" << tmp << "\n\t{");
-	location.set_location(tmp);
+	location.set_path(tmp);
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		err_parsing_config("expecting '{' after 'server'");
 	while ((tmp = get_str_before_char(config, " ;\n", pos)) != "}")
@@ -158,7 +160,7 @@ Location	parse_location(string config, size_t *pos)
 	return location;
 }
 
-Webserv::Webserv(string config_file)
+Webserv::Webserv(const string config_file)
 {
 	if (config_file == "")
 	{

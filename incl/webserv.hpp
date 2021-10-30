@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 15:26:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 20:04:27 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Webserv
 		void 	stop();
 		void 	build(void);
 		void 	process(Client *client);
-		bool	conflict_ip_address_port_server_names(const string ip_address, const unsigned int port, const list<string> server_names);
+		bool	conflict_ip_address_port_server_names(const string ip_address, const unsigned int port, const list<string> server_names) const;
 };
 
 #endif

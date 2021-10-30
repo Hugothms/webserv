@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 14:22:19 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/30 20:01:52 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,48 +66,48 @@ int Server::setup(void)
 	return (listen_fd);
 }
 
-list<Location>	Server::get_locations()
+list<Location>	Server::get_locations() const
 {
 	return locations;
 }
 
-list<string>	Server::get_server_names()
+list<string>	Server::get_server_names() const
 {
 	return server_names;
 }
 
-map<int, string>	Server::get_error_pages()
+map<int, string>	Server::get_error_pages() const
 {
 	return error_pages;
 }
 
-string			Server::get_ip_address()
+string			Server::get_ip_address() const
 {
 	return ip_address;
 }
 
-unsigned int	Server::get_port()
+unsigned int	Server::get_port() const
 {
 	return port;
 }
 
-string			Server::get_root()
+string			Server::get_root() const
 {
 	return root;
 }
 
-string			Server::get_index()
+string			Server::get_index() const
 {
 	return index;
 }
 
-unsigned int	Server::get_max_client_body_size()
+unsigned int	Server::get_max_client_body_size() const
 {
 	return max_client_body_size;
 }
 
 
-int Server::get_listen_fd(void)
+int Server::get_listen_fd(void) const
 {
 	return listen_fd;
 }
