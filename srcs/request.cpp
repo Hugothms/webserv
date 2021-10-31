@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/30 22:08:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/10/31 17:47:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,28 @@ Server	*select_server(const list<Server*> servers, string host, unsigned int por
 	return default_server;
 }
 
-string 	send_socket(string message, string filepath, Server *server)
+string send_socket(const string message, const string type, const string body)
+{
+	stringstream response;
+	response << "HTTP/1.1 " << message << endl;
+	response << "Date: " << get_time_stamp() << endl;
+	response << "Server: webserv/0.01" << endl;
+	response << "Content-Type: " << type << endl;
+	response << "Content-Length: " << body.length() << endl;
+	response << "Connection: Closed" << endl;
+	response << endl;
+	response << body;
+	if (type == "text/html")
+	{
+		DEBUG("********* RESPONSE *********");
+		DEBUG(response.str());
+	}
+	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
+	return (response.str());
+
+}
+
+string 	send_file(const Server *server, string message, string filepath)
 {
 	if (filepath[filepath.length() - 1] == '/')
 	{
@@ -217,32 +238,16 @@ string 	send_socket(string message, string filepath, Server *server)
 	}
 	else if (message == "")
 		message = code_200;
-	string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	if (page == "") // if file is a directory or is empty
+	string body((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	if (body == "") // if file is a directory or is empty
 	{
 		message = code_404;
 		file.close();
 		file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
-		page = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+		body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	}
 	file.close();
-	string type = get_type(filepath);
-	stringstream response;
-	response << "HTTP/1.1 " << message << endl;
-	response << "Date: " << get_time_stamp() << endl;
-	response << "Server: webserv/0.01" << endl;
-	response << "Content-Type: " << type << endl;
-	response << "Content-Length: " << page.length() << endl;
-	response << "Connection: Closed" << endl;
-	response << endl;
-	response << page;
-	if (type == "text/html")
-	{
-		DEBUG("********* RESPONSE *********");
-		DEBUG(response.str());
-	}
-	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
-	return (response.str());
+	return (send_socket(message, get_type(filepath), body));
 }
 
 Location	*select_location(const Server *server, const string target)
@@ -270,6 +275,17 @@ Location	*select_location(const Server *server, const string target)
 			break;
 		searched_path = searched_path.substr(0, pos);
 	}
+	searched_path = "/";
+	DEBUG(searched_path);
+	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	{
+		DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
+		if (searched_path == location->get_path())
+		{
+			DEBUG("Location found: " << location->get_path());
+			return ((new Location(*location)));
+		}
+	}
 	return NULL;
 }
 
@@ -295,22 +311,24 @@ string	Request::respond(const list<Server*> servers)
 {
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_socket(code_404, server->get_error_pages()[404], server));
+		return (send_file(server, code_404, server->get_error_pages()[404]));
 	string filepath = string(server->get_root() + target);
 	if (target.compare("/") == 0)
 		filepath += server->get_index();
 	if (!method_allowed(server, target, type))
-		return (send_socket(code_405, server->get_error_pages()[405], server));
+		return (send_file(server, code_405, server->get_error_pages()[405]));
 	if (type == "GET")
-		return(send_socket("", filepath, server));
+		return(send_file(server, "", filepath));
 	else if (type == "POST")
 	{
+		//todo
 
 	}
 	else if (type == "DELETE")
 	{
+		//todo
 
 	}
-	return (send_socket(code_405, server->get_error_pages()[405], server));
+	return (send_file(server, code_405, server->get_error_pages()[405]));
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 }
