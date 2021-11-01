@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/31 17:47:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/01 19:17:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,13 @@ string	get_type(const string str)
 	return ret;
 }
 
+string error_page(const Server *server, const int x)
+{
+	if (server && server->get_error_pages().size() && server->get_error_pages()[x].length())
+			return (server->get_root() + server->get_error_pages()[x]);
+	return ("default_error_pages/" + to_string(x) + ".html");
+}
+
 /**
  * @param servers	list of server in which to search for the corresponding one
  * @param host		specified in the conf by the 'server_name' keyword
@@ -228,13 +235,13 @@ string 	send_file(const Server *server, string message, string filepath)
 		DEBUG("Target is a directory");
 		filepath += server->get_index();
 	}
-	DEBUG(filepath);
+	DEBUG("filepath :" << filepath);
 	ifstream file(filepath.c_str(), ofstream::in);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 	{
 		message = code_404;
 		file.close();
-		file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
+		file.open(error_page(server, 404), ofstream::in);
 	}
 	else if (message == "")
 		message = code_200;
@@ -243,7 +250,7 @@ string 	send_file(const Server *server, string message, string filepath)
 	{
 		message = code_404;
 		file.close();
-		file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
+		file.open(error_page(server, 404), ofstream::in);
 		body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	}
 	file.close();
@@ -311,14 +318,14 @@ string	Request::respond(const list<Server*> servers)
 {
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_file(server, code_404, server->get_error_pages()[404]));
-	string filepath = string(server->get_root() + target);
+		return (send_file(server, code_404, error_page(server, 404)));
+	string filepath = string(target);
 	if (target.compare("/") == 0)
 		filepath += server->get_index();
 	if (!method_allowed(server, target, type))
-		return (send_file(server, code_405, server->get_error_pages()[405]));
+		return (send_file(server, code_405, error_page(server, 405)));
 	if (type == "GET")
-		return(send_file(server, "", filepath));
+		return(send_file(server, "", server->get_root() + filepath));
 	else if (type == "POST")
 	{
 		//todo
@@ -329,6 +336,6 @@ string	Request::respond(const list<Server*> servers)
 		//todo
 
 	}
-	return (send_file(server, code_405, server->get_error_pages()[405]));
+	return (send_file(server, code_405, error_page(server, 405)));
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 }
