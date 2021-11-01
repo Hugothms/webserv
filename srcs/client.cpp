@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:37:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/01 20:55:20 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int Client::receive()
 		{
 			rec_buffer += string(buff, len);
 			_done_recv = 1;
-			DEBUG("FINISHED READING\n");
+			DEBUG("FINISHED READING");
 			return 1;
 		}
 		else if (len == tmps)
@@ -115,7 +115,7 @@ int Client::receive()
 		else
 		{
 			_done_recv = 1;
-			DEBUG("FINISHED READING OR DC\n");
+			DEBUG("FINISHED READING OR DC");
 			return -1;
 		}
 	return (1);
