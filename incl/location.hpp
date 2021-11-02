@@ -25,6 +25,8 @@ class Location
 		string			location_root;
 		string			default_answer;
 		string			index; // file served when a directory is requested
+		string			upload_directory;
+		bool			upload_allowed;
 		bool 			directory_listing;
 
 	public:
@@ -37,6 +39,7 @@ class Location
 		string			get_location_root() const;
 		string			get_default_answer() const;
 		string			get_index() const;
+		string			get_upload_directory() const;
 		bool			get_directory_listing() const;
 
 		void set_HTTP_methods(const list<string> HTTP_methods);
@@ -46,6 +49,7 @@ class Location
 		void set_location_root(const string location_root);
 		void set_default_answer(const string default_answer);
 		void set_index(const string index);
+		void set_upload_directory(const string index);
 		void set_directory_listing(const bool directory_listing);
 };
 

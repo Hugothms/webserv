@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/30 20:05:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/02 13:57:20 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,11 @@ string			Location::get_index() const
 	return (this->index);
 }
 
+string			Location::get_upload_directory() const
+{
+	return (this->upload_directory);
+}
+
 bool			Location::get_directory_listing() const
 {
 	return (this->directory_listing);
@@ -85,6 +90,11 @@ void Location::set_default_answer(const string default_answer)
 void Location::set_index(const string index)
 {
 	this->index = index;
+}
+
+void Location::set_upload_directory(const string upload_directory)
+{
+	this->upload_directory = upload_directory;
 }
 
 void Location::set_directory_listing(const bool directory_listing)
