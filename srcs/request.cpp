@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/01 19:17:40 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/02 18:34:28 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,8 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 	DEBUG("type:" << type);
 	DEBUG("target:" << target);
 	DEBUG("socket:" << socket);
-	map<string, string>::iterator it = headers.begin();
-	while(it != headers.end())
-		DEBUG(it->first << ": " << it++->second);
+	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
+		DEBUG(it->first << ": " << it->second);
 	DEBUG("****** REQUEST PARSED *******");
 }
 
@@ -112,7 +111,7 @@ string	getmonth(const int month)
 		case 9:
 			return "Oct";
 		case 10:
-			return "Now";
+			return "Nov";
 		case 11:
 			return "Dec";
 		default :
@@ -289,18 +288,15 @@ Location	*select_location(const Server *server, const string target)
 		DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
 		if (searched_path == location->get_path())
 		{
-			DEBUG("Location found: " << location->get_path());
+			DEBUG("Default location found: " << location->get_path());
 			return ((new Location(*location)));
 		}
 	}
 	return NULL;
 }
 
-bool method_allowed(const Server *server, const string target, const string method)
+bool method_allowed(const Location *location, const string method)
 {
-	Location *location;
-	if (!(location = select_location(server, target)))
-		return false;
 	list<string> HTTP_methods = location->get_HTTP_methods();
 	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
 	{
@@ -319,23 +315,28 @@ string	Request::respond(const list<Server*> servers)
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_file(server, code_404, error_page(server, 404)));
+	Location *location = select_location(server, target);
+	if (!location)
+		return (send_file(server, code_404, error_page(server, 404)));
 	string filepath = string(target);
 	if (target.compare("/") == 0)
-		filepath += server->get_index();
-	if (!method_allowed(server, target, type))
-		return (send_file(server, code_405, error_page(server, 405)));
+		filepath += server->get_root() + '/' + server->get_index();
+	if (!method_allowed(location, type))
+	{
+		filepath = error_page(server, 405);
+		return (send_file(server, code_405, filepath));
+	}
 	if (type == "GET")
-		return(send_file(server, "", server->get_root() + filepath));
+		return(send_file(server, "", filepath));
 	else if (type == "POST")
 	{
 		//todo
-
+		return (send_file(server, "", filepath));
 	}
 	else if (type == "DELETE")
 	{
 		//todo
-
+		return (send_file(server, "", filepath));
 	}
 	return (send_file(server, code_405, error_page(server, 405)));
-	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 }
