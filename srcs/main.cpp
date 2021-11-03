@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:37:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 14:17:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Webserv* ptr;
 void stop(int num)
 {
 	(void) num;
-	// DEBUG("KILL\n");
+	//");
 
 	// if (ptr)
 	// {
@@ -30,7 +30,7 @@ void stop(int num)
 	// }
 	ptr->stop();
 	DEBUG("KILLED");
-	// 	// DEBUG("STOPPED\n");
+	// 	// DEBUG("STOPPED");
 	// }
 	exit(0);
 	// return 0;
