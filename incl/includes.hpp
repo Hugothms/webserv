@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/28 16:53:30 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/02 18:51:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Location;
 
 bool	is_integer(const string &s);
 string	get_content_file(const string filename);
-string	get_str_before_char(const string str, const string c, size_t *pos, const string skip = "\r\t ");
+string	get_str_before_char(const string str, const string stop, size_t *pos, const string skip = "\r\t ");
 
 # define code_100 "100 Continue"
 # define code_101 "101 Switching Protocols"

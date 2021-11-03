@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/02 18:34:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 08:47:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			string ip_address;
 			string port;
 			if ((ip_address = get_str_before_char(request, ":", &pos)).length())
-				port = get_str_before_char(request, "\n", &pos);
+				port = get_str_before_char(request, "\r\n", &pos);
 			else
 			{
-				ip_address = get_str_before_char(request, "\n", &pos);
+				ip_address = get_str_before_char(request, "\r\n", &pos);
 				port = "80";
 			}
 			// if (ip_address == "localhost")
@@ -49,7 +49,7 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
-		headers.insert(pair<string, string>(header, get_str_before_char(request, "\n", &pos)));
+		headers.insert(pair<string, string>(header, get_str_before_char(request, "\r\n", &pos)));
 	}
 	pos++;
 	if (headers.count("Content-Length"))
@@ -193,6 +193,7 @@ Server	*select_server(const list<Server*> servers, string host, unsigned int por
 			list<string> server_names = (*server)->get_server_names();
 			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 			{
+				DEBUG("Candidate " << *server_name << ":" << (*server)->get_port());
 				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
 				{
 					DEBUG("Found " << *server_name << ":" << (*server)->get_port());
