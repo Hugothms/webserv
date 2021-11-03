@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/02 18:51:02 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 17:08:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <sys/select.h>
+# include <sys/socket.h> // bind
 
 // DATASTRUCTURE INCLUDES
 # include <vector>

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/30 20:02:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 17:09:44 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include "location.hpp"
 # include "request.hpp"
 // # include "client.hpp"
-// # include "webserv.hpp"
 
 # define V4 AF_INET
 # define V6 AF_INET6
