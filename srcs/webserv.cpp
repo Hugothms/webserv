@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/03 14:16:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 16:56:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,18 +344,16 @@ void 	Webserv::sig()
 void Webserv::accept_new_conn(void)
 {
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
+	{
+		if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
 		{
-			if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
-			{
-				Client *client = new Client(*server);
-
-				client->push_back_server(*server);
-
-				_clients.push_back(client);
-				FD_SET(client->get_fd(), &listen_set);
-				FD_SET(client->get_fd(), &write_set);
-			}
+			Client *client = new Client(*server);
+			client->push_back_server(*server);
+			_clients.push_back(client);
+			FD_SET(client->get_fd(), &listen_set);
+			FD_SET(client->get_fd(), &write_set);
 		}
+	}
 }
 
 void	Webserv::listen()
