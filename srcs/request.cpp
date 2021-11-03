@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/03 08:47:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 10:05:50 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ string	get_type(const string str)
 	return ret;
 }
 
-string error_page(const Server *server, const int x)
+string	error_page(const Server *server, const int x)
 {
 	if (server && server->get_error_pages().size() && server->get_error_pages()[x].length())
 			return (server->get_root() + server->get_error_pages()[x]);
@@ -230,12 +230,6 @@ string send_socket(const string message, const string type, const string body)
 
 string 	send_file(const Server *server, string message, string filepath)
 {
-	if (filepath[filepath.length() - 1] == '/')
-	{
-		DEBUG("Target is a directory");
-		filepath += server->get_index();
-	}
-	DEBUG("filepath :" << filepath);
 	ifstream file(filepath.c_str(), ofstream::in);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 	{
@@ -311,17 +305,33 @@ bool method_allowed(const Location *location, const string method)
 	return false;
 }
 
+void Request::set_filepath()
+{
+	filepath = server->get_root();
+	if (target.compare("/") == 0)
+		filepath += '/' + server->get_index();
+	else
+		filepath += target;
+	if (filepath[filepath.length() - 1] == '/')
+	{
+		DEBUG("Target is a directory");
+		if (location->get_index().length())
+			filepath += location->get_index();
+		else
+			filepath += server->get_index();
+	}
+	DEBUG("filepath :" << filepath);
+}
+
 string	Request::respond(const list<Server*> servers)
 {
-	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
+	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_file(server, code_404, error_page(server, 404)));
-	Location *location = select_location(server, target);
+	location = select_location(server, target);
 	if (!location)
 		return (send_file(server, code_404, error_page(server, 404)));
-	string filepath = string(target);
-	if (target.compare("/") == 0)
-		filepath += server->get_root() + '/' + server->get_index();
+	set_filepath();
 	if (!method_allowed(location, type))
 	{
 		filepath = error_page(server, 405);
