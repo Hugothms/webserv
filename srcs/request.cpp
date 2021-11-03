@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/03 10:05:50 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 14:09:06 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,15 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 	pos++;
 	if (headers.count("Content-Length"))
 		headers.insert(pair<string, string>("Body", &request[pos]));
-	DEBUG("****** PARSING REQUEST ******");
-	DEBUG("type:" << type);
-	DEBUG("target:" << target);
-	DEBUG("socket:" << socket);
+	// DEBUG("****** PARSING REQUEST ******");
+	// DEBUG("type:" << type);
+	// DEBUG("target:" << target);
+	// DEBUG("socket:" << socket);
 	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
-		DEBUG(it->first << ": " << it->second);
-	DEBUG("****** REQUEST PARSED *******");
+	{
+		// DEBUG(it->first << ": " << it->second);
+	}
+	// DEBUG("****** REQUEST PARSED *******");
 }
 
 string	getdayofweek(const int day)
@@ -182,7 +184,7 @@ string	error_page(const Server *server, const int x)
 **/
 Server	*select_server(const list<Server*> servers, string host, unsigned int port)
 {
-	DEBUG("Looking for " << host << ":" << port);
+	// DEBUG("Looking for " << host << ":" << port);
 	Server *default_server = NULL;
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
@@ -193,17 +195,17 @@ Server	*select_server(const list<Server*> servers, string host, unsigned int por
 			list<string> server_names = (*server)->get_server_names();
 			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 			{
-				DEBUG("Candidate " << *server_name << ":" << (*server)->get_port());
+				// DEBUG("Candidate " << *server_name << ":" << (*server)->get_port());
 				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
 				{
-					DEBUG("Found " << *server_name << ":" << (*server)->get_port());
+					// DEBUG("Found " << *server_name << ":" << (*server)->get_port());
 					return (*server);
 				}
 			}
 		}
 	}
 	if (default_server)
-		DEBUG("Found default server for port: " << port);
+		// DEBUG("Found default server for port: " << port);
 	return default_server;
 }
 
@@ -258,16 +260,16 @@ Location	*select_location(const Server *server, const string target)
 		return NULL;
 	//TODO: decompose filepath
 	string searched_path = target;
-	DEBUG("tmp: " << target);
+	// DEBUG("tmp: " << target);
 	while (searched_path != "")
 	{
-		DEBUG(searched_path);
+		// DEBUG(searched_path);
 		for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 		{
-			DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
+			// DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
 			if (searched_path == location->get_path())
 			{
-				DEBUG("Location found: " << location->get_path());
+				// DEBUG("Location found: " << location->get_path());
 				return ((new Location(*location)));
 			}
 		}
@@ -277,13 +279,11 @@ Location	*select_location(const Server *server, const string target)
 		searched_path = searched_path.substr(0, pos);
 	}
 	searched_path = "/";
-	DEBUG(searched_path);
 	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 	{
-		DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
 		if (searched_path == location->get_path())
 		{
-			DEBUG("Default location found: " << location->get_path());
+			// DEBUG("Default location found: " << location->get_path());
 			return ((new Location(*location)));
 		}
 	}
@@ -314,7 +314,7 @@ void Request::set_filepath()
 		filepath += target;
 	if (filepath[filepath.length() - 1] == '/')
 	{
-		DEBUG("Target is a directory");
+		// DEBUG("Target is a directory");
 		if (location->get_index().length())
 			filepath += location->get_index();
 		else
