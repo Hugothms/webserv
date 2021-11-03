@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/02 13:56:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 14:16:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ Webserv::Webserv(const string config_file)
 		return ;
 	}
 	const string config = get_content_file(config_file);
-	DEBUG("Provided config:\n" << config);
+	DEBUG("Provided config:" << endl << config);
 
 	// Parse and add multiple _servers in "_servers"
 	size_t pos = 0;
@@ -282,7 +282,7 @@ Webserv::Webserv(const string config_file)
 			_servers.push_back(server);
 		}
 	}
-	DEBUG("!!!!!!! CONFIG PARSED !!!!!!\n");
+	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
 }
 
 void Webserv::build()
@@ -299,7 +299,7 @@ void Webserv::build()
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
-		DEBUG("Port added to the FD_SET !\n");
+		DEBUG("Port added to the FD_SET !");
 	}
 }
 
@@ -312,10 +312,10 @@ void Webserv::process(Client *client)
 	}
 	else
 	{
-		DEBUG("RESPONDING\n");
+		DEBUG("RESPONDING");
 		Request req(client->get_rec_buff()->c_str(),client->get_rec_buff()->size(), client->get_fd());
 		req.respond(client->servers);
-		// DEBUG("WE DONE BUD\n");
+		// DEBUG("WE DONE BUD");
 		// write(2, client->rec_buffer.c_str(),client->rec_buffer.size() );
 		// DEBUG(client->rec_buffer);
 	}
@@ -328,7 +328,7 @@ void Webserv::process(Client *client)
 	// }
 	// else
 	// {
-	// 	DEBUG("Client is done\n");
+	// 	DEBUG("Client is done");
 	// 	FD_CLR(client->get_fd(), &listen_set);
 	// 	FD_CLR(client->get_fd(), &write_set);
 	// 	close(client->get_fd());
@@ -388,9 +388,9 @@ void	Webserv::listen()
 
 
 
-		// DEBUG("ENTREING SELECT\n");
+		// DEBUG("ENTREING SELECT");
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
-		// DEBUG("RETURNING SELECT\n");
+		// DEBUG("RETURNING SELECT");
 
 		// Accept new clients on each server
 		accept_new_conn();
@@ -422,7 +422,7 @@ void	Webserv::listen()
 				{
 					(*client)->send();
 				}
-				// DEBUG("RESPOND TIME\n");
+				DEBUG("RESPOND TIME");
 			}
 
 			if ((*client)->get_fd() == -1)
