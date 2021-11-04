@@ -51,6 +51,17 @@ class Location
 		void set_index(const string index);
 		void set_upload_directory(const string index);
 		void set_directory_listing(const bool directory_listing);
+
+
+		// <string, void (Location::*)(const string)>
+
+		typedef void (Location::*my_pointer_function)(const string);
+		map<string, my_pointer_function> map_pointer_function;
+
+		void set(const string &key, const string value) {
+			my_pointer_function fp = map_pointer_function[key];
+			return (this->*fp)(value);
+		}
 };
 
 #endif
