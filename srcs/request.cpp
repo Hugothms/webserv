@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/03 14:09:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/04 15:04:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,6 +225,7 @@ string send_socket(const string message, const string type, const string body)
 		DEBUG("********* RESPONSE *********");
 		DEBUG(response.str());
 	}
+	DEBUG(__LINE__);
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 	return (response.str());
 

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/03 16:56:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/04 16:25:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ Location	parse_location(const string config, size_t *pos)
 {
 	Location	location;
 	string		tmp;
-
 	tmp = get_str_before_char(config, " ", pos);
 	if (tmp.length() > 1 && tmp.back() == '/')
 		tmp.resize(tmp.length() - 1);
@@ -98,8 +97,9 @@ Location	parse_location(const string config, size_t *pos)
 			}
 			get_str_before_char(config, "\n", pos);
 		}
-		else if (tmp == "HTTP_redirection")
+		else if (*location.map_pointer_function[tmp])
 		{
+			DEBUG("I7vjvreijoibobnbnognoiiooiggjjbiobobobdo");
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
 				location.set_HTTP_redirection(tmp);
@@ -107,42 +107,51 @@ Location	parse_location(const string config, size_t *pos)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else if (tmp == "root")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_location_root(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "default_answer")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_default_answer(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "index")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_index(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "upload_directory")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_upload_directory(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
+		// else if (tmp == "HTTP_redirection")
+		// {
+		// 	if ((tmp = get_str_before_char(config, ";", pos)).length())
+		// 	{
+		// 		location.set_HTTP_redirection(tmp);
+		// 		DEBUG("\t\t\t" << tmp);
+		// 		get_str_before_char(config, "\n", pos);
+		// 	}
+		// }
+		// else if (tmp == "root")
+		// {
+		// 	if ((tmp = get_str_before_char(config, ";", pos)).length())
+		// 	{
+		// 		location.set_location_root(tmp);
+		// 		DEBUG("\t\t\t" << tmp);
+		// 		get_str_before_char(config, "\n", pos);
+		// 	}
+		// }
+		// else if (tmp == "default_answer")
+		// {
+		// 	if ((tmp = get_str_before_char(config, ";", pos)).length())
+		// 	{
+		// 		location.set_default_answer(tmp);
+		// 		DEBUG("\t\t\t" << tmp);
+		// 		get_str_before_char(config, "\n", pos);
+		// 	}
+		// }
+		// else if (tmp == "index")
+		// {
+		// 	if ((tmp = get_str_before_char(config, ";", pos)).length())
+		// 	{
+		// 		location.set_index(tmp);
+		// 		DEBUG("\t\t\t" << tmp);
+		// 		get_str_before_char(config, "\n", pos);
+		// 	}
+		// }
+		// else if (tmp == "upload_directory")
+		// {
+		// 	if ((tmp = get_str_before_char(config, ";", pos)).length())
+		// 	{
+		// 		location.set_upload_directory(tmp);
+		// 		DEBUG("\t\t\t" << tmp);
+		// 		get_str_before_char(config, "\n", pos);
+		// 	}
+		// }
 		else if (tmp == "directory_listing")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
