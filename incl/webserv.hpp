@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/04 16:11:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 17:29:48 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,17 @@ class Webserv
 	public:
 		Webserv(const string config_file = "");
 		~Webserv();
+		void	push_back_server(Server *server);
+		bool	conflict_ip_address_port_server_names(const string ip_address, const unsigned int port, const list<string> server_names) const;
+		void	parse_config(const string config);
+
 		void	listen();
 		void 	accept_new_conn(void);
 		static void sig();
 		void 	stop();
 		void 	build(void);
 		void 	process(Client *client);
-		bool	conflict_ip_address_port_server_names(const string ip_address, const unsigned int port, const list<string> server_names) const;
+
 };
 
 #endif

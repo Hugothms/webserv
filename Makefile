@@ -26,6 +26,7 @@ INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 
 SRC			=	main.cpp			\
 				location.cpp		\
+				parse.cpp			\
 				request.cpp			\
 				server.cpp			\
 				utils_parsing.cpp	\
