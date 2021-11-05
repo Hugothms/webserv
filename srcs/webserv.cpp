@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/05 14:26:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 15:15:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,8 @@ Location	parse_location(const string config, size_t *pos)
 			// DEBUG("\t\t***OTHER_LOCATION: " << tmp);
 			get_str_before_char(config, ";\n", pos);
 		}
-		// sleep(1);
+		else
+			break;
 	}
 	if (tmp != "}")
 	{
@@ -245,13 +246,14 @@ Webserv::Webserv(const string config_file)
 					DEBUG("\t\t***OTHER: " << tmp);
 					tmp = get_str_before_char(config, "\n", &pos);
 				}
+				else
+					break;
 			}
-			// sleep(1);
-			// if (tmp != "}")
-			// {
-			// 	DEBUG("Server configuration is invalid !");
-			// 	exit(EXIT_FAILURE);
-			// }
+			if (tmp != "}")
+			{
+				DEBUG("Server configuration is invalid !");
+				exit(EXIT_FAILURE);
+			}
 			DEBUG("}");
 			if (conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 				err_parsing_config("ip_address:port/server_names conflict with another server");
