@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/05 12:38:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 13:38:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -342,6 +342,16 @@ string	Request::respond(const list<Server*> servers)
 	else if (type == "POST")
 	{
 		//todo
+		string uploaded_file = server->get_root() + location->get_upload_directory();
+		// if (file exist in upload directory)
+		// {
+		// 	append to file
+		// }
+		// else
+		// {
+		// 	create file and write body in it
+		// }
+
 		return (send_file(server, "", filepath));
 	}
 	else if (type == "DELETE")

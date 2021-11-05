@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/03 17:09:44 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 13:38:31 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class Server
 		string				get_index() const;
 		unsigned int		get_max_client_body_size() const;
 		int 				get_listen_fd(void) const;
+		bool				is_valid(void) const;
 
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);
