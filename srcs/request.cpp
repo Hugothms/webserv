@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/04 15:04:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 12:38:52 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ Server	*select_server(const list<Server*> servers, string host, unsigned int por
 			}
 		}
 	}
-	if (default_server)
+	// if (default_server)
 		// DEBUG("Found default server for port: " << port);
 	return default_server;
 }
@@ -225,10 +225,9 @@ string send_socket(const string message, const string type, const string body)
 		DEBUG("********* RESPONSE *********");
 		DEBUG(response.str());
 	}
-	DEBUG(__LINE__);
+	DEBUG(__FILE__ << ":" << __LINE__);
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 	return (response.str());
-
 }
 
 string 	send_file(const Server *server, string message, string filepath)
