@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/03 10:07:02 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 17:04:31 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 
 class Server;
+class Location;
 
 class Request
 {
@@ -30,8 +31,8 @@ class Request
 		// string		body;			// Only for POST
 
 		// * FOR INTERNAL USE *
-		const Server			*server;
-		const Location			*location;
+		const Server		*server;
+		const Location		*location;
 		string				filepath;
 
 		/* Ignored because not HTTP/1.1 compliant

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/03 17:08:53 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 17:05:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ using namespace std;
 
 // OTHERS INCLUDES
 # include "location.hpp"
+# include "server.hpp"
 
 
 # if DEBUG_ACTIVE == 1
@@ -45,12 +46,18 @@ using namespace std;
 #  define DEBUG(x)
 # endif
 
+class Server;
 class Location;
 
 
 bool	is_integer(const string &s);
 string	get_content_file(const string filename);
 string	get_str_before_char(const string str, const string stop, size_t *pos, const string skip = "\r\t ");
+
+// * PARSING *
+void	err_parsing_config(const string error);
+Server	*parse_server(const string config, size_t *pos);
+
 
 # define code_100 "100 Continue"
 # define code_101 "101 Switching Protocols"

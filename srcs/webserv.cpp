@@ -6,11 +6,30 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/05 16:26:44 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 17:29:34 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
+
+Webserv::Webserv(const string config_file)
+{
+	parse_config(config_file);
+}
+
+Webserv::~Webserv()
+{
+	// for (list<Client*>::iterator it = _clients.begin(); it != _clients.end(); it++)
+	// {
+	// 	close(it->fd);
+	// }
+	// _servers.erase(_servers.begin(), _servers.end());
+}
+
+void	Webserv::push_back_server(Server *server)
+{
+	_servers.push_back(server);
+}
 
 bool Webserv::conflict_ip_address_port_server_names(const string new_ip_address, const unsigned int new_port, const list<string> new_server_names) const
 {
@@ -32,118 +51,12 @@ bool Webserv::conflict_ip_address_port_server_names(const string new_ip_address,
 	return false;
 }
 
-void	err_parsing_config(const string error)
-{
-	cerr << "Error: Wrong server configuration: " << error << endl;
-	exit(5);
-}
-
-Location	parse_location(const string config, size_t *pos)
-{
-	Location	location;
-	string		tmp;
-	tmp = get_str_before_char(config, " ", pos);
-	if (tmp.length() > 1 && tmp.back() == '/')
-		tmp.resize(tmp.length() - 1);
-	DEBUG("\t" << tmp << "\n\t{");
-	location.set_path(tmp);
-	if (get_str_before_char(config, " ;\n", pos) != "{")
-		err_parsing_config("expecting '{' after 'server'");
-	while (config[*pos] && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
-	{
-		if (tmp[0] == '#')
-		{
-			if (config[*pos-1] != '\n')
-				get_str_before_char(config, "\n", pos);
-		}
-		else if (tmp.length())
-			DEBUG("\t\t" << tmp << ":");
-		if (tmp == "HTTP_methods")
-		{
-			while ((tmp = get_str_before_char(config, " ;", pos)).length())
-			{
-				DEBUG("\t\t\t" << tmp);
-				location.push_back_HTTP_method(tmp);
-			}
-			get_str_before_char(config, "\n", pos);
-		}
-		else if (tmp == "HTTP_redirection")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_HTTP_redirection(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "root")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_location_root(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "default_answer")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_default_answer(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "index")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_index(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "upload_directory")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_upload_directory(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "directory_listing")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
-			{
-				location.set_directory_listing(atoi(tmp.c_str()));
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp.length())
-		{
-			// DEBUG("\t\t***OTHER_LOCATION: " << tmp);
-			get_str_before_char(config, ";\n", pos);
-		}
-		else
-			break;
-	}
-	if (tmp != "}")
-	{
-		DEBUG("Server configuration is invalid !");
-		exit(EXIT_FAILURE);
-	}
-	DEBUG("\t}");
-	return location;
-}
-
-Webserv::Webserv(const string config_file)
+void	Webserv::parse_config(const string config_file)
 {
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
-		_servers.push_back(new Server());
+		push_back_server(new Server());
 		return ;
 	}
 	const string config = get_content_file(config_file);
@@ -156,112 +69,10 @@ Webserv::Webserv(const string config_file)
 		string tmp = get_str_before_char(config, " \n", &pos);
 		if (tmp == "server")
 		{
-			DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!!");
-			Server *server = new Server();
-			tmp = get_str_before_char(config, "\n", &pos);
-			if (tmp != "{")
-				continue ;
-			DEBUG("{");
-			while (config[pos] && (tmp = get_str_before_char(config, " ;\n", &pos)) != "}")
-			{
-				DEBUG("\t" << tmp);
-				if (tmp.empty() || (tmp[0] == '#'))
-				{
-					if (config[pos - 1] == ' ' || config[pos - 1] == ';')
-						(get_str_before_char(config, "\n", &pos));
-				}
-				else if (tmp == "location")
-					server->push_back_location(parse_location(config, &pos));
-				else if (tmp == "server_name")
-				{
-					while ((tmp = get_str_before_char(config, " ;", &pos)).length())
-					{
-						DEBUG("\t\t" << tmp);
-						server->push_back_server_name(tmp);
-					}
-					get_str_before_char(config, "\n", &pos);
-				}
-				else if (tmp == "error_page")
-				{
-					if ((tmp = get_str_before_char(config, " =;", &pos)).length())
-					{
-						int error = atoi(tmp.c_str());
-						if (config[pos] != '=')
-							err_parsing_config("error page not well configured");
-						else
-							pos++;
-						if ((tmp = get_str_before_char(config, ";", &pos)).length())
-						{
-							server->push_back_error_page(pair<int, string>(error, tmp));
-							DEBUG("\t\t" << error << " = " << tmp);
-						}
-					}
-					get_str_before_char(config, "\n", &pos);
-				}
-				else if (tmp == "listen")
-				{
-					if (!(tmp = get_str_before_char(config, ":", &pos)).length())
-						tmp = "0.0.0.0";
-					if (tmp == "localhost")
-						tmp = "127.0.0.1";
-					server->set_ip_address(tmp);
-					DEBUG("\t\tip_address: " << tmp);
-					if (is_integer(tmp = get_str_before_char(config, ";", &pos)))
-					{
-						server->set_port(atoi(tmp.c_str()));
-						DEBUG("\t\tport: " << atoi(tmp.c_str()));
-					}
-					get_str_before_char(config, "\n", &pos);
-				}
-				else if (tmp == "root")
-				{
-					if((tmp = get_str_before_char(config, ";", &pos)).length())
-					{
-						server->set_root(tmp);
-						get_str_before_char(config, "\n", &pos);
-					}
-					DEBUG("\t\t" << server->get_root());
-				}
-				else if (tmp == "index")
-				{
-					if((tmp = get_str_before_char(config, ";", &pos)).length())
-					{
-						server->set_index(tmp);
-						get_str_before_char(config, "\n", &pos);
-					}
-					DEBUG("\t\t" << server->get_index());
-				}
-				else if (tmp == "max_client_body_size")
-				{
-					if(is_integer(tmp = get_str_before_char(config, ";", &pos)))
-					{
-						get_str_before_char(config, "\n", &pos);
-						server->set_max_client_body_size(atoi(tmp.c_str()));
-					}
-					DEBUG("\t\t" << server->get_max_client_body_size());
-				}
-				else if (tmp.length())
-				{
-					DEBUG("\t\t***OTHER: " << tmp);
-					tmp = get_str_before_char(config, "\n", &pos);
-				}
-				else
-					break;
-			}
-			if (tmp != "}")
-			{
-				DEBUG("Server configuration is invalid !");
-				exit(EXIT_FAILURE);
-			}
-			DEBUG("}");
-			if (conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
+			Server *server = parse_server(config, &pos);
+			if (server && conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 				err_parsing_config("ip_address:port/server_names conflict with another server");
-			if (!server->is_valid())
-			{
-				DEBUG("Server configuration is invalid !");
-				exit(EXIT_FAILURE);
-			}
-			_servers.push_back(server);
+			push_back_server(server);
 		}
 	}
 	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
@@ -431,13 +242,4 @@ void Webserv::stop()
 	// _servers.clear();
 	// _clients.clear();
 	DEBUG("CLOSED");
-}
-
-Webserv::~Webserv()
-{
-	// for (list<Client*>::iterator it = _clients.begin(); it != _clients.end(); it++)
-	// {
-	// 	close(it->fd);
-	// }
-	// _servers.erase(_servers.begin(), _servers.end());
 }
