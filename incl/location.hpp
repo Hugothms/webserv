@@ -26,12 +26,12 @@ class Location
 		string			default_answer;
 		string			index; // file served when a directory is requested
 		string			upload_directory;
-		bool			upload_allowed;
 		bool 			directory_listing;
 
 	public:
 		Location();
 		~Location();
+		bool			is_valid(void) const;
 
 		list<string>	get_HTTP_methods() const;
 		string			get_path() const;

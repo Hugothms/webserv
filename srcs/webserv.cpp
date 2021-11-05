@@ -6,41 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/05 12:51:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 14:26:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-bool is_a_valid_server(const Server* server)
-{
-	// TODO: determine what is mandatory for a server to exist
-	if (server->get_ip_address() == "")
-		return false;
-	if (server->get_port() == 0)
-		return false;
-	if (server->get_root() == "")
-		return false;
-	if (server->get_index() == "")
-		return false;
-	if (server->get_max_client_body_size() == 0)
-		return false;
-	list<Location> locations = server->get_locations();
-	if (!locations.size())
-		return false;
-	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
-	{
-		if (location->get_path() == "")
-			return false;
-		if (location->get_HTTP_methods().size() == 0)
-			return false;
-		if (location->get_HTTP_redirection() == "")
-			return false;
-		if (location->get_location_root() == "")
-			return false;
-	}
-	return true;
-}
 
 bool Webserv::conflict_ip_address_port_server_names(const string new_ip_address, const unsigned int new_port, const list<string> new_server_names) const
 {
@@ -79,7 +50,7 @@ Location	parse_location(const string config, size_t *pos)
 	location.set_path(tmp);
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		err_parsing_config("expecting '{' after 'server'");
-	while ((tmp = get_str_before_char(config, " ;\n", pos)) != "}")
+	while (config[*pos] && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
 		if (tmp[0] == '#')
 		{
@@ -157,6 +128,11 @@ Location	parse_location(const string config, size_t *pos)
 			get_str_before_char(config, ";\n", pos);
 		}
 		// sleep(1);
+	}
+	if (tmp != "}")
+	{
+		DEBUG("Server configuration is invalid !");
+		exit(EXIT_FAILURE);
 	}
 	DEBUG("\t}");
 	return location;
@@ -270,10 +246,16 @@ Webserv::Webserv(const string config_file)
 					tmp = get_str_before_char(config, "\n", &pos);
 				}
 			}
+			// sleep(1);
+			// if (tmp != "}")
+			// {
+			// 	DEBUG("Server configuration is invalid !");
+			// 	exit(EXIT_FAILURE);
+			// }
 			DEBUG("}");
 			if (conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 				err_parsing_config("ip_address:port/server_names conflict with another server");
-			if (!is_a_valid_server(server))
+			if (!server->is_valid())
 			{
 				DEBUG("Server configuration is invalid !");
 				exit(EXIT_FAILURE);

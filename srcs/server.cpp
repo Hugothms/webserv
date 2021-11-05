@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/30 20:01:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 13:53:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,36 @@ int Server::setup(void)
 	}
 	listen(listen_fd, SOMAXCONN);
 	return (listen_fd);
+}
+
+bool Server::is_valid(void) const
+{
+	// TODO: determine what is mandatory for a server be valid
+	if (get_ip_address() == "")
+		return false;
+	if (get_port() == 0)
+		return false;
+	if (get_root() == "")
+		return false;
+	if (get_index() == "")
+		return false;
+	if (get_max_client_body_size() == 0)
+		return false;
+	list<Location> locations = get_locations();
+	if (!locations.size())
+		return false;
+	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	{
+		if (location->get_path() == "")
+			return false;
+		if (location->get_HTTP_methods().size() == 0)
+			return false;
+		if (location->get_HTTP_redirection() == "")
+			return false;
+		if (location->get_location_root() == "")
+			return false;
+	}
+	return true;
 }
 
 list<Location>	Server::get_locations() const
