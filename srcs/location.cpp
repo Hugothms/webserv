@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/05 13:55:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/06 13:08:09 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ Location::~Location() {}
 bool		Location::is_valid(void) const
 {
 	//TODO: determine what is madatory for a location to be valid
-	for (list<string>::iterator HTTP_method = get_HTTP_methods().begin(); HTTP_method != get_HTTP_methods().end(); HTTP_method++)
+	list<string> HTTP_methods = get_HTTP_methods();
+	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != get_HTTP_methods().end(); HTTP_method++)
 	{
 		if (*HTTP_method == "POST" && !get_upload_directory().length())
 			return false;
