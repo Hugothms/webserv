@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/07 18:58:56 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/07 21:31:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,44 +94,43 @@ void Client::clear_send(void)
 
 int Client::receive()
 {
-	char buff[tmps];			
+	char buff[BUFF_S];			
 	int len;
-		// DEBUG("RECV START\n");
-		len = recv(_fd, buff, tmps, 0);
-		// DEBUG("RECV END\n");
-		if (len < tmps && len > 0)
-		{
-			rec_buffer += string(buff, len);
-			_done_recv = 1;
-			DEBUG("FINISHED READING\n");
-			return 1;
-		}
-		else if (len == tmps)
-		{
-			rec_buffer += string(buff, len);
-			_done_recv = 0;
-			return 0;
-		}
-		else
-		{
-			_done_recv = 1;
-			DEBUG("FINISHED READING OR DC\n");	
-			return -1;
-		}
+		
+	len = recv(_fd, buff, BUFF_S, 0);
+	
+	if (len < BUFF_S && len > 0)
+	{
+		rec_buffer += string(buff, len);
+		_done_recv = 1;
+		// DEBUG("FINISHED READING\n");
+		return 1;
+	}
+	else if (len == BUFF_S)
+	{
+		rec_buffer += string(buff, len);
+		_done_recv = 0;
+		return 0;
+	}
+	else
+	{
+		_done_recv = 1;
+		// DEBUG("FINISHED READING OR DC\n");	
+		return -1;
+	}
 	return (1);
 }
 
 int Client::send()
 {
-	int actual = tmps;
+	int actual = BUFF_S;
 	if (send_offset + actual > send_buffer.size())
-	{
 		actual = send_buffer.size() - send_offset;
-	}
-	// DEBUG("SENDING........\n");
+
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
-	// DEBUG("SENT!\n");
+
 	send_offset += actual;
+
 	if (send_offset == send_buffer.size())
 	{
 		_done_send = 1;
