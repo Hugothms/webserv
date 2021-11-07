@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/07 21:26:31 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/07 21:37:51 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class Client
 
 	public :
 		
-		int send_offset;
+		unsigned int 		send_offset;
 		bool 				send_rdy;
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];

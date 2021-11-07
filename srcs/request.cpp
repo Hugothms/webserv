@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/07 21:24:32 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/07 21:39:30 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ Server	*Request::select_server(const list<Server*> servers, string host, unsigne
 	return NULL;
 }
 
-string 	send_socket(int socket, string message, string page)
+string 	send_socket(string message, string page)
 {
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
@@ -208,7 +208,7 @@ string	Request::respond(const list<Server*> servers)
 	stringstream response;
 	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_socket(socket, "404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
+		return (send_socket("404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
 	string filepath(server->get_root());
 	if (target.compare("/") == 0)
 		target += server->get_index();
@@ -225,7 +225,7 @@ string	Request::respond(const list<Server*> servers)
 					method_found = true;
 		}
 		if (!method_found)
-			return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
+			return (send_socket("405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
 		ifstream myfile(filepath.c_str(), ofstream::in);
 		if (!myfile)
 		{
@@ -254,7 +254,6 @@ string	Request::respond(const list<Server*> servers)
 		myfile.close();
 		return (response.str());
 	}
-
 	else if (type == "POST")
 	{
 
@@ -268,7 +267,7 @@ string	Request::respond(const list<Server*> servers)
 		response << "HTTP/1.1 403 Forbidden" << endl;
 
 	}
-
+	return("");
 }
 
 string	Request::respond()
