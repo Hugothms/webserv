@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/05 17:28:50 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/07 15:47:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ Location	parse_location(const string config, size_t *pos)
 	tmp = get_str_before_char(config, " ", pos);
 	if (tmp.length() > 1 && tmp.back() == '/')
 		tmp.resize(tmp.length() - 1);
-	DEBUG("\t" << tmp << "\n\t{");
+	DEBUG("\t" << tmp);
+	DEBUG("\t{");
 	location.set_path(tmp);
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		err_parsing_config("expecting '{' after 'server'");
@@ -131,7 +132,8 @@ Server	*parse_server(const string config, size_t *pos)
 	{
 		DEBUG("\t" << tmp);
 		if (tmp.empty() || (tmp[0] == '#'))
-		{if (config[*pos - 1] == ' ' || config[*pos - 1] == ';')
+		{
+			if (config[*pos - 1] == ' ' || config[*pos - 1] == ';')
 				(get_str_before_char(config, "\n", pos));
 			else if (!config[*pos])
 				break;
