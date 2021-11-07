@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/05 17:05:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/06 13:44:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ using namespace std;
 
 
 # if DEBUG_ACTIVE == 1
-#  define DEBUG(x) cerr << x << endl;
+#  define DEBUG(x) cerr << __FILE__ << ':' << __LINE__ << '\t' << x << endl;
 # else
 #  define DEBUG(x)
 # endif
