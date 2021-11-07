@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/07 21:31:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/07 21:37:23 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ int Client::send()
 		send_buffer.clear();
 		send_rdy = 0;
 	}
+	return 0;
 }
 
 void Client::set_fd(const int fd)
