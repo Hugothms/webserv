@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/18 16:58:44 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/07 18:58:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
 	ptr = &webserv;
-
+	signal(SIGPIPE, SIG_IGN);
 	signal(SIGSTOP, &stop);
 	signal(SIGINT, &stop);
 	signal(SIGKILL, &stop);

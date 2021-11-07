@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/26 15:02:52 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/07 18:58:56 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,9 @@ int Client::receive()
 {
 	char buff[tmps];			
 	int len;
-
+		// DEBUG("RECV START\n");
 		len = recv(_fd, buff, tmps, 0);
+		// DEBUG("RECV END\n");
 		if (len < tmps && len > 0)
 		{
 			rec_buffer += string(buff, len);
@@ -127,7 +128,9 @@ int Client::send()
 	{
 		actual = send_buffer.size() - send_offset;
 	}
+	// DEBUG("SENDING........\n");
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
+	// DEBUG("SENT!\n");
 	send_offset += actual;
 	if (send_offset == send_buffer.size())
 	{
