@@ -168,9 +168,7 @@ void	Webserv::listen()
 					(*client)->set_response(req.respond((*client)->servers));
 				}
 				else if ((*client)->is_done_send() == 0)
-				{
 					(*client)->send();
-				}
 			}
 		}
 	}
