@@ -132,6 +132,14 @@ void 	Webserv::loop_prep(void) //This can be optimized
 	}
 }
 
+void Webserv::clear_fd(Client *client)
+{
+	close(client->get_fd());
+	FD_CLR(client->get_fd(), &listen_set);
+	FD_CLR(client->get_fd(), &write_set);
+	client->set_fd(-1);
+}
+
 void	Webserv::listen()
 {
 	build();
@@ -151,21 +159,15 @@ void	Webserv::listen()
 				if ((*client)->receive() == -1)
 				{
 					DEBUG("client seems to have left, clearing his marks");
-					
-					close((*client)->get_fd());
-					FD_CLR((*client)->get_fd(), &listen_set);
-					FD_CLR((*client)->get_fd(), &write_set);
-					(*client)->set_fd(-1);
+					clear_fd(*client);
 				}
 			}
 			else if ((*client)->is_done_recv())
 			{
-				DEBUG("client is done receiving");
+				DEBUG("client is done transmitting");
+
 				if ((*client)->send_rdy == 0)
-				{
-					Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
-					(*client)->set_response(req.respond((*client)->servers));
-				}
+					(*client)->set_response();
 				else if ((*client)->is_done_send() == 0)
 					(*client)->send();
 			}
