@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/08 12:27:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 12:29:55 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 Webserv::Webserv(const string config_file)
 {
 	parse_config(config_file);
+}
+
+Webserv::~Webserv()
+{
+	stop();
 }
 
 void	Webserv::push_back_server(Server *server)
@@ -184,9 +189,4 @@ void Webserv::stop()
 		*client = 0;
 	}
 	DEBUG("CLOSED");
-}
-
-Webserv::~Webserv()
-{
-	stop();
 }
