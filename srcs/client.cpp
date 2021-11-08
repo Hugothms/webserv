@@ -149,7 +149,6 @@ int Client::send()
 		send_buffer.clear();
 		_done_recv = 0;
 		DEBUG("Send_rdy back to 0");
-		
 	}
 	return 0;
 }

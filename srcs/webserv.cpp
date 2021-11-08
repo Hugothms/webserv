@@ -145,27 +145,25 @@ void	Webserv::listen()
 		// DEBUG("AMT CLIENT " << _clients.size());
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-
-			// DEBUG("Client: " << (*client)->get_fd());
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
 			{
-				DEBUG("client seems ready to transmit data");
+				DEBUG("client seems ready to transmit data");			
 				
 				if ((*client)->receive() == -1)
 				{
 					DEBUG("client seems to have left, clearing his marks");
+					
 					close((*client)->get_fd());
 					FD_CLR((*client)->get_fd(), &listen_set);
 					FD_CLR((*client)->get_fd(), &write_set);
 					(*client)->set_fd(-1);
 				}
 			}
-			else if ((*client)->is_done_recv())// && (*client)->get_fd() != -1)
+			else if ((*client)->is_done_recv())
 			{
 				DEBUG("client is done receiving");
 				if ((*client)->send_rdy == 0)
 				{
-					DEBUG("Building response");
 					Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
 					(*client)->set_response(req.respond((*client)->servers));
 				}
