@@ -48,11 +48,14 @@ int Server::setup(void)
 	}
 
 	hint.sin_family = AF_INET;
+	DEBUG("PORT IS " << port);
 	hint.sin_port = htons(port);
 
 	DEBUG("TRYING TO BIND TO " << ip_address);
-
-	inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
+	if (ip_address.empty())
+		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
+	else
+		inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));

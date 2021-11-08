@@ -52,7 +52,9 @@ void	Webserv::parse_config(const string config_file)
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
-		push_back_server(new Server());
+		Server *srv = new Server();
+		srv->set_port(80);
+		push_back_server(srv);
 		return ;
 	}
 	const string config = get_content_file(config_file);
