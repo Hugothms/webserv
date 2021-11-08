@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 13:15:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 14:32:09 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,6 @@ string send_socket(const string message, const string type, const string body)
 		DEBUG("********* RESPONSE *********");
 		DEBUG(response.str());
 	}
-	DEBUG(__FILE__ << ":" << __LINE__);
 	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 	return (response.str());
 }
@@ -296,12 +295,8 @@ bool method_allowed(const Location *location, const string method)
 	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
 	{
 		if (*HTTP_method == method)
-		{
-			delete location;
 			return true;
-		}
 	}
-	delete location;
 	return false;
 }
 
@@ -331,17 +326,13 @@ string	Request::respond(const list<Server*> servers)
 	location = select_location(server, target);
 	if (!location)
 		return (send_file(server, code_404, error_page(server, 404)));
-	set_filepath();
 	if (!method_allowed(location, type))
-	{
-		filepath = error_page(server, 405);
-		return (send_file(server, code_405, filepath));
-	}
+		return (send_file(server, code_405, error_page(server, 405)));
+	set_filepath();
 	if (type == "GET")
 		return(send_file(server, "", filepath));
 	else if (type == "POST")
 	{
-		//todo
 		filepath = server->get_root() + location->get_upload_directory() + target;
 		ofstream file;
 		file.open(filepath);
