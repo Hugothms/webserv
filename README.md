@@ -18,3 +18,4 @@
 
 Issues:
 - Sometimes (not systematicly) a broken pipe occurs when requesting big files
+- The Requests are created multiple times, with the same parameters.
