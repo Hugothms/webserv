@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/07 15:47:32 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 14:18:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,12 +107,12 @@ Location	parse_location(const string config, size_t *pos)
 			// DEBUG("\t\t***OTHER_LOCATION: " << tmp);
 			get_str_before_char(config, ";\n", pos);
 		}
-		else
-			break;
+		// else
+		// 	break;
 	}
 	if (tmp != "}")
 	{
-		DEBUG("Server configuration is invalid !");
+		cerr << location.get_path() << " location: no ending bracket" << endl;
 		exit(EXIT_FAILURE);
 	}
 	DEBUG("\t}");
@@ -219,9 +219,10 @@ Server	*parse_server(const string config, size_t *pos)
 		exit(EXIT_FAILURE);
 	}
 	DEBUG("}");
-	if (!server->is_valid())
+	string error = server->is_valid();
+	if (error.length())
 	{
-		DEBUG("Server configuration is invalid !");
+		cerr << server->get_root() << " server configuration is invalid: " << error<< endl;
 		exit(EXIT_FAILURE);
 	}
 	return server;

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/05 17:16:54 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 14:07:37 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,34 +66,29 @@ int Server::setup(void)
 	return (listen_fd);
 }
 
-bool Server::is_valid(void) const
+string Server::is_valid(void) const
 {
 	// TODO: determine what is mandatory for a server be valid
 	if (get_ip_address() == "")
-		return false;
+		return "ip_address is not set";
 	if (get_port() == 0)
-		return false;
+		return "port is not set";
 	if (get_root() == "")
-		return false;
+		return "root is not set";
 	if (get_index() == "")
-		return false;
+		return "index is not set";
 	if (get_max_client_body_size() == 0)
-		return false;
+		return "max_client_body_size is not set";
 	list<Location> locations = get_locations();
 	if (!locations.size())
-		return false;
+		return "location is not set";
 	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 	{
-		if (location->get_path() == "")
-			return false;
-		if (location->get_HTTP_methods().size() == 0)
-			return false;
-		if (location->get_HTTP_redirection() == "")
-			return false;
-		if (location->get_location_root() == "")
-			return false;
+		string error = location->is_valid();
+		if (error.length())
+			return error;
 	}
-	return true;
+	return "";
 }
 
 list<Location>	Server::get_locations() const
