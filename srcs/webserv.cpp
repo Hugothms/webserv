@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/08 12:29:55 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 12:51:21 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,12 +136,8 @@ void	Webserv::listen()
 	while (true)
 	{
 		loop_prep();
-
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
-
 		accept_new_conn();
-
-
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
@@ -164,7 +160,6 @@ void	Webserv::listen()
 				else
 					(*client)->send();
 			}
-
 			if ((*client)->get_fd() == -1)
 			{
 				delete (*client);
