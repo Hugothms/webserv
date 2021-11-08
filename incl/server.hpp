@@ -64,7 +64,7 @@ class Server
 		string				get_index() const;
 		unsigned int		get_max_client_body_size() const;
 		int 				get_listen_fd(void) const;
-		bool				is_valid(void) const;
+		string				is_valid(void) const;
 
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);

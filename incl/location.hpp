@@ -31,7 +31,7 @@ class Location
 	public:
 		Location();
 		~Location();
-		bool			is_valid(void) const;
+		string			is_valid(void) const;
 
 		list<string>	get_HTTP_methods() const;
 		string			get_path() const;
