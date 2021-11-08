@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:36:57 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 12:22:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <sys/socket.h>
 
 
-#define tmps 1024
+#define BUFF_S 1024
 
 
 class Client
@@ -37,7 +37,7 @@ class Client
 
 	public :
 
-		int send_offset;
+		unsigned int 		send_offset;
 		bool 				send_rdy;
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];

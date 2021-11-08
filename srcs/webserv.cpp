@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/05 17:29:34 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 12:27:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,6 @@
 Webserv::Webserv(const string config_file)
 {
 	parse_config(config_file);
-}
-
-Webserv::~Webserv()
-{
-	// for (list<Client*>::iterator it = _clients.begin(); it != _clients.end(); it++)
-	// {
-	// 	close(it->fd);
-	// }
-	// _servers.erase(_servers.begin(), _servers.end());
 }
 
 void	Webserv::push_back_server(Server *server)
@@ -96,43 +87,6 @@ void Webserv::build()
 	}
 }
 
-void Webserv::process(Client *client)
-{
-
-	if (!client->is_done_recv())
-	{
-		client->receive();
-	}
-	else
-	{
-		DEBUG("RESPONDING");
-		Request req(client->get_rec_buff()->c_str(),client->get_rec_buff()->size(), client->get_fd());
-		req.respond(client->servers);
-		// DEBUG("WE DONE BUD");
-		// write(2, client->rec_buffer.c_str(),client->rec_buffer.size() );
-		// DEBUG(client->rec_buffer);
-	}
-
-
-	// if (client->receive())
-	// {
-	// 	Request req(client->rec_buffer.c_str(),client->rec_buffer.length(), client->get_fd());
-	// 	req.respond(client->servers);
-	// }
-	// else
-	// {
-	// 	DEBUG("Client is done");
-	// 	FD_CLR(client->get_fd(), &listen_set);
-	// 	FD_CLR(client->get_fd(), &write_set);
-	// 	close(client->get_fd());
-	// 	client->set_fd(-1);
-	// }
-}
-
-void 	Webserv::sig()
-{
-	return ;
-}
 
 void Webserv::accept_new_conn(void)
 {
@@ -149,50 +103,44 @@ void Webserv::accept_new_conn(void)
 	}
 }
 
+void 	Webserv::loop_prep(void) //This can be optimized
+{
+	lcopy_set = listen_set;
+	wcopy_set = write_set;
+
+	int tmpfd;
+	for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
+	{
+		tmpfd = (*client)->get_fd();
+
+		if (tmpfd > high_fd)
+			high_fd = tmpfd;
+		else if (tmpfd == -1)
+		{
+			delete (*client);
+			client = _clients.erase(client);
+			if (client == _clients.end())
+				break;
+		}
+	}
+}
+
 void	Webserv::listen()
 {
-
 	build();
-	// lcopy_set = listen_set;
-	// wcopy_set = write_set;
-
 	while (true)
 	{
-		// DEBUG("START");
-		//This can be optimized
-		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
-		{
-			int tmpfd = (*client)->get_fd();
-			if (tmpfd > high_fd)
-				high_fd = tmpfd;
-			else if (tmpfd == -1)
-			{
-				client = _clients.erase(client);
-				if (client == _clients.end())
-					break;
-			}
-		}
+		loop_prep();
 
-		lcopy_set = listen_set;
-		wcopy_set = write_set;
-
-
-
-
-		// DEBUG("ENTREING SELECT");
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
-		// DEBUG("RETURNING SELECT");
 
-		// Accept new clients on each server
 		accept_new_conn();
 
 
-		// Loop through all the clients and find out if they sent
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
+			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
 			{
-				//Case where there is stuff to read
 				if ((*client)->receive() == -1)
 				{
 					close((*client)->get_fd());
@@ -200,7 +148,6 @@ void	Webserv::listen()
 					FD_CLR((*client)->get_fd(), &write_set);
 					(*client)->set_fd(-1);
 				}
-				// process(*client);
 			}
 			else if ((*client)->is_done_recv() && (*client)->get_fd() != -1)
 			{
@@ -210,10 +157,7 @@ void	Webserv::listen()
 					(*client)->set_response(req.respond((*client)->servers));
 				}
 				else
-				{
 					(*client)->send();
-				}
-				DEBUG("RESPOND TIME");
 			}
 
 			if ((*client)->get_fd() == -1)
@@ -239,7 +183,10 @@ void Webserv::stop()
 		delete (*client);
 		*client = 0;
 	}
-	// _servers.clear();
-	// _clients.clear();
 	DEBUG("CLOSED");
+}
+
+Webserv::~Webserv()
+{
+	stop();
 }
