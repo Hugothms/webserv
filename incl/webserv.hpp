@@ -46,6 +46,7 @@ class Webserv
 		void 	accept_new_conn(void);
 		static void sig();
 		void 	stop();
+		void 	clear_fd(Client *client);
 		void 	build(void);
 		void 	process(Client *client);
 		bool	is_a_valid_server(	const list<Location>	locations,

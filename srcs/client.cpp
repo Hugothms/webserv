@@ -64,13 +64,17 @@ string* Client::get_send_buff(void)
 	return (&send_buffer);
 }
 
-void Client::set_response(string str)
+void Client::set_response(void)
 {
-	send_buffer = str;
-	send_rdy = 1;
+	Request req(get_rec_buff()->c_str(),get_rec_buff()->length(), get_fd());
+
+	send_buffer = req.respond(servers);
 	
+	send_rdy = 1;
+
 	_done_send = 0;
 	send_offset = 0;
+	rec_buffer.clear();
 }
 
 void Client::clear_recv(void)
@@ -101,56 +105,51 @@ int Client::receive()
 	len = recv(_fd, buff, BUFF_S, 0);
 	DEBUG("Received :" << len);
 
-	if (len < BUFF_S && len > 0)
+	if (len > 0)
 	{
+		if (len < BUFF_S)
+		{
+			DEBUG("Data fit in the buffer, read done");
+			_done_recv = 1;
+		}
+		else
+		{
+			DEBUG("Data did not fit in the buffer, read more plz");		
+			_done_recv = 0;
+		}
 		rec_buffer += string(buff, len);
-		_done_recv = 1;
-		DEBUG("Data fit in the buffer, read done");
-		return 1;
-	}
-	else if (len == BUFF_S)
-	{
-		rec_buffer += string(buff, len);		
-		_done_recv = 0;
-		DEBUG("Data did not fit in the buffer, read more plz");
-		return 0;
+		return (_done_recv);
 	}
 	else
 	{
 		DEBUG("No data received, client is done");
 		_done_recv = 1;
-		return -1;
+		return (-1);
 	}
-	return (1);
 }
 
-int Client::send()
+void Client::send()
 {
 	int actual = BUFF_S;
 
 
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
-	if (actual <= 0)
-	{
-		// DEBUG("RET");
-		return 0;
-	}
-	DEBUG("actual = " << actual);
-	DEBUG("Sending response");
+	
+	// DEBUG("actual = " << actual);
+	// DEBUG("Sending response");
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
-	DEBUG("Sent from byte :" << send_offset << " to :" << send_offset + actual);
+	// DEBUG("Sent from byte :" << send_offset << " to :" << send_offset + actual);
 	send_offset += actual;
 
 	if (send_offset == send_buffer.size())
 	{
+		DEBUG("Done sending the whole thing")
 		_done_send = 1;
 		send_rdy = 0;
-		send_buffer.clear();
 		_done_recv = 0;
-		DEBUG("Send_rdy back to 0");
+		send_buffer.clear();
 	}
-	return 0;
 }
 
 void Client::set_fd(const int fd)

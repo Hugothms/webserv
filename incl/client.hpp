@@ -64,10 +64,9 @@ class Client
 		void set_done_recv(bool t);
 		void clear_recv(void);
 		string *get_rec_buff(void);
-		void set_response(string str);
+		void set_response();
 
-		int send();
-		// int send();
+		void send(void);
 
 		bool is_done_send(void) const;
 		void set_done_send(bool t);
