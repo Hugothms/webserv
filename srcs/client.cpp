@@ -28,15 +28,13 @@ Client::Client(Server *srv)
 	send_rdy = 0;
 	client_len = sizeof(client_addr);
 
-
-	DEBUG("New conn incomming, need to accept it !");
-
 	_fd = accept(srv->get_listen_fd(), get_sockaddr(), get_addr_len());
 
+	DEBUG("Client created !");
 	// inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
 
 	// printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
-	DEBUG("Client created !");
+	
 }
 
 
@@ -97,10 +95,14 @@ int Client::receive()
 	char buff[BUFF_S];
 	int len;
 
+	DEBUG("Receiving....\n");
+
 	len = recv(_fd, buff, BUFF_S, 0);
 
+	DEBUG("Received :" << len <<"\n");
+
 	if (len < BUFF_S && len > 0)
-	{
+	{         
 		rec_buffer += string(buff, len);
 		_done_recv = 1;
 		// DEBUG("FINISHED READING\n");
@@ -124,17 +126,26 @@ int Client::receive()
 int Client::send()
 {
 	int actual = BUFF_S;
+
+
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
-
+	if (actual <= 0)
+	{
+		// DEBUG("RET");
+		return 0;
+	}
+	DEBUG("actual = " << actual);
+	DEBUG("Sending response");
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
-
+	DEBUG("Sent from byte :" << send_offset << " to :" << send_offset + actual);
 	send_offset += actual;
 
 	if (send_offset == send_buffer.size())
 	{
 		_done_send = 1;
 		send_buffer.clear();
+		DEBUG("Send_rdy back to 0");
 		send_rdy = 0;
 	}
 	return 0;

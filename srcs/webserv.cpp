@@ -137,34 +137,49 @@ void	Webserv::listen()
 	build();
 	while (true)
 	{
-		DEBUG("Waiting for new connections...");
+		// DEBUG("Waiting for new connections...");
 		loop_prep();
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
+		int i = 0;
+		// DEBUG("AMT CLIENT " << _clients.size());
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
+
 			// DEBUG("Client: " << (*client)->get_fd());
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
 			{
+				DEBUG("client seems ready to transmit data");
 				// DEBUG("FD_ISSET");
+
+				// DEBUG("is_done_recv : " << (*client)->is_done_recv() << "\n");
+				//!(*client)->is_done_recv() 
 				if ((*client)->receive() == -1)
 				{
+					DEBUG("client seems to have left");
+
 					close((*client)->get_fd());
 					FD_CLR((*client)->get_fd(), &listen_set);
 					FD_CLR((*client)->get_fd(), &write_set);
+					
 					(*client)->set_fd(-1);
 				}
 			}
 			else if ((*client)->is_done_recv() && (*client)->get_fd() != -1)
 			{
 				// DEBUG("is_done_recv");
-				if ((*client)->send_rdy == 0)
+				if ((*client)->send_rdy == 0 && !(*client)->get_rec_buff()->empty() )
 				{
+					DEBUG("Building response");
 					Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
 					(*client)->set_response(req.respond((*client)->servers));
+					(*client)->get_rec_buff()->clear();
 				}
 				else
+				{
+					
 					(*client)->send();
+				}
 			}
 			if ((*client)->get_fd() == -1)
 			{
