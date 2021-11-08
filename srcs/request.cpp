@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 20:19:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 22:08:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,11 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 	get_str_before_char(request, "\n", &pos);
 	while (pos <= size && request[pos]) // headers parsing loop
 	{
+		if (request[pos] == '\n')
+			pos++;
 		string header = get_str_before_char(request, ":\n", &pos);
-		DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
-		if (header == "\0")
+		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
+		if (header.length() == 0)
 			break ; // case empty line
 		if (header == "Host")
 		{
@@ -48,31 +50,12 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
-		DEBUG("---------------------INSERTED HEADER");
 		headers.insert(pair<string, string>(header, get_str_before_char(request, "\r\n", &pos)));
 	}
-	pos++;
-	for (map<string, string>::iterator header = headers.begin(); header != headers.end(); header++)
-	{
-		DEBUG(header->first << ": " << header->second);
-	}
-	DEBUG("");
-
-	//get_str_before_char(request, "\r\n", &pos)
-	// DEBUG(headers.count("Host"));
-	// DEBUG("Content-Type" << headers.count("Content-Type") << " value: " << headers["Content-Type"]);
-	// DEBUG("Content-Length" << headers.count("Content-Length") << " value: " << headers["Content-Length"]);
-	// DEBUG("Content-Length" << headers.count("Content-Length") << " value: " << headers["Content-Length"]);
 	if (headers.count("Content-Length") > 0)
-		headers.insert(pair<string, string>("Body", get_str_before_char(request, "\r\n", &pos)));
-	// DEBUG("****** PARSING REQUEST ******");
-	// DEBUG("type:" << type);
-	// DEBUG("target:" << target);
-	// DEBUG("socket:" << socket);
-	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
-	{
-		// DEBUG(it->first << ": " << it->second);
-	}
+		headers.insert(pair<string, string>("Body", &request[pos]));
+	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
+	// 	DEBUG(it->first << ": " << it->second);
 	// DEBUG("****** REQUEST PARSED *******");
 }
 
@@ -351,7 +334,6 @@ string	Request::respond(const list<Server*> servers)
 		// file.open(filepath);
 		ofstream file_out(filepath, ios::app);
 		file_out << headers["Body"] << endl;
-		file_out << "finito" << endl;
 		file_out.close();
 		return (send_file(server, "", filepath));
 	}
