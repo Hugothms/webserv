@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 12:24:47 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 13:15:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,7 +320,7 @@ void Request::set_filepath()
 		else
 			filepath += server->get_index();
 	}
-	DEBUG("filepath :" << filepath);
+	DEBUG("filepath: " << filepath);
 }
 
 string	Request::respond(const list<Server*> servers)
@@ -342,21 +342,17 @@ string	Request::respond(const list<Server*> servers)
 	else if (type == "POST")
 	{
 		//todo
-		string uploaded_file = server->get_root() + location->get_upload_directory();
-		// if (file exist in upload directory)
-		// {
-		// 	append to file
-		// }
-		// else
-		// {
-		// 	create file and write body in it
-		// }
-
+		filepath = server->get_root() + location->get_upload_directory() + target;
+		ofstream file;
+		file.open(filepath);
+		file << headers["Body"] << endl;
+		file.close();
 		return (send_file(server, "", filepath));
 	}
 	else if (type == "DELETE")
 	{
 		//todo
+		filepath = server->get_root() + location->get_upload_directory();
 		return (send_file(server, "", filepath));
 	}
 	return (send_file(server, code_405, error_page(server, 405)));
