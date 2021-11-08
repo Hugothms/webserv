@@ -68,6 +68,8 @@ void Client::set_response(string str)
 {
 	send_buffer = str;
 	send_rdy = 1;
+	
+	_done_send = 0;
 	send_offset = 0;
 }
 
@@ -95,29 +97,28 @@ int Client::receive()
 	char buff[BUFF_S];
 	int len;
 
-	DEBUG("Receiving....\n");
-
+	DEBUG("Receiving....");
 	len = recv(_fd, buff, BUFF_S, 0);
-
-	DEBUG("Received :" << len <<"\n");
+	DEBUG("Received :" << len);
 
 	if (len < BUFF_S && len > 0)
-	{         
+	{
 		rec_buffer += string(buff, len);
 		_done_recv = 1;
-		// DEBUG("FINISHED READING\n");
+		DEBUG("Data fit in the buffer, read done");
 		return 1;
 	}
 	else if (len == BUFF_S)
 	{
-		rec_buffer += string(buff, len);
+		rec_buffer += string(buff, len);		
 		_done_recv = 0;
+		DEBUG("Data did not fit in the buffer, read more plz");
 		return 0;
 	}
 	else
 	{
+		DEBUG("No data received, client is done");
 		_done_recv = 1;
-		// DEBUG("FINISHED READING OR DC\n");
 		return -1;
 	}
 	return (1);
@@ -144,9 +145,11 @@ int Client::send()
 	if (send_offset == send_buffer.size())
 	{
 		_done_send = 1;
-		send_buffer.clear();
-		DEBUG("Send_rdy back to 0");
 		send_rdy = 0;
+		send_buffer.clear();
+		_done_recv = 0;
+		DEBUG("Send_rdy back to 0");
+		
 	}
 	return 0;
 }
