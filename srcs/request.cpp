@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 22:08:03 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 22:10:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,7 +314,6 @@ void Request::set_filepath()
 
 string	Request::respond(const list<Server*> servers)
 {
-	DEBUG("target: " << target);
 	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_file(server, code_404, error_page(server, 404)));
