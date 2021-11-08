@@ -40,5 +40,4 @@ webserv.code-workspace
 log
 err
 test
-page.html
 *.DS_Store

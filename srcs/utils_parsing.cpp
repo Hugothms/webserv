@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/10/22 13:37:57 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/03 08:45:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,12 @@ string get_str_before_char(const string str, const string stop, size_t *pos, con
 		if (str.find(stop[i], *pos) - *pos < length)
 			length = str.find(stop[i], *pos) - *pos;
 	}
+	if (*pos + length == string::npos || (str.find('\n', *pos) - *pos < length))
+		return "";
 	string res;
-	if (length == string::npos || str.find('\n', *pos) < *pos + length)
-		return res;
-	res = str.substr(*pos, str[*pos + length - 1] == '\r' ? length - 1 : length);
+	if (str[*pos + length - 1] == '\r')
+		res = str.substr(*pos, length - 1);
+	res = str.substr(*pos, length);
 	*pos += length + 1;
 	return res;
 }

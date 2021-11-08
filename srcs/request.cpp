@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:15:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 15:44:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,34 +34,35 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			break ; // case empty line
 		if (header == "Host")
 		{
-			string host;
+			string ip_address;
 			string port;
-			if ((host = get_str_before_char(request, ":", &pos)).length())
-				port = get_str_before_char(request, "\n", &pos);
+			if ((ip_address = get_str_before_char(request, ":", &pos)).length())
+				port = get_str_before_char(request, "\r\n", &pos);
 			else
 			{
-				host = get_str_before_char(request, "\n", &pos);
+				ip_address = get_str_before_char(request, "\r\n", &pos);
 				port = "80";
 			}
-			// if (host == "localhost")
-			// 	host = "127.0.0.1";
-			headers.insert(pair<string, string>("Host", host));
+			// if (ip_address == "localhost")
+			// 	ip_address = "127.0.0.1";
+			headers.insert(pair<string, string>("Host", ip_address));
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
-		headers.insert(pair<string, string>(header, get_str_before_char(request, "\n", &pos)));
+		headers.insert(pair<string, string>(header, get_str_before_char(request, "\r\n", &pos)));
 	}
 	pos++;
 	if (headers.count("Content-Length"))
 		headers.insert(pair<string, string>("Body", &request[pos]));
-	DEBUG("****** PARSING REQUEST ******");
-	DEBUG("type:" << type);
-	DEBUG("target:" << target);
-	DEBUG("socket:" << socket);
-	map<string, string>::iterator it = headers.begin();
-	while(it != headers.end())
-		DEBUG(it->first << ": " << it++->second);
-	DEBUG("****** REQUEST PARSED *******");
+	// DEBUG("****** PARSING REQUEST ******");
+	// DEBUG("type:" << type);
+	// DEBUG("target:" << target);
+	// DEBUG("socket:" << socket);
+	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
+	{
+		// DEBUG(it->first << ": " << it->second);
+	}
+	// DEBUG("****** REQUEST PARSED *******");
 }
 
 string	getdayofweek(const int day)
@@ -112,7 +113,7 @@ string	getmonth(const int month)
 		case 9:
 			return "Oct";
 		case 10:
-			return "Now";
+			return "Nov";
 		case 11:
 			return "Dec";
 		default :
@@ -168,91 +169,183 @@ string	get_type(const string str)
 	return ret;
 }
 
-//TODO : select server
-Server	*Request::select_server(const list<Server*> servers, string host, unsigned int port)
+string	error_page(const Server *server, const int x)
 {
-	DEBUG("Looking for " << host << ":" << port);
-	list<Server*>::const_iterator it = servers.begin();
-	while (it != servers.end())
-	{
-		DEBUG((*it)->get_host() << ":" << (*it)->get_port());
-		if (((*it)->get_host() == "0.0.0.0" || (*it)->get_host() == host) && (*it)->get_port() == port)
-			return (*it);
-		it++;
-	}
-	return NULL;
+	if (server && server->get_error_pages().size() && server->get_error_pages()[x].length())
+			return (server->get_root() + server->get_error_pages()[x]);
+	return ("default_error_pages/" + to_string(x) + ".html");
 }
 
-void 	send_socket(int socket, string message, string page, string type = "text/html")
+/**
+ * @param servers	list of server in which to search for the corresponding one
+ * @param host		specified in the conf by the 'server_name' keyword
+ * @param port		specified in the conf by the 'listen' keyword (ip_address:port)
+ * @return			a pointer to the server corresponding to the couple (host, port) or the default server for this port if it exist, null overwise.
+**/
+Server	*select_server(const list<Server*> servers, string host, unsigned int port)
+{
+	// DEBUG("Looking for " << host << ":" << port);
+	Server *default_server = NULL;
+	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
+	{
+		if ((*server)->get_port() == port)
+		{
+			if (default_server == NULL)
+				default_server = *server;
+			list<string> server_names = (*server)->get_server_names();
+			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
+			{
+				// DEBUG("Candidate " << *server_name << ":" << (*server)->get_port());
+				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
+				{
+					// DEBUG("Found " << *server_name << ":" << (*server)->get_port());
+					return (*server);
+				}
+			}
+		}
+	}
+	// if (default_server)
+		// DEBUG("Found default server for port: " << port);
+	return default_server;
+}
+
+string send_socket(const string message, const string type, const string body)
 {
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
 	response << "Date: " << get_time_stamp() << endl;
 	response << "Server: webserv/0.01" << endl;
 	response << "Content-Type: " << type << endl;
-	response << "Content-Length: " << page.length() << endl;
-	response << "Connection: Cosed" << endl;
+	response << "Content-Length: " << body.length() << endl;
+	response << "Connection: Closed" << endl;
 	response << endl;
-	response << page;
+	response << body;
 	if (type == "text/html")
 	{
 		DEBUG("********* RESPONSE *********");
 		DEBUG(response.str());
 	}
-	send(socket, response.str().c_str(), response.str().length(), 0);
+	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
+	return (response.str());
 }
 
-bool Request::method_allowed(Server *server, string method)
+string 	send_file(const Server *server, string message, string filepath)
+{
+	ifstream file(filepath.c_str(), ofstream::in);
+	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
+	{
+		message = code_404;
+		file.close();
+		file.open(error_page(server, 404), ofstream::in);
+	}
+	else if (message == "")
+		message = code_200;
+	string body((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	if (body == "") // if file is a directory or is empty
+	{
+		message = code_404;
+		file.close();
+		file.open(error_page(server, 404), ofstream::in);
+		body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	}
+	file.close();
+	return (send_socket(message, get_type(filepath), body));
+}
+
+Location	*select_location(const Server *server, const string target)
 {
 	list<Location> locations = server->get_locations();
 	if (locations.size() == 0)
-		return false;
+		return NULL;
+	//TODO: decompose filepath
+	string searched_path = target;
+	// DEBUG("tmp: " << target);
+	while (searched_path != "")
+	{
+		// DEBUG(searched_path);
+		for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+		{
+			// DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
+			if (searched_path == location->get_path())
+			{
+				// DEBUG("Location found: " << location->get_path());
+				return ((new Location(*location)));
+			}
+		}
+		size_t pos = searched_path.find_last_of("/");
+		if (pos == string::npos)
+			break;
+		searched_path = searched_path.substr(0, pos);
+	}
+	searched_path = "/";
 	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 	{
-		list<string> HTTP_methods = location->get_HTTP_methods();
-		for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
-			if (*HTTP_method == method)
-				return true;
+		if (searched_path == location->get_path())
+		{
+			// DEBUG("Default location found: " << location->get_path());
+			return ((new Location(*location)));
+		}
+	}
+	return NULL;
+}
+
+bool method_allowed(const Location *location, const string method)
+{
+	list<string> HTTP_methods = location->get_HTTP_methods();
+	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+	{
+		if (*HTTP_method == method)
+			return true;
 	}
 	return false;
 }
 
-void	Request::respond(const list<Server*> servers)
+void Request::set_filepath()
 {
-	Server *server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
-	if (!server)
-		return (send_socket(socket, "404 Not Found", "<html><body><h1>404 Not Found</h1></body></html>"));
-	string message;
-	string filepath(server->get_root());
+	filepath = server->get_root();
 	if (target.compare("/") == 0)
-		target += server->get_index();
-	filepath += target;
-	if (type == "GET")
+		filepath += '/' + server->get_index();
+	else
+		filepath += target;
+	if (filepath[filepath.length() - 1] == '/')
 	{
-		if (!method_allowed(server, "GET"))
-			return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
-		ifstream file(filepath.c_str(), ofstream::in);
-		if (!file)
-		{
-			file.close();
-			file.open(server->get_root() + server->get_error_pages()[404], ofstream::in);
-			message = "404 Not Found";
-		}
+		// DEBUG("Target is a directory");
+		if (location->get_index().length())
+			filepath += location->get_index();
 		else
-			message = "200 OK";
-		string page((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-		send_socket(socket, message, page, get_type(filepath));
-		file.close();
+			filepath += server->get_index();
 	}
+	DEBUG("filepath: " << filepath);
+}
+
+string	Request::respond(const list<Server*> servers)
+{
+	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
+	if (!server)
+		return (send_file(server, code_404, error_page(server, 404)));
+	location = select_location(server, target);
+	if (!location)
+		return (send_file(server, code_404, error_page(server, 404)));
+	if (!method_allowed(location, type))
+		return (send_file(server, code_405, error_page(server, 405)));
+	set_filepath();
+	if (type == "GET")
+		return(send_file(server, "", filepath));
 	else if (type == "POST")
 	{
-
+		filepath = server->get_root() + location->get_upload_directory() + target;
+		ofstream file;
+		file.open(filepath);
+		file << headers["Body"] << endl;
+		file.close();
+		return (send_file(server, "", filepath));
 	}
 	else if (type == "DELETE")
 	{
-
+		//todo
+		filepath = server->get_root() + location->get_upload_directory();
+		remove(filepath.c_str());
+		return (send_file(server, "", filepath));
 	}
-	else
-		return (send_socket(socket, "405 Method Not Allowed", "<html><body><h1>405 Method Not Allowed</h1></body></html>"));
-	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
+	return (send_file(server, code_405, error_page(server, 405)));
 }

@@ -1,3 +1,4 @@
+
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
@@ -24,19 +25,19 @@ INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 				$(INCLUDE)/webserv.hpp
 
 SRC			=	main.cpp			\
-				location.cpp			\
+				location.cpp		\
+				parse.cpp			\
 				request.cpp			\
 				server.cpp			\
 				utils_parsing.cpp	\
+				client.cpp			\
 				webserv.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
 
-CFLAGS		=	-Wall -Wextra -std=c++98 -g -fsanitize=address #-Werror
-
+CFLAGS		=	-Wall -Wextra -std=c++98 -g3 -fsanitize=address #-Werror
 CC			=	clang++
-
 RM			=	rm -rf
 
 DEBUG		=	1

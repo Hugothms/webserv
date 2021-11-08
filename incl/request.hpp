@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/27 13:02:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 17:04:31 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,24 @@
 # include "includes.hpp"
 # include "server.hpp"
 
+
 class Server;
+class Location;
 
 class Request
 {
 	private :
+		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
 		string				target;			// The URL requested
 		int					socket;			// ? i don't know
 		map<string, string>	headers;
 		// string		body;			// Only for POST
+
+		// * FOR INTERNAL USE *
+		const Server		*server;
+		const Location		*location;
+		string				filepath;
 
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;
@@ -57,10 +65,9 @@ class Request
 	public :
 		Request(const char *buffer, const size_t size, const int socket=80);
 		~Request();
-		bool	method_allowed(Server *server, string method);
-		Server	*select_server(const list<Server*> servers, string host, unsigned int port);
-		void	respond(void);
-		void	respond(const list<Server*> servers);
+		void	set_filepath(void);
+		string	respond(void);
+		string	respond(const list<Server*> servers);
 };
 
 #endif
