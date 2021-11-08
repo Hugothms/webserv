@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/08 12:51:21 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 13:58:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,13 +135,16 @@ void	Webserv::listen()
 	build();
 	while (true)
 	{
+		DEBUG("Waiting for new connections...");
 		loop_prep();
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
+			DEBUG("Client: " << (*client)->get_fd());
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
 			{
+				DEBUG("FD_ISSET");
 				if ((*client)->receive() == -1)
 				{
 					close((*client)->get_fd());
@@ -152,6 +155,7 @@ void	Webserv::listen()
 			}
 			else if ((*client)->is_done_recv() && (*client)->get_fd() != -1)
 			{
+				DEBUG("is_done_recv");
 				if ((*client)->send_rdy == 0)
 				{
 					Request req((*client)->get_rec_buff()->c_str(),(*client)->get_rec_buff()->length(), (*client)->get_fd());
@@ -162,6 +166,7 @@ void	Webserv::listen()
 			}
 			if ((*client)->get_fd() == -1)
 			{
+				DEBUG("Done");
 				delete (*client);
 				client = _clients.erase(client);
 				--client;
