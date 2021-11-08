@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/03 14:17:10 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 12:23:48 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
 	ptr = &webserv;
-
+	signal(SIGPIPE, SIG_IGN);
 	signal(SIGSTOP, &stop);
 	signal(SIGINT, &stop);
 	signal(SIGKILL, &stop);

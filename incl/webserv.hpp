@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/05 17:29:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 12:23:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,21 @@ class Webserv
 		void	parse_config(const string config);
 
 		void	listen();
+		void	loop_prep();
 		void 	accept_new_conn(void);
 		static void sig();
 		void 	stop();
 		void 	build(void);
 		void 	process(Client *client);
+		bool	is_a_valid_server(	const list<Location>	locations,
+									const list<string>		server_names,
+									const map<int, string>	error_pages,
+									const string			host,
+									const unsigned int 		port,
+									const string			root,
+									const string			index,
+									const unsigned int		max_client_body_size);
+		bool	conflict_host_port_server_names(const string host, const unsigned int port, const list<string> server_names);
 
 };
 
