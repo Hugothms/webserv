@@ -19,21 +19,10 @@ Webserv* ptr;
 void stop(int num)
 {
 	(void) num;
-	//");
-
-	// if (ptr)
-	// {
-	// while (1)
-	// {
 	DEBUG("KILLING");
-		// int i = 1;
-	// }
 	ptr->stop();
 	DEBUG("KILLED");
-	// 	// DEBUG("STOPPED");
-	// }
 	exit(0);
-	// return 0;
 }
 
 int main(int argc, char *argv[])
@@ -54,6 +43,7 @@ int main(int argc, char *argv[])
 		file.close();
 	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
+	
 	ptr = &webserv;
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGSTOP, &stop);
