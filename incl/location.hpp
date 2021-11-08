@@ -19,31 +19,49 @@ class Location
 {
 	private :
 		// * PARSED FROM CONFIG FILE *
-		string			location;
+		string			path;
 		list<string>	HTTP_methods;
 		string			HTTP_redirection;
 		string			location_root;
-		bool 			directory_listing;
 		string			default_answer;
+		string			index; // file served when a directory is requested
+		string			upload_directory;
+		bool 			directory_listing;
 
 	public:
 		Location();
 		~Location();
+		string			is_valid(void) const;
 
-		list<string>	get_HTTP_methods();
-		string			get_location();
-		string			get_HTTP_redirection();
-		string			get_location_root();
-		string			get_default_answer();
-		bool			get_directory_listing();
+		list<string>	get_HTTP_methods() const;
+		string			get_path() const;
+		string			get_HTTP_redirection() const;
+		string			get_location_root() const;
+		string			get_default_answer() const;
+		string			get_index() const;
+		string			get_upload_directory() const;
+		bool			get_directory_listing() const;
 
 		void set_HTTP_methods(const list<string> HTTP_methods);
 		void push_back_HTTP_method(const string HTTP_method);
-		void set_location(const string location);
+		void set_path(const string location);
 		void set_HTTP_redirection(const string HTTP_redirection);
 		void set_location_root(const string location_root);
 		void set_default_answer(const string default_answer);
+		void set_index(const string index);
+		void set_upload_directory(const string index);
 		void set_directory_listing(const bool directory_listing);
+
+
+		// <string, void (Location::*)(const string)>
+
+		// typedef void (Location::*my_pointer_function)(const string);
+		// map<string, my_pointer_function const> map_pointer_function;
+
+		// void set(const string &key, const string value) {
+		// 	my_pointer_function fp = map_pointer_function[key];
+		// 	return (this->*fp)(value);
+		// }
 };
 
 #endif

@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/21 17:24:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 14:07:37 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
-// : host("0.0.0.0"), port(80), root("website"), index("index.html"), max_client_body_size(2048)
+// : ip_address("0.0.0.0"), port(80), root("website"), index("index.html"), max_client_body_size(2048)
 {}
 
 Server::~Server()
@@ -23,20 +23,20 @@ Server::~Server()
 	DEBUG("KILLED");
 }
 
-Client* Server::handle_new_conn()
-{
-	DEBUG("New conn incomming, need to accept it !");
+// Client* Server::handle_new_conn()
+// {
+// 	DEBUG("New conn incomming, need to accept it !");
 
-	Client *new_client = new Client();
+// 	Client *new_client = new Client();
 
-	new_client->set_fd(accept(listen_fd, new_client->get_sockaddr(), new_client->get_addr_len()));
+// 	new_client->set_fd(accept(listen_fd, new_client->get_sockaddr(), new_client->get_addr_len()));
 
-	inet_ntop(AF_INET, &(new_client->client_addr.sin_addr), new_client->client_ipv4_str, INET_ADDRSTRLEN);
+// 	inet_ntop(AF_INET, &(new_client->client_addr.sin_addr), new_client->client_ipv4_str, INET_ADDRSTRLEN);
 
-	printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
-	DEBUG("Client created !");
-	return (new_client);
-}
+// 	printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
+// 	DEBUG("Client created !");
+// 	return (new_client);
+// }
 
 int Server::setup(void)
 {
@@ -48,11 +48,14 @@ int Server::setup(void)
 	}
 
 	hint.sin_family = AF_INET;
+	DEBUG("PORT IS " << port);
 	hint.sin_port = htons(port);
 
-	DEBUG("TRYING TO BIND TO " << host);
-
-	inet_pton(AF_INET, host.c_str(), &(hint.sin_addr));
+	DEBUG("TRYING TO BIND TO " << ip_address);
+	if (ip_address.empty())
+		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
+	else
+		inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
@@ -66,48 +69,73 @@ int Server::setup(void)
 	return (listen_fd);
 }
 
-list<Location>	Server::get_locations()
+string Server::is_valid(void) const
+{
+	// TODO: determine what is mandatory for a server be valid
+	if (get_ip_address() == "")
+		return "ip_address is not set";
+	if (get_port() == 0)
+		return "port is not set";
+	if (get_root() == "")
+		return "root is not set";
+	if (get_index() == "")
+		return "index is not set";
+	if (get_max_client_body_size() == 0)
+		return "max_client_body_size is not set";
+	list<Location> locations = get_locations();
+	if (!locations.size())
+		return "location is not set";
+	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	{
+		string error = location->is_valid();
+		if (error.length())
+			return error;
+	}
+	return "";
+}
+
+list<Location>	Server::get_locations() const
 {
 	return locations;
 }
 
-list<string>	Server::get_server_names()
+list<string>	Server::get_server_names() const
 {
 	return server_names;
 }
 
-map<int, string>	Server::get_error_pages()
+map<int, string>	Server::get_error_pages() const
 {
 	return error_pages;
 }
 
-string			Server::get_host()
+string			Server::get_ip_address() const
 {
-	return host;
+	return ip_address;
 }
 
-unsigned int	Server::get_port()
+unsigned int	Server::get_port() const
 {
 	return port;
 }
 
-string			Server::get_root()
+string			Server::get_root() const
 {
 	return root;
 }
 
-string			Server::get_index()
+string			Server::get_index() const
 {
 	return index;
 }
 
-unsigned int	Server::get_max_client_body_size()
+unsigned int	Server::get_max_client_body_size() const
 {
 	return max_client_body_size;
 }
 
 
-int Server::get_listen_fd(void)
+int Server::get_listen_fd(void) const
 {
 	return listen_fd;
 }
@@ -141,9 +169,9 @@ void	Server::push_back_error_page(pair<int, string> error_page)
 	this->error_pages.insert(error_page);
 }
 
-void	Server::set_host(const string host)
+void	Server::set_ip_address(const string ip_address)
 {
-	this->host = host;
+	this->ip_address = ip_address;
 }
 
 void	Server::set_port(const unsigned int port)

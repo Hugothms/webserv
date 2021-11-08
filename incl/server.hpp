@@ -6,18 +6,17 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/10/20 12:36:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/05 13:38:31 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
+# ifndef SERVER_HPP
 # define SERVER_HPP
 
 # include "includes.hpp"
 # include "location.hpp"
 # include "request.hpp"
-# include "client.hpp"
-# include "webserv.hpp"
+// # include "client.hpp"
 
 # define V4 AF_INET
 # define V6 AF_INET6
@@ -35,12 +34,13 @@ class Server
 		list<Location>		locations;
 		list<string>		server_names; // "Host" header in HTTP request (domain names)
 		map<int, string>	error_pages; //
-		string				host;
+		string				ip_address;
 		unsigned int		port; // port to listen and send on ("listen" in config file)
 		string				root; // directory where the webste is
 		string				index; // file served when "/" is requested
 		unsigned int		max_client_body_size;
 
+		// * FOR INTERNAL USE *
 		int 				listen_fd;
 		struct sockaddr_in	hint;
 
@@ -49,21 +49,22 @@ class Server
 		~Server();
 		void	s_listen();
 
- 		Client	*handle_new_conn();
+ 		// Client	*handle_new_conn();
 		int		setup();
 
 		// Client handle_new_conn(int listen_sock);
 		// int port;
 
-		list<Location>		get_locations();
-		list<string>		get_server_names();
-		map<int, string>	get_error_pages();
-		string				get_host();
-		unsigned int		get_port();
-		string				get_root();
-		string				get_index();
-		unsigned int		get_max_client_body_size();
-		int 				get_listen_fd(void);
+		list<Location>		get_locations() const;
+		list<string>		get_server_names() const;
+		map<int, string>	get_error_pages() const;
+		string				get_ip_address() const;
+		unsigned int		get_port() const;
+		string				get_root() const;
+		string				get_index() const;
+		unsigned int		get_max_client_body_size() const;
+		int 				get_listen_fd(void) const;
+		string				is_valid(void) const;
 
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);
@@ -71,7 +72,7 @@ class Server
 		void push_back_server_name(const string server_name);
 		void set_error_pages(const map<int, string> error_pages);
 		void push_back_error_page(const pair<int, string> error_page);
-		void set_host(const string host);
+		void set_ip_address(const string ip_address);
 		void set_port(const unsigned int port);
 		void set_root(const string root);
 		void set_index(const string index);
