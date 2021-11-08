@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 14:32:09 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 15:44:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,6 +344,7 @@ string	Request::respond(const list<Server*> servers)
 	{
 		//todo
 		filepath = server->get_root() + location->get_upload_directory();
+		remove(filepath.c_str());
 		return (send_file(server, "", filepath));
 	}
 	return (send_file(server, code_405, error_page(server, 405)));
