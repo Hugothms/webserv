@@ -141,7 +141,6 @@ void	Webserv::listen()
 		loop_prep();
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
-		int i = 0;
 		// DEBUG("AMT CLIENT " << _clients.size());
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
