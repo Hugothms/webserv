@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 12:28:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 19:34:24 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INCLUDES_HPP
 # define INCLUDES_HPP
 
-// STD INCLUDES
+//* STD INCLUDES
 # include <iostream>
 # include <fstream>
 # include <sstream>
@@ -21,21 +21,22 @@
 # include <cstdlib>
 # include <unistd.h>
 # include <ctime>
+# include <sys/stat.h> // mkdir
 
-// NETWORK INCLUDES
+//* NETWORK INCLUDES
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <sys/select.h>
 # include <sys/socket.h> // bind
 
-// DATASTRUCTURE INCLUDES
+//* DATASTRUCTURE INCLUDES
 # include <vector>
 # include <list>
 # include <map>
 
 using namespace std;
 
-// OTHERS INCLUDES
+//* OUR INCLUDES
 # include "location.hpp"
 # include "server.hpp"
 
@@ -56,7 +57,7 @@ bool	is_integer(const string &s);
 string	get_content_file(const string filename);
 string	get_str_before_char(const string str, const string stop, size_t *pos, const string skip = "\r\t ");
 
-// * PARSING *
+//* PARSING
 void	err_parsing_config(const string error);
 Server	*parse_server(const string config, size_t *pos);
 

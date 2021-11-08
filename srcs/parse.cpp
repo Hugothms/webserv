@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/08 14:18:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 20:33:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,10 @@ Location	parse_location(const string config, size_t *pos)
 		}
 		else if (tmp == "upload_directory")
 		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos, "\r\t /")).length())
 			{
+				if (tmp[tmp.length()] == '/')
+					tmp.resize(tmp.length() - 1);
 				location.set_upload_directory(tmp);
 				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);

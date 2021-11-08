@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 15:44:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/08 22:08:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,13 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 	type = get_str_before_char(request, " ", &pos);
 	target = get_str_before_char(request, " ", &pos);
 	get_str_before_char(request, "\n", &pos);
-	string header;
-	while (pos < size && request[pos]) // headers parsing loop
+	while (pos <= size && request[pos]) // headers parsing loop
 	{
-		header = get_str_before_char(request, ": ", &pos);
+		if (request[pos] == '\n')
+			pos++;
+		string header = get_str_before_char(request, ":\n", &pos);
 		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
-		if (header == "\0")
+		if (header.length() == 0)
 			break ; // case empty line
 		if (header == "Host")
 		{
@@ -51,17 +52,10 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 		}
 		headers.insert(pair<string, string>(header, get_str_before_char(request, "\r\n", &pos)));
 	}
-	pos++;
-	if (headers.count("Content-Length"))
+	if (headers.count("Content-Length") > 0)
 		headers.insert(pair<string, string>("Body", &request[pos]));
-	// DEBUG("****** PARSING REQUEST ******");
-	// DEBUG("type:" << type);
-	// DEBUG("target:" << target);
-	// DEBUG("socket:" << socket);
-	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
-	{
-		// DEBUG(it->first << ": " << it->second);
-	}
+	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
+	// 	DEBUG(it->first << ": " << it->second);
 	// DEBUG("****** REQUEST PARSED *******");
 }
 
@@ -220,12 +214,12 @@ string send_socket(const string message, const string type, const string body)
 	response << "Connection: Closed" << endl;
 	response << endl;
 	response << body;
-	if (type == "text/html")
-	{
-		DEBUG("********* RESPONSE *********");
-		DEBUG(response.str());
-	}
-	DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
+	// if (type == "text/html")
+	// {
+	// 	DEBUG("********* RESPONSE *********");
+	// 	DEBUG(response.str());
+	// }
+	// DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
 	return (response.str());
 }
 
@@ -315,11 +309,12 @@ void Request::set_filepath()
 		else
 			filepath += server->get_index();
 	}
-	DEBUG("filepath: " << filepath);
+	// DEBUG("filepath: " << filepath);
 }
 
 string	Request::respond(const list<Server*> servers)
 {
+	DEBUG("target: " << target);
 	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
 		return (send_file(server, code_404, error_page(server, 404)));
@@ -333,17 +328,19 @@ string	Request::respond(const list<Server*> servers)
 		return(send_file(server, "", filepath));
 	else if (type == "POST")
 	{
-		filepath = server->get_root() + location->get_upload_directory() + target;
-		ofstream file;
-		file.open(filepath);
-		file << headers["Body"] << endl;
-		file.close();
+		mkdir((server->get_root() + '/' + location->get_upload_directory()).c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
+		filepath = server->get_root() + '/' + location->get_upload_directory() + target;
+		// ofstream file;
+		// file.open(filepath);
+		ofstream file_out(filepath, ios::app);
+		file_out << headers["Body"] << endl;
+		file_out.close();
 		return (send_file(server, "", filepath));
 	}
 	else if (type == "DELETE")
 	{
 		//todo
-		filepath = server->get_root() + location->get_upload_directory();
+		filepath = server->get_root() + '/' + location->get_upload_directory() + target;
 		remove(filepath.c_str());
 		return (send_file(server, "", filepath));
 	}
