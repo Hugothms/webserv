@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 19:34:24 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:02:58 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,12 @@ class Location;
 
 
 bool	is_integer(const string &s);
-string	get_content_file(const string filename);
-string	get_str_before_char(const string str, const string stop, size_t *pos, const string skip = "\r\t ");
+string	get_content_file(const string &filename);
+string	get_str_before_char(const string &str, const string stop, size_t *pos, const string skip = "\r\t ");
 
 //* PARSING
 void	err_parsing_config(const string error);
-Server	*parse_server(const string config, size_t *pos);
+Server	*parse_server(const string &config, size_t *pos);
 
 
 # define code_100 "100 Continue"

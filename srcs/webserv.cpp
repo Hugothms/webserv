@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/09 15:02:39 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/09 16:19:33 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	Webserv::push_back_server(Server *server)
 	_servers.push_back(server);
 }
 
-bool Webserv::conflict_ip_address_port_server_names(const string new_ip_address, const unsigned int new_port, const list<string> new_server_names) const
+bool Webserv::conflict_ip_address_port_server_names(const string &new_ip_address, const unsigned int new_port, const list<string> &new_server_names) const
 {
 	for (list<Server*>::const_iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
@@ -53,8 +53,10 @@ void	Webserv::parse_config(const string config_file)
 	if (config_file == "")
 	{
 		DEBUG("Default config (no config provided)");
+		//TODEL
 		Server *srv = new Server();
 		srv->set_port(80);
+		//
 		push_back_server(srv);
 		return ;
 	}
@@ -70,7 +72,10 @@ void	Webserv::parse_config(const string config_file)
 		{
 			Server *server = parse_server(config, &pos);
 			if (server && conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
+			{
+				delete server;
 				err_parsing_config("ip_address:port/server_names conflict with another server");
+			}
 			push_back_server(server);
 		}
 	}
@@ -81,6 +86,7 @@ void Webserv::build()
 {
 	FD_ZERO(&listen_set);
 	FD_ZERO(&write_set);
+	
 	high_fd = 0;
 	int fd;
 	//Setup the set for listening on different ports/IP
@@ -102,7 +108,7 @@ void Webserv::accept_new_conn(void)
 	{
 		if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
 		{
-			Client *client = new Client(*server);
+			Client *client = new Client((*server)->get_listen_fd());
 			client->push_back_server(*server);
 			_clients.push_back(client);
 			FD_SET(client->get_fd(), &listen_set);
@@ -148,6 +154,7 @@ void	Webserv::listen()
 	{
 		// DEBUG("Waiting for new connections...");
 		loop_prep();
+		
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
 		// DEBUG("AMT CLIENT " << _clients.size());

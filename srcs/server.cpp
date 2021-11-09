@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 14:07:37 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:24:31 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int Server::setup(void)
 	listen_fd = socket(AF_INET, SOCK_STREAM , 0);
 	if (listen_fd == -1)
 	{
+		//Can't use ERRNO value
 		perror("socket");
 		exit(1);
 	}
@@ -52,12 +53,15 @@ int Server::setup(void)
 	hint.sin_port = htons(port);
 
 	DEBUG("TRYING TO BIND TO " << ip_address);
+	
+	//TODEL
 	if (ip_address.empty())
 		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
-	else
+	else //TODEL
 		inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
+	//Need to check conn alive and stuff
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
 	if (bind(listen_fd, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
@@ -65,6 +69,7 @@ int Server::setup(void)
 		perror("bind");
 		exit(1);
 	}
+	//Chanege max number of clients
 	listen(listen_fd, SOMAXCONN);
 	return (listen_fd);
 }

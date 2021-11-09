@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 12:23:39 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:18:41 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@ Client::Client()
 	client_len = sizeof(client_addr);
 }
 
-Client::Client(Server *srv)
+Client::Client(int new_listen_fd)
 {
 	_done_recv = 0;
 	_done_send = 0;
 	send_rdy = 0;
 	client_len = sizeof(client_addr);
 
-	_fd = accept(srv->get_listen_fd(), get_sockaddr(), get_addr_len());
+	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
 
 	DEBUG("Client created !");
 	// inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
