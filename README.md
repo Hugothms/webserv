@@ -14,8 +14,3 @@
 		- HTTP 1.1 Compliant : What is it, and do it
 		- Parsing HTTP requests
 		- Config file : Define available options, parse the file and apply changes
-
-
-Issues:
-- Sometimes (not systematicly) a broken pipe occurs when requesting big files
-- The Requests are created multiple times, with the same parameters.
