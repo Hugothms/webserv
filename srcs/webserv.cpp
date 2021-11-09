@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/08 13:58:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 15:02:39 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Webserv::Webserv(const string config_file)
 {
 	parse_config(config_file);
+	build();
 }
 
 Webserv::~Webserv()
@@ -142,7 +143,7 @@ void Webserv::clear_fd(Client *client)
 
 void	Webserv::listen()
 {
-	build();
+	// build();
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");
@@ -164,12 +165,18 @@ void	Webserv::listen()
 			}
 			else if ((*client)->is_done_recv())
 			{
-				DEBUG("client is done transmitting");
+				
 
 				if ((*client)->send_rdy == 0)
+				{
+					DEBUG("Building response");
 					(*client)->set_response();
+				}
 				else if ((*client)->is_done_send() == 0)
+				{
+					DEBUG("Sending response");
 					(*client)->send();
+				}
 			}
 		}
 	}
