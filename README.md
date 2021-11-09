@@ -6,13 +6,14 @@ Summary: The objective of this project is to create a fully functional HTTP web 
 or more conveniently:
 
 	make run_config file
+
 ## Features
 ### ✅ It supports:
 * GET, HEAD, POST & DELETE HTTP methods
 * A configuration file given as an argument (examples of configurations in 'config' directory)
 
 ### ❌ It doesn't support:
-* other HTTP metods
+* other HTTP methods
 
 ## How it works
 ⚒️ In construction...
