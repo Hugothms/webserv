@@ -1,5 +1,5 @@
 # Webserv
-Summary: The objective of this project is to create a fully functional HTTP web server.
+The objective of this project is to create a fully functional HTTP web server.
 
 ## Usage
 	make && ./webserv file.conf
