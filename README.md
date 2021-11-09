@@ -1,16 +1,22 @@
-# TODO LIST
+# Webserv
+Summary: The objective of this project is to create a fully functional HTTP web server.
 
-## Unassigned tasks:
-- Implement CGI (PHP etc) using fork
-- File upload/removal : POST / DELETE (+ get)
+## Usage
+	make && ./webserv file.conf
+or more conveniently:
 
-## Assigned tasks:
+	make run_config file
 
-	Enzo:
-		- Select, non blocking networking : OK
-		- Port management : WIP
+## Features
+### ✅ It supports:
+* GET, HEAD, POST & DELETE HTTP methods
+* A configuration file given as an argument (examples of configurations in 'config' directory)
 
-	Hugo:
-		- HTTP 1.1 Compliant : What is it, and do it
-		- Parsing HTTP requests
-		- Config file : Define available options, parse the file and apply changes
+### ❌ It doesn't support:
+* other HTTP metods
+
+## How it works
+⚒️ In construction...
+
+## Collaborators
+This project was developed in team with @endcerro (Enzo Dal Cerro)
