@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 22:10:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 17:27:09 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,25 @@
 
 Request::~Request() {}
 
-Request::Request(const char *buffer, const size_t size, const int sock)
-: socket(sock)//, content_length(0), port(0)
+Request::Request(const string &buffer)
 {
+	size_t pos = 0;
+
+
 	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
-	size_t pos = 0;
-	string request(buffer, size);
-	type = get_str_before_char(request, " ", &pos);
-	target = get_str_before_char(request, " ", &pos);
-	get_str_before_char(request, "\n", &pos);
-	while (pos <= size && request[pos]) // headers parsing loop
+	
+	// string buffer(buffer, size);
+	type = get_str_before_char(buffer, " ", &pos);
+	target = get_str_before_char(buffer, " ", &pos);
+	get_str_before_char(buffer, "\n", &pos);
+
+	size_t len = buffer.length();
+	while (pos <= len && buffer[pos]) // headers parsing loop
 	{
-		if (request[pos] == '\n')
+		if (buffer[pos] == '\n')
 			pos++;
-		string header = get_str_before_char(request, ":\n", &pos);
+		string header = get_str_before_char(buffer, ":\n", &pos);
 		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
 		if (header.length() == 0)
 			break ; // case empty line
@@ -37,11 +41,11 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 		{
 			string ip_address;
 			string port;
-			if ((ip_address = get_str_before_char(request, ":", &pos)).length())
-				port = get_str_before_char(request, "\r\n", &pos);
+			if ((ip_address = get_str_before_char(buffer, ":", &pos)).length())
+				port = get_str_before_char(buffer, "\r\n", &pos);
 			else
 			{
-				ip_address = get_str_before_char(request, "\r\n", &pos);
+				ip_address = get_str_before_char(buffer, "\r\n", &pos);
 				port = "80";
 			}
 			// if (ip_address == "localhost")
@@ -50,10 +54,10 @@ Request::Request(const char *buffer, const size_t size, const int sock)
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
-		headers.insert(pair<string, string>(header, get_str_before_char(request, "\r\n", &pos)));
+		headers.insert(pair<string, string>(header, get_str_before_char(buffer, "\r\n", &pos)));
 	}
 	if (headers.count("Content-Length") > 0)
-		headers.insert(pair<string, string>("Body", &request[pos]));
+		headers.insert(pair<string, string>("Body", &buffer[pos]));
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
 	// DEBUG("****** REQUEST PARSED *******");
@@ -138,10 +142,11 @@ string	get_time_stamp()
 	if (time->tm_sec < 10)
 		output << "0";
 	output << time->tm_sec << " GMT";
+
 	return (output.str());
 }
 
-string	get_type(const string str)
+string	get_type(const string &str)
 {
 	string ret;
 	if (str.find(".png", str.length() - 4) != string::npos)
@@ -176,7 +181,7 @@ string	error_page(const Server *server, const int x)
  * @param port		specified in the conf by the 'listen' keyword (ip_address:port)
  * @return			a pointer to the server corresponding to the couple (host, port) or the default server for this port if it exist, null overwise.
 **/
-Server	*select_server(const list<Server*> servers, string host, unsigned int port)
+Server	*select_server(const list<Server*> &servers, string &host, unsigned int port)
 {
 	// DEBUG("Looking for " << host << ":" << port);
 	Server *default_server = NULL;
@@ -203,7 +208,7 @@ Server	*select_server(const list<Server*> servers, string host, unsigned int por
 	return default_server;
 }
 
-string send_socket(const string message, const string type, const string body)
+string send_socket(const string &message, const string &type, const string &body)
 {
 	stringstream response;
 	response << "HTTP/1.1 " << message << endl;
@@ -246,7 +251,7 @@ string 	send_file(const Server *server, string message, string filepath)
 	return (send_socket(message, get_type(filepath), body));
 }
 
-Location	*select_location(const Server *server, const string target)
+Location	*select_location(const Server *server, const string &target)
 {
 	list<Location> locations = server->get_locations();
 	if (locations.size() == 0)
@@ -283,7 +288,7 @@ Location	*select_location(const Server *server, const string target)
 	return NULL;
 }
 
-bool method_allowed(const Location *location, const string method)
+bool method_allowed(const Location *location, const string &method)
 {
 	list<string> HTTP_methods = location->get_HTTP_methods();
 	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
@@ -312,7 +317,7 @@ void Request::set_filepath()
 	// DEBUG("filepath: " << filepath);
 }
 
-string	Request::respond(const list<Server*> servers)
+string	Request::respond(const list<Server*> &servers)
 {
 	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
