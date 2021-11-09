@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 16:18:41 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/09 17:26:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,9 @@ string* Client::get_send_buff(void)
 
 void Client::set_response(void)
 {
-	Request req(get_rec_buff()->c_str(),get_rec_buff()->length(), get_fd());
+	Request req(*get_rec_buff());
 
+	// send_buffer = req.respond(servers);
 	send_buffer = req.respond(servers);
 	
 	send_rdy = 1;

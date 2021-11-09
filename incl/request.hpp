@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/05 17:04:31 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 17:27:30 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ class Request
 		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
 		string				target;			// The URL requested
-		int					socket;			// ? i don't know
 		map<string, string>	headers;
 		// string		body;			// Only for POST
 
@@ -63,11 +62,11 @@ class Request
 		*/
 
 	public :
-		Request(const char *buffer, const size_t size, const int socket=80);
+		Request(const string &buffer);
 		~Request();
 		void	set_filepath(void);
-		string	respond(void);
-		string	respond(const list<Server*> servers);
+		// string	respond(void);
+		string	respond(const list<Server*> &servers);
 };
 
 #endif
