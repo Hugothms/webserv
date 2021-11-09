@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 12:23:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:05:34 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Webserv
 		Webserv(const string config_file = "");
 		~Webserv();
 		void	push_back_server(Server *server);
-		bool	conflict_ip_address_port_server_names(const string ip_address, const unsigned int port, const list<string> server_names) const;
+		bool	conflict_ip_address_port_server_names(const string &ip_address, const unsigned int port, const list<string> &server_names) const;
 		void	parse_config(const string config);
 
 		void	listen();

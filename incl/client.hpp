@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 12:22:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:33:09 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <sys/socket.h>
 
 
-#define BUFF_S 1024
+#define BUFF_S 4096
 
 
 class Client
@@ -42,7 +42,14 @@ class Client
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
+		
+
+
+
 		list<Server*>		servers;
+
+		
+
 
 		int 				write_pos;
 		bool 				read_done;
@@ -50,7 +57,7 @@ class Client
 
 
 		Client();
-		Client(Server *srv);
+		Client(int new_listen_fd);
 
 		~Client();
 

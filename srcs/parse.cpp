@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/08 20:33:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:09:06 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,10 @@ void	err_parsing_config(const string error)
 {
 	cerr << "Error: Wrong server configuration: " << error << endl;
 	exit(5);
+
 }
 
-Location	parse_location(const string config, size_t *pos)
+Location	parse_location(const string &config, size_t *pos)
 {
 	Location	location;
 	string		tmp;
@@ -121,7 +122,7 @@ Location	parse_location(const string config, size_t *pos)
 	return location;
 }
 
-Server	*parse_server(const string config, size_t *pos)
+Server	*parse_server(const string &config, size_t *pos)
 {
 	string tmp;
 	DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!!");
@@ -218,6 +219,7 @@ Server	*parse_server(const string config, size_t *pos)
 	if (tmp != "}")
 	{
 		DEBUG("Server configuration is invalid !");
+		delete server;
 		exit(EXIT_FAILURE);
 	}
 	DEBUG("}");
@@ -225,6 +227,7 @@ Server	*parse_server(const string config, size_t *pos)
 	if (error.length())
 	{
 		cerr << server->get_root() << " server configuration is invalid: " << error<< endl;
+		delete server;
 		exit(EXIT_FAILURE);
 	}
 	return server;

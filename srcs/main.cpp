@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 12:23:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:21:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ Webserv* ptr;
 void stop(int num)
 {
 	(void) num;
-	DEBUG("KILLING");
+	// DEBUG("KILLING");
 	ptr->stop();
-	DEBUG("KILLED");
+	// DEBUG("KILLED");
 	exit(0);
 }
 

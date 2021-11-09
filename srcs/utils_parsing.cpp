@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_parsing.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/03 08:45:53 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/09 16:02:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,14 @@ bool is_integer(const string &s)
 	return (*p == 0);
 }
 
-string get_content_file(const string filename)
+string get_content_file(const string &filename)
 {
-	ifstream myfile;
-	myfile.open(filename.c_str());
-	string content("");
-	while (myfile)
-		content = content + (char)myfile.get();
+	ifstream myfile(filename.c_str());
+
+	string content((istreambuf_iterator<char>(myfile)), istreambuf_iterator<char>());
 	myfile.close();
-	return content.substr(0, content.length() - 1);
+	// return content.substr(0, content.length() - 1);
+	return content;
 }
 
 /**
@@ -41,7 +40,7 @@ string get_content_file(const string filename)
  * @return first substring found between the start and the first occurence of a char in 'stop' (or empty string if '\\n' is found first)
  *
 **/
-string get_str_before_char(const string str, const string stop, size_t *pos, const string skip)
+string get_str_before_char(const string &str, const string stop, size_t *pos, const string skip)
 {
 	while (skip.find(str[*pos]) < skip.length())
 		(*pos)++;
