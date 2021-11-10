@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 17:27:09 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/10 11:52:37 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Request::Request(const string &buffer)
 
 	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
-	
+
 	// string buffer(buffer, size);
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
@@ -208,27 +208,20 @@ Server	*select_server(const list<Server*> &servers, string &host, unsigned int p
 	return default_server;
 }
 
-string send_socket(const string &message, const string &type, const string &body)
+string get_header(const string &message, const string &type, const size_t length)
 {
-	stringstream response;
-	response << "HTTP/1.1 " << message << endl;
-	response << "Date: " << get_time_stamp() << endl;
-	response << "Server: webserv/0.01" << endl;
-	response << "Content-Type: " << type << endl;
-	response << "Content-Length: " << body.length() << endl;
-	response << "Connection: Closed" << endl;
-	response << endl;
-	response << body;
-	// if (type == "text/html")
-	// {
-	// 	DEBUG("********* RESPONSE *********");
-	// 	DEBUG(response.str());
-	// }
-	// DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
-	return (response.str());
+	stringstream header;
+	header << "HTTP/1.1 " << message << endl;
+	header << "Date: " << get_time_stamp() << endl;
+	header << "Server: webserv/0.01" << endl;
+	header << "Content-Type: " << type << endl;
+	header << "Content-Length: " << length << endl;
+	header << "Connection: Closed" << endl;
+	header << endl;
+	return (header.str());
 }
 
-string 	send_file(const Server *server, string message, string filepath)
+void 	get_body(const Server *server, string &message, string filepath, string &body)
 {
 	ifstream file(filepath.c_str(), ofstream::in);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
@@ -239,7 +232,7 @@ string 	send_file(const Server *server, string message, string filepath)
 	}
 	else if (message == "")
 		message = code_200;
-	string body((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	if (body == "") // if file is a directory or is empty
 	{
 		message = code_404;
@@ -248,7 +241,22 @@ string 	send_file(const Server *server, string message, string filepath)
 		body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	}
 	file.close();
-	return (send_socket(message, get_type(filepath), body));
+}
+
+string 	get_response(const Server *server, string message, string filepath)
+{
+	string response;
+	string body;
+	get_body(server, message, filepath, body);
+	response = get_header(message, get_type(filepath), body.length());
+	response += body;
+	// if (type == "text/html")
+	// {
+	// 	DEBUG("********* RESPONSE *********");
+	// 	DEBUG(response);
+	// }
+	// DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
+	return response;
 }
 
 Location	*select_location(const Server *server, const string &target)
@@ -314,22 +322,29 @@ void Request::set_filepath()
 		else
 			filepath += server->get_index();
 	}
-	// DEBUG("filepath: " << filepath);
+	DEBUG("filepath: " << filepath);
 }
 
 string	Request::respond(const list<Server*> &servers)
 {
 	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (send_file(server, code_404, error_page(server, 404)));
+		return (get_response(server, code_404, error_page(server, 404)));
 	location = select_location(server, target);
 	if (!location)
-		return (send_file(server, code_404, error_page(server, 404)));
+		return (get_response(server, code_404, error_page(server, 404)));
 	if (!method_allowed(location, type))
-		return (send_file(server, code_405, error_page(server, 405)));
+		return (get_response(server, code_405, error_page(server, 405)));
 	set_filepath();
+	string message;
 	if (type == "GET")
-		return(send_file(server, "", filepath));
+		return(get_response(server, "", filepath));
+	else if (type == "HEAD")
+	{
+		string body;
+		get_body(server, message, filepath, body);
+		return (get_header("", get_type(filepath), body.length()));
+	}
 	else if (type == "POST")
 	{
 		mkdir((server->get_root() + '/' + location->get_upload_directory()).c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
@@ -339,14 +354,14 @@ string	Request::respond(const list<Server*> &servers)
 		ofstream file_out(filepath, ios::app);
 		file_out << headers["Body"] << endl;
 		file_out.close();
-		return (send_file(server, "", filepath));
+		return (get_response(server, "", filepath));
 	}
 	else if (type == "DELETE")
 	{
 		//todo
 		filepath = server->get_root() + '/' + location->get_upload_directory() + target;
 		remove(filepath.c_str());
-		return (send_file(server, "", filepath));
+		return (get_response(server, "", filepath));
 	}
-	return (send_file(server, code_405, error_page(server, 405)));
+	return (get_response(server, code_405, error_page(server, 405)));
 }
