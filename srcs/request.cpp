@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/10 11:52:37 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/10 12:22:07 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,7 +343,7 @@ string	Request::respond(const list<Server*> &servers)
 	{
 		string body;
 		get_body(server, message, filepath, body);
-		return (get_header("", get_type(filepath), body.length()));
+		return (get_header(message, get_type(filepath), body.length()));
 	}
 	else if (type == "POST")
 	{
