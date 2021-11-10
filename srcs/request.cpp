@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/10 12:22:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/10 12:51:06 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,7 +322,7 @@ void Request::set_filepath()
 		else
 			filepath += server->get_index();
 	}
-	DEBUG("filepath: " << filepath);
+	// DEBUG("filepath: " << filepath);
 }
 
 string	Request::respond(const list<Server*> &servers)
