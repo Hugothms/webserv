@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/09 16:09:06 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/11 12:41:43 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ Location	parse_location(const string &config, size_t *pos)
 	{
 		if (tmp[0] == '#')
 		{
-			if (config[*pos-1] != '\n')
-				get_str_before_char(config, "\n", pos);
+			// if (config[*pos-1] != '\n')
+			// 	get_str_before_char(config, "\n", pos);
 		}
 		else if (tmp.length())
 			DEBUG("\t\t" << tmp << ":");
@@ -62,16 +62,9 @@ Location	parse_location(const string &config, size_t *pos)
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
+				if (tmp.length() > 1 && tmp.back() == '/')
+					tmp.resize(tmp.length() - 1);
 				location.set_location_root(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
-		else if (tmp == "default_answer")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
-			{
-				location.set_default_answer(tmp);
 				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
 			}
@@ -119,6 +112,8 @@ Location	parse_location(const string &config, size_t *pos)
 		exit(EXIT_FAILURE);
 	}
 	DEBUG("\t}");
+	if (location.get_location_root().length() == 0)
+		location.set_location_root(location.get_path());
 	return location;
 }
 
