@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/11 12:55:26 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/11 13:14:54 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,18 +315,18 @@ void Request::set_filepath()
 		filepath += '/' + server->get_index();
 		return ;
 	}
-	DEBUG("filepath: " << filepath);
-	DEBUG("target: " << target);
-	DEBUG("path(): " << location->get_path());
-	DEBUG("root(): " << location->get_location_root());
-	DEBUG("");
 	size_t pos = target.find(location->get_path());
-	DEBUG(pos);
+	// DEBUG("filepath: " << filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("path(): " << location->get_path());
+	// DEBUG("root(): " << location->get_location_root());
+	// DEBUG("pos:" << pos);
+	// DEBUG("");
 	if (pos != string::npos)
 	{
-		string tmp = target.substr(pos + location->get_path().length() + 1);
+		string tmp = target.substr(pos + location->get_path().length());
 		target.resize(pos);
-		filepath += location->get_location_root() + '/' + tmp;
+		filepath += '/' + location->get_location_root() + '/' + tmp;
 	}
 	else
 		filepath += target;
@@ -338,7 +338,7 @@ void Request::set_filepath()
 		else
 			filepath += server->get_index();
 	}
-	DEBUG("filepath: " << filepath << endl << endl);
+	// DEBUG("filepath: " << filepath << endl << endl);
 }
 
 string	Request::respond(const list<Server*> &servers)
