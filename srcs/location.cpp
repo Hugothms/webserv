@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/08 14:32:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/11 12:27:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ string		Location::is_valid(void) const
 	// 	if (*HTTP_method == "POST" && !get_upload_directory().length())
 	// 		return "directory_upload is not set (and HTTP_method POST is accepted)";
 	// }
-	if (get_HTTP_redirection() == "")
-		return (get_path() + " location: HTTP_redirection is not set");
 	if (get_location_root() == "")
 		return (get_path() + " location: location_root is not set");
 	return "";
@@ -62,11 +60,6 @@ string			Location::get_HTTP_redirection() const
 string			Location::get_location_root() const
 {
 	return (this->location_root);
-}
-
-string			Location::get_default_answer() const
-{
-	return (this->default_answer);
 }
 
 string			Location::get_index() const
@@ -106,11 +99,6 @@ void Location::set_HTTP_redirection(const string HTTP_redirection)
 void Location::set_location_root(const string location_root)
 {
 	this->location_root = location_root;
-}
-
-void Location::set_default_answer(const string default_answer)
-{
-	this->default_answer = default_answer;
 }
 
 void Location::set_index(const string index)
