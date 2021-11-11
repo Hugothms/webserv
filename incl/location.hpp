@@ -23,7 +23,6 @@ class Location
 		list<string>	HTTP_methods;
 		string			HTTP_redirection;
 		string			location_root;
-		string			default_answer;
 		string			index; // file served when a directory is requested
 		string			upload_directory;
 		bool 			directory_listing;
@@ -37,7 +36,6 @@ class Location
 		string			get_path() const;
 		string			get_HTTP_redirection() const;
 		string			get_location_root() const;
-		string			get_default_answer() const;
 		string			get_index() const;
 		string			get_upload_directory() const;
 		bool			get_directory_listing() const;
@@ -47,7 +45,6 @@ class Location
 		void set_path(const string location);
 		void set_HTTP_redirection(const string HTTP_redirection);
 		void set_location_root(const string location_root);
-		void set_default_answer(const string default_answer);
 		void set_index(const string index);
 		void set_upload_directory(const string index);
 		void set_directory_listing(const bool directory_listing);
