@@ -14,11 +14,15 @@
 #define LOCATION_HPP
 
 #include "includes.hpp"
+#include "server.hpp"
+
+class Server;
 
 class Location
 {
 	private :
 		// * PARSED FROM CONFIG FILE *
+		Server			*server;
 		string			path;
 		list<string>	HTTP_methods;
 		string			HTTP_redirection;
@@ -32,6 +36,7 @@ class Location
 		~Location();
 		string			is_valid(void) const;
 
+		Server			*get_server() const;
 		list<string>	get_HTTP_methods() const;
 		string			get_path() const;
 		string			get_HTTP_redirection() const;
@@ -40,6 +45,7 @@ class Location
 		string			get_upload_directory() const;
 		bool			get_directory_listing() const;
 
+		void set_server(Server *server);
 		void set_HTTP_methods(const list<string> HTTP_methods);
 		void push_back_HTTP_method(const string HTTP_method);
 		void set_path(const string location);
