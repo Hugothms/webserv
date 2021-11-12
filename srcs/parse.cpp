@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/12 13:31:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 14:31:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,7 @@ Server	*parse_server(const string &config, size_t *pos)
 	}
 	DEBUG("}");
 	string error = server->is_valid();
-	if (error.length())
+	if (error.length() > 0)
 	{
 		cerr << server->get_root() << " server configuration is invalid: " << error<< endl;
 		delete server;

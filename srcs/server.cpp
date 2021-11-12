@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 14:04:33 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 14:37:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ int Server::setup(void)
 
 string Server::is_valid(void) const
 {
-	// TODO: determine what is mandatory for a server be valid
 	if (get_ip_address() == "")
 		return "ip_address is not set";
 	if (get_port() == 0)
@@ -93,7 +92,7 @@ string Server::is_valid(void) const
 	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
 	{
 		string error = location->is_valid();
-		if (error.length())
+		if (error.length() > 0)
 			return error;
 	}
 	return "";
