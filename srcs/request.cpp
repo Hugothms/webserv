@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 14:02:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 14:20:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,6 +221,12 @@ string get_header(const string &message, const string &type, const size_t length
 	return (header.str());
 }
 
+void cgi(string &message, string &body)
+{
+	// TODO: fork and pipe
+
+}
+
 void 	get_body(const Server *server, string &message, string filepath, string &body)
 {
 	list<string> cgis = server->get_cgis();
@@ -229,25 +235,26 @@ void 	get_body(const Server *server, string &message, string filepath, string &b
 		if (cgi->length() > 0 && filepath.find(*cgi) > 0)
 		{
 			DEBUG("CGI extention found !");
+			return (cgi(body))
 		}
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 	{
-		message = code_404;
+		message = CODE_404;
 		file.close();
 		file.open(error_page(server, 404), ofstream::in);
 	}
 	else if (message == "")
-		message = code_200;
+		message = CODE_200;
 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	if (body == "") // if file is a directory or is empty
-	{
-		message = code_404;
-		file.close();
-		file.open(error_page(server, 404), ofstream::in);
-		body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	}
+	// if (body == "") // if file is a directory or is empty
+	// {
+	// 	message = CODE_404;
+	// 	file.close();
+	// 	file.open(error_page(server, 404), ofstream::in);
+	// 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	// }
 	file.close();
 }
 
@@ -346,19 +353,19 @@ void Request::set_filepath()
 		else
 			filepath += server->get_index();
 	}
-	// DEBUG("filepath: " << filepath << endl << endl);
+	DEBUG("filepath: " << filepath << endl << endl);
 }
 
 string	Request::respond(const list<Server*> &servers)
 {
 	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (get_response(server, code_404, error_page(server, 404)));
+		return (get_response(server, CODE_404, error_page(server, 404)));
 	location = select_location(server, target);
 	if (!location)
-		return (get_response(server, code_404, error_page(server, 404)));
+		return (get_response(server, CODE_404, error_page(server, 404)));
 	if (!method_allowed(location, type))
-		return (get_response(server, code_405, error_page(server, 405)));
+		return (get_response(server, CODE_405, error_page(server, 405)));
 	set_filepath();
 	string message;
 	if (type == "GET")
@@ -387,5 +394,5 @@ string	Request::respond(const list<Server*> &servers)
 		remove(filepath.c_str());
 		return (get_response(server, "", filepath));
 	}
-	return (get_response(server, code_405, error_page(server, 405)));
+	return (get_response(server, CODE_405, error_page(server, 405)));
 }
