@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/11 12:41:43 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 13:31:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	err_parsing_config(const string error)
 
 }
 
-Location	parse_location(const string &config, size_t *pos)
+Location	parse_location(const string &config, size_t *pos, Server *server)
 {
 	Location	location;
 	string		tmp;
@@ -114,6 +114,7 @@ Location	parse_location(const string &config, size_t *pos)
 	DEBUG("\t}");
 	if (location.get_location_root().length() == 0)
 		location.set_location_root(location.get_path());
+	location.set_server(server);
 	return location;
 }
 
@@ -137,13 +138,22 @@ Server	*parse_server(const string &config, size_t *pos)
 				break;
 		}
 		else if (tmp == "location")
-			server->push_back_location(parse_location(config, pos));
+			server->push_back_location(parse_location(config, pos, server));
 		else if (tmp == "server_name")
 		{
 			while ((tmp = get_str_before_char(config, " ;", pos)).length())
 			{
 				DEBUG("\t\t" << tmp);
 				server->push_back_server_name(tmp);
+			}
+			get_str_before_char(config, "\n", pos);
+		}
+		else if (tmp == "cgi")
+		{
+			while ((tmp = get_str_before_char(config, " ;", pos)).length())
+			{
+				DEBUG("\t\t" << tmp);
+				server->push_back_cgi(tmp);
 			}
 			get_str_before_char(config, "\n", pos);
 		}
