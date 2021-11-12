@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 14:20:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 14:36:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ string get_header(const string &message, const string &type, const size_t length
 	return (header.str());
 }
 
-void cgi(string &message, string &body)
+void launch_cgi(string &message, string &body)
 {
 	// TODO: fork and pipe
 
@@ -235,7 +235,7 @@ void 	get_body(const Server *server, string &message, string filepath, string &b
 		if (cgi->length() > 0 && filepath.find(*cgi) > 0)
 		{
 			DEBUG("CGI extention found !");
-			return (cgi(body))
+			return (launch_cgi(message, body));
 		}
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
@@ -279,7 +279,6 @@ Location	*select_location(const Server *server, const string &target)
 	list<Location> locations = server->get_locations();
 	if (locations.size() == 0)
 		return NULL;
-	//TODO: decompose filepath
 	string searched_path = target;
 	// DEBUG("tmp: " << target);
 	while (searched_path != "")
