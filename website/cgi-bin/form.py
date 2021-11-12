@@ -15,7 +15,7 @@ print('<output>{0} and {1}</output>'.format(name, email))
 
 # cgi.parse()
 
-
+# http://www.cgi101.com/book/ch3/text.html
 # DOCUMENT_ROOT # ROOT DIRECTORY OF THE SERVER
 # HTTP_HOST # HOST NAME OF THE PAGE
 # SCRIPT_FILENAME #FULL PATH OF THIS SCRIPT

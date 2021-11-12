@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 16:02:58 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/12 14:20:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,41 +62,41 @@ void	err_parsing_config(const string error);
 Server	*parse_server(const string &config, size_t *pos);
 
 
-# define code_100 "100 Continue"
-# define code_101 "101 Switching Protocols"
-# define code_200 "200 OK"
-# define code_201 "201 Created"
-# define code_202 "202 Accepted"
-# define code_203 "203 Non-Authoritative Information"
-# define code_204 "204 No Content"
-# define code_205 "205 Reset Content"
-# define code_300 "300 Multiple Choices"
-# define code_301 "301 Moved Permanently"
-# define code_302 "302 Found"
-# define code_303 "303 See Other"
-# define code_305 "305 Use Proxy"
-# define code_306 "306 (Unused)"
-# define code_307 "307 Temporary Redirect"
-# define code_400 "400 Bad Request"
-# define code_402 "402 Payment Required"
-# define code_403 "403 Forbidden"
-# define code_404 "404 Not Found"
-# define code_405 "405 Method Not Allowed"
-# define code_406 "406 Not Acceptable"
-# define code_408 "408 Request Timeout"
-# define code_409 "409 Conflict"
-# define code_410 "410 Gone"
-# define code_411 "411 Length Required"
-# define code_413 "413 Payload Too Large"
-# define code_414 "414 URI Too Long"
-# define code_415 "415 Unsupported Media Type"
-# define code_417 "417 Expectation Failed"
-# define code_426 "426 Upgrade Required"
-# define code_500 "500 Internal Server Error"
-# define code_501 "501 Not Implemented"
-# define code_502 "502 Bad Gateway"
-# define code_503 "503 Service Unavailable"
-# define code_504 "504 Gateway Timeout"
-# define code_505 "505 HTTP Version Not Supported"
+# define CODE_100 "100 Continue"
+# define CODE_101 "101 Switching Protocols"
+# define CODE_200 "200 OK"
+# define CODE_201 "201 Created"
+# define CODE_202 "202 Accepted"
+# define CODE_203 "203 Non-Authoritative Information"
+# define CODE_204 "204 No Content"
+# define CODE_205 "205 Reset Content"
+# define CODE_300 "300 Multiple Choices"
+# define CODE_301 "301 Moved Permanently"
+# define CODE_302 "302 Found"
+# define CODE_303 "303 See Other"
+# define CODE_305 "305 Use Proxy"
+# define CODE_306 "306 (Unused)"
+# define CODE_307 "307 Temporary Redirect"
+# define CODE_400 "400 Bad Request"
+# define CODE_402 "402 Payment Required"
+# define CODE_403 "403 Forbidden"
+# define CODE_404 "404 Not Found"
+# define CODE_405 "405 Method Not Allowed"
+# define CODE_406 "406 Not Acceptable"
+# define CODE_408 "408 Request Timeout"
+# define CODE_409 "409 Conflict"
+# define CODE_410 "410 Gone"
+# define CODE_411 "411 Length Required"
+# define CODE_413 "413 Payload Too Large"
+# define CODE_414 "414 URI Too Long"
+# define CODE_415 "415 Unsupported Media Type"
+# define CODE_417 "417 Expectation Failed"
+# define CODE_426 "426 Upgrade Required"
+# define CODE_500 "500 Internal Server Error"
+# define CODE_501 "501 Not Implemented"
+# define CODE_502 "502 Bad Gateway"
+# define CODE_503 "503 Service Unavailable"
+# define CODE_504 "504 Gateway Timeout"
+# define CODE_505 "505 HTTP Version Not Supported"
 
 #endif
