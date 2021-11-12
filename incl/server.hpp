@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 13:20:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 14:04:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class Server
 		// * PARSED FROM CONFIG FILE *
 		list<Location>		locations;
 		list<string>		server_names; // "Host" header in HTTP request (domain names)
-		list<string>		cgi; // "Host" header in HTTP request (domain names)
+		list<string>		cgis; // CGI's extentions name
 		map<int, string>	error_pages; //
 		string				ip_address;
 		unsigned int		port; // port to listen and send on ("listen" in config file)
@@ -58,7 +58,7 @@ class Server
 
 		list<Location>		get_locations() const;
 		list<string>		get_server_names() const;
-		list<string>		get_cgi() const;
+		list<string>		get_cgis() const;
 		map<int, string>	get_error_pages() const;
 		string				get_ip_address() const;
 		unsigned int		get_port() const;
@@ -71,7 +71,7 @@ class Server
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);
 		void set_server_names(const list<string> server_names);
-		void set_cgi(const list<string> cgi);
+		void set_cgis(const list<string> cgi);
 		void push_back_server_name(const string server_name);
 		void push_back_cgi(const string cgi);
 		void set_error_pages(const map<int, string> error_pages);

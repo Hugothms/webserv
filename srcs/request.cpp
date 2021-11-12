@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/11 13:14:54 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 14:02:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,14 @@ string get_header(const string &message, const string &type, const size_t length
 
 void 	get_body(const Server *server, string &message, string filepath, string &body)
 {
+	list<string> cgis = server->get_cgis();
+	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+	{
+		if (cgi->length() > 0 && filepath.find(*cgi) > 0)
+		{
+			DEBUG("CGI extention found !");
+		}
+	}
 	ifstream file(filepath.c_str(), ofstream::in);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 	{
