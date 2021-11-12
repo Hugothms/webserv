@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 16:24:31 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/12 13:43:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int Server::setup(void)
 	hint.sin_port = htons(port);
 
 	DEBUG("TRYING TO BIND TO " << ip_address);
-	
+
 	//TODEL
 	if (ip_address.empty())
 		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
@@ -109,6 +109,11 @@ list<string>	Server::get_server_names() const
 	return server_names;
 }
 
+list<string>	Server::get_cgi() const
+{
+	return cgi;
+}
+
 map<int, string>	Server::get_error_pages() const
 {
 	return error_pages;
@@ -139,11 +144,12 @@ unsigned int	Server::get_max_client_body_size() const
 	return max_client_body_size;
 }
 
-
 int Server::get_listen_fd(void) const
 {
 	return listen_fd;
 }
+
+
 void	Server::set_locations(const list<Location> locations)
 {
 	this->locations = locations;
@@ -162,6 +168,16 @@ void	Server::set_server_names(const list<string> server_names)
 void	Server::push_back_server_name(string server_name)
 {
 	this->server_names.push_back(server_name);
+}
+
+void	Server::set_cgi(const list<string> cgi)
+{
+	this->cgi = cgi;
+}
+
+void	Server::push_back_cgi(string cgi)
+{
+	this->cgi.push_back(cgi);
 }
 
 void	Server::set_error_pages(const map<int, string> error_pages)
