@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/11 12:27:40 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/12 13:28:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,11 @@ string		Location::is_valid(void) const
 	return "";
 }
 
+Server			*Location::get_server() const
+{
+	return (this->server);
+}
+
 list<string>	Location::get_HTTP_methods() const
 {
 	return (this->HTTP_methods);
@@ -75,6 +80,11 @@ string			Location::get_upload_directory() const
 bool			Location::get_directory_listing() const
 {
 	return (this->directory_listing);
+}
+
+void Location::set_server(Server *server)
+{
+	this->server = server;
 }
 
 void Location::set_HTTP_methods(const list<string> HTTP_methods)
