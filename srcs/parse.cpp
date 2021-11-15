@@ -6,18 +6,11 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/15 16:28:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 17:08:48 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
-void	err_parsing_config(const Server *server, const string error)
-{
-	cerr << server->get_root() << " server configuration is invalid: " << error << endl;
-	delete server;
-	exit(EXIT_FAILURE);
-}
 
 Location	parse_location(const string &config, size_t *pos, Server *server)
 {
