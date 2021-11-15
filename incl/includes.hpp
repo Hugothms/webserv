@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/15 17:04:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 17:10:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,13 @@ class Server;
 class Location;
 
 
+//* PARSING
+Server	*parse_server(const string &config, size_t *pos);
 bool	is_integer(const string &s);
 string	get_content_file(const string &filename);
 string	get_str_before_char(const string &str, const string stop, size_t *pos, const string skip = "\r\t ");
-
-//* PARSING
-void	err_parsing_config(const Server *server, const string error);
-Server	*parse_server(const string &config, size_t *pos);
 bool	file_is_empty(ifstream &file);
+void	err_parsing_config(const Server *server, const string error);
 
 # define CODE_100 "100 Continue"
 # define CODE_101 "101 Switching Protocols"
