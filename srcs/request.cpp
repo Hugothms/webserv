@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 14:36:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 15:36:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,12 +227,36 @@ void launch_cgi(string &message, string &body)
 
 }
 
+void get_auto_index(const Server *server, string &message, string filepath, string &body)
+{
+	stringstream auto_index;
+	auto_index << "<html lang=\"en\">\n\
+	<body style=\"background-color: grey; color: lightgrey;\">\n\
+	<div style=\"display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;\">\n\
+		<h1>Auto Index</h1>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
+	</div>\n\
+	</body>\n\
+	</html>";
+	body = auto_index.str();
+}
+
 void 	get_body(const Server *server, string &message, string filepath, string &body)
 {
+	if (filepath.back() == '/')
+		return (get_auto_index(server, message, filepath, body));
 	list<string> cgis = server->get_cgis();
 	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 	{
-		if (cgi->length() > 0 && filepath.find(*cgi) > 0)
+		if (cgi->length() > 0 && filepath.find(*cgi) != string::npos)
 		{
 			DEBUG("CGI extention found !");
 			return (launch_cgi(message, body));
@@ -323,10 +347,10 @@ bool method_allowed(const Location *location, const string &method)
 
 void Request::set_filepath()
 {
-	filepath = server->get_root();
+	filepath = server->get_root() + '/';
 	if (target.compare("/") == 0)
 	{
-		filepath += '/' + server->get_index();
+		filepath += server->get_index();
 		return ;
 	}
 	size_t pos = target.find(location->get_path());
@@ -336,11 +360,11 @@ void Request::set_filepath()
 	// DEBUG("root(): " << location->get_location_root());
 	// DEBUG("pos:" << pos);
 	// DEBUG("");
-	if (pos != string::npos)
+	if (pos == 0)
 	{
 		string tmp = target.substr(pos + location->get_path().length());
 		target.resize(pos);
-		filepath += '/' + location->get_location_root() + '/' + tmp;
+		filepath += location->get_location_root() + '/' + tmp;
 	}
 	else
 		filepath += target;
