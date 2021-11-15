@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_parsing.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/09 16:02:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/15 17:04:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,9 @@ string get_str_before_char(const string &str, const string stop, size_t *pos, co
 	res = str.substr(*pos, length);
 	*pos += length + 1;
 	return res;
+}
+
+bool file_is_empty(ifstream &file)
+{
+	return (file.peek() == ifstream::traits_type::eof());
 }
