@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 14:04:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 17:27:34 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define MAX_BACKLOG 10
 # define MAX_CLIENTS 10
 # define BUFFER_SIZE 4096
+
+class Location;
 
 class Server
 {
