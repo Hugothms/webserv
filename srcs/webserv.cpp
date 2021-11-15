@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/09 16:19:33 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/15 16:30:06 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,7 @@ void	Webserv::parse_config(const string config_file)
 			Server *server = parse_server(config, &pos);
 			if (server && conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 			{
-				delete server;
-				err_parsing_config("ip_address:port/server_names conflict with another server");
+				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
 			}
 			push_back_server(server);
 		}
@@ -86,7 +85,7 @@ void Webserv::build()
 {
 	FD_ZERO(&listen_set);
 	FD_ZERO(&write_set);
-	
+
 	high_fd = 0;
 	int fd;
 	//Setup the set for listening on different ports/IP
@@ -154,7 +153,7 @@ void	Webserv::listen()
 	{
 		// DEBUG("Waiting for new connections...");
 		loop_prep();
-		
+
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
 		// DEBUG("AMT CLIENT " << _clients.size());
@@ -162,8 +161,8 @@ void	Webserv::listen()
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
 			{
-				DEBUG("client seems ready to transmit data");			
-				
+				DEBUG("client seems ready to transmit data");
+
 				if ((*client)->receive() == -1)
 				{
 					DEBUG("client seems to have left, clearing his marks");
@@ -172,8 +171,6 @@ void	Webserv::listen()
 			}
 			else if ((*client)->is_done_recv())
 			{
-				
-
 				if ((*client)->send_rdy == 0)
 				{
 					DEBUG("Building response");

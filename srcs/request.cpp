@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/15 15:36:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 16:29:50 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,32 +227,42 @@ void launch_cgi(string &message, string &body)
 
 }
 
-void get_auto_index(const Server *server, string &message, string filepath, string &body)
+void get_auto_index(string &message, string filepath, string &body)
 {
 	stringstream auto_index;
-	auto_index << "<html lang=\"en\">\n\
-	<body style=\"background-color: grey; color: lightgrey;\">\n\
-	<div style=\"display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;\">\n\
-		<h1>Auto Index</h1>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-		<p><a href=\"filepath\" class=\"active\">filepath</a></p>\n\
-	</div>\n\
-	</body>\n\
-	</html>";
+	auto_index << "	<html lang=\"en\">\n\
+					<body style=\"background-color: grey; color: lightgrey;\">\n\
+					<div style=\"display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;\">\n\
+						<h1>Auto Index</h1>\n";
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(filepath.c_str())) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir (dir)) != NULL)
+		{
+			// printf ("%s\n", ent->d_name);
+			auto_index << "<p><a href=\"" << ent->d_name << "\" class=\"active\">" << ent->d_name << "</a></p>\n";
+		}
+		closedir (dir);
+	}
+	else
+	{
+		/* could not open directory */
+		// perror ("");
+		// return EXIT_FAILURE;
+	}
+	auto_index << "	</div>\n\
+					</body>\n\
+					</html>";
+	message = CODE_200;
 	body = auto_index.str();
 }
 
 void 	get_body(const Server *server, string &message, string filepath, string &body)
 {
 	if (filepath.back() == '/')
-		return (get_auto_index(server, message, filepath, body));
+		return (get_auto_index(message, filepath, body));
 	list<string> cgis = server->get_cgis();
 	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 	{
@@ -263,6 +273,8 @@ void 	get_body(const Server *server, string &message, string filepath, string &b
 		}
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
+	char *qwerty = "qqqq";
+	istream &hugo = file.read(qwerty, 1);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 	{
 		message = CODE_404;
@@ -364,17 +376,20 @@ void Request::set_filepath()
 	{
 		string tmp = target.substr(pos + location->get_path().length());
 		target.resize(pos);
-		filepath += location->get_location_root() + '/' + tmp;
+		filepath += location->get_location_root() + tmp;
 	}
 	else
 		filepath += target;
 	if (filepath[filepath.length() - 1] == '/')
 	{
-		// DEBUG("Target is a directory");
+		DEBUG("Target is a DIRECTORY !");
 		if (location->get_index().length())
 			filepath += location->get_index();
 		else
-			filepath += server->get_index();
+		{
+			// 	filepath += server->get_index();
+		}
+
 	}
 	DEBUG("filepath: " << filepath << endl << endl);
 }

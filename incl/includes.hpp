@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 14:20:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 16:27:48 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <unistd.h>
 # include <ctime>
 # include <sys/stat.h> // mkdir
+# include <dirent.h> // dirent readdir
 
 //* NETWORK INCLUDES
 # include <netinet/in.h>
@@ -58,7 +59,7 @@ string	get_content_file(const string &filename);
 string	get_str_before_char(const string &str, const string stop, size_t *pos, const string skip = "\r\t ");
 
 //* PARSING
-void	err_parsing_config(const string error);
+void	err_parsing_config(const Server *server, const string error);
 Server	*parse_server(const string &config, size_t *pos);
 
 

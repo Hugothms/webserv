@@ -6,17 +6,17 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/15 15:30:24 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 16:28:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void	err_parsing_config(const string error)
+void	err_parsing_config(const Server *server, const string error)
 {
-	cerr << "Error: Wrong server configuration: " << error << endl;
-	exit(5);
-
+	cerr << server->get_root() << " server configuration is invalid: " << error << endl;
+	delete server;
+	exit(EXIT_FAILURE);
 }
 
 Location	parse_location(const string &config, size_t *pos, Server *server)
@@ -30,7 +30,7 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 	DEBUG("\t{");
 	location.set_path(tmp);
 	if (get_str_before_char(config, " ;\n", pos) != "{")
-		err_parsing_config("expecting '{' after 'server'");
+		err_parsing_config(server, "expecting '{' after 'server'");
 	while (config[*pos] && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
 		if (tmp[0] == '#')
@@ -163,7 +163,7 @@ Server	*parse_server(const string &config, size_t *pos)
 			{
 				int error = atoi(tmp.c_str());
 				if (config[*pos] != '=')
-					err_parsing_config("error page not well configured");
+					err_parsing_config(server, "error page not well configured");
 				(*pos)++;
 				if ((tmp = get_str_before_char(config, ";", pos)).length())
 				{
@@ -224,18 +224,9 @@ Server	*parse_server(const string &config, size_t *pos)
 		}
 	}
 	if (tmp != "}")
-	{
-		DEBUG("Server configuration is invalid !");
-		delete server;
-		exit(EXIT_FAILURE);
-	}
-	DEBUG("}");
+		err_parsing_config(server, "no closing bracket");
 	string error = server->is_valid();
 	if (error.length() > 0)
-	{
-		cerr << server->get_root() << " server configuration is invalid: " << error<< endl;
-		delete server;
-		exit(EXIT_FAILURE);
-	}
+		err_parsing_config(server, error);
 	return server;
 }
