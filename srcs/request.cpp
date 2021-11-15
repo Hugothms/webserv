@@ -5,12 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/15 17:04:01 by hthomas          ###   ########.fr       */
+/*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
+/*   Updated: 2021/11/15 18:40:49 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
 #include "request.hpp"
 
 Request::~Request() {}
@@ -224,7 +223,15 @@ string get_header(const string &message, const string &type, const size_t length
 void launch_cgi(string &message, string &body)
 {
 	// TODO: fork and pipe
+	// pid_t pid = fork();
+	// if(pid == 0)
+	// {
+	// 	// Execute cgi
+	// }
+	// else
+	// {
 
+	// }
 }
 
 void get_auto_index(string &message, string filepath, string &body)
@@ -242,7 +249,16 @@ void get_auto_index(string &message, string filepath, string &body)
 		while ((ent = readdir (dir)) != NULL)
 		{
 			// printf ("%s\n", ent->d_name);
-			auto_index << "<p><a href=\"" << ent->d_name << "\" class=\"active\">" << ent->d_name << "</a></p>\n";
+			string name = ent->d_name;
+			ifstream file(name.c_str(), ofstream::in);
+			if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
+			{
+				// todo exit ?
+			}
+			if (is_directory(filepath + name))
+				name += '/';
+			file.close();
+			auto_index << "<p><a href=\"" << name << "\" class=\"active\">" << name << "</a></p>\n";
 		}
 		closedir (dir);
 	}
@@ -261,7 +277,7 @@ void get_auto_index(string &message, string filepath, string &body)
 
 void 	get_body(const Server *server, string &message, string filepath, string &body)
 {
-	if (filepath.back() == '/')
+	if (is_directory(filepath) && filepath.back() == '/')
 		return (get_auto_index(message, filepath, body));
 	list<string> cgis = server->get_cgis();
 	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
@@ -273,7 +289,6 @@ void 	get_body(const Server *server, string &message, string filepath, string &b
 		}
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
-	char *qwerty = "qqqq";
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad() || file_is_empty(file))
 	{
 		message = CODE_404;
@@ -365,12 +380,12 @@ void Request::set_filepath()
 		return ;
 	}
 	size_t pos = target.find(location->get_path());
-	// DEBUG("filepath: " << filepath);
-	// DEBUG("target: " << target);
-	// DEBUG("path(): " << location->get_path());
-	// DEBUG("root(): " << location->get_location_root());
-	// DEBUG("pos:" << pos);
-	// DEBUG("");
+	DEBUG("filepath: " << filepath);
+	DEBUG("target: " << target);
+	DEBUG("path(): " << location->get_path());
+	DEBUG("root(): " << location->get_location_root());
+	DEBUG("pos:" << pos);
+	DEBUG("");
 	if (pos == 0)
 	{
 		string tmp = target.substr(pos + location->get_path().length());

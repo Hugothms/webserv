@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/15 17:08:55 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 18:05:30 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,17 @@ string get_str_before_char(const string &str, const string stop, size_t *pos, co
 bool file_is_empty(ifstream &file)
 {
 	return (file.peek() == ifstream::traits_type::eof());
+}
+
+bool is_directory(const string &filename)
+{
+	struct stat st_buf;
+	int status = stat(filename.c_str(), &st_buf);
+	if (status != 0) {
+		// printf ("Error, errno = %d\n", errno);
+		return false;
+	}
+	return (S_ISDIR(st_buf.st_mode) == 1);
 }
 
 void	err_parsing_config(const Server *server, const string error)
