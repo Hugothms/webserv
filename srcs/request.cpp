@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 16:29:23 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/15 16:29:50 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 17:04:01 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,8 +274,7 @@ void 	get_body(const Server *server, string &message, string filepath, string &b
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
 	char *qwerty = "qqqq";
-	istream &hugo = file.read(qwerty, 1);
-	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
+	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad() || file_is_empty(file))
 	{
 		message = CODE_404;
 		file.close();

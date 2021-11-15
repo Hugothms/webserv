@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/15 16:27:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/15 17:04:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ string	get_str_before_char(const string &str, const string stop, size_t *pos, co
 //* PARSING
 void	err_parsing_config(const Server *server, const string error);
 Server	*parse_server(const string &config, size_t *pos);
-
+bool	file_is_empty(ifstream &file);
 
 # define CODE_100 "100 Continue"
 # define CODE_101 "101 Switching Protocols"
