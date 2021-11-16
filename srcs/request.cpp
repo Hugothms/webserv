@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/15 18:40:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/16 18:00:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,24 +223,22 @@ string get_header(const string &message, const string &type, const size_t length
 void launch_cgi(string &message, string &body)
 {
 	// TODO: fork and pipe
-	// pid_t pid = fork();
-	// if(pid == 0)
-	// {
-	// 	// Execute cgi
-	// }
-	// else
-	// {
-
-	// }
+	pid_t pid = fork();
+	if(pid == 0)
+	{
+		// Execute cgi
+		exit(EXIT_SUCCESS);
+	}
 }
 
-void get_auto_index(string &message, string filepath, string &body)
+void get_auto_index(const Server *server, string &message, string filepath, string &body)
 {
 	stringstream auto_index;
 	auto_index << "	<html lang=\"en\">\n\
 					<body style=\"background-color: grey; color: lightgrey;\">\n\
 					<div style=\"display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;\">\n\
 						<h1>Auto Index</h1>\n";
+	auto_index << filepath.substr(server->get_root().length());
 	DIR *dir;
 	struct dirent *ent;
 	if ((dir = opendir(filepath.c_str())) != NULL)
@@ -278,7 +276,7 @@ void get_auto_index(string &message, string filepath, string &body)
 void 	get_body(const Server *server, string &message, string filepath, string &body)
 {
 	if (is_directory(filepath) && filepath.back() == '/')
-		return (get_auto_index(message, filepath, body));
+		return (get_auto_index(server, message, filepath, body));
 	list<string> cgis = server->get_cgis();
 	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 	{
@@ -373,10 +371,10 @@ bool method_allowed(const Location *location, const string &method)
 
 void Request::set_filepath()
 {
-	filepath = server->get_root() + '/';
+	filepath = server->get_root().substr(1);
 	if (target.compare("/") == 0)
 	{
-		filepath += server->get_index();
+		filepath += '/' + server->get_index();
 		return ;
 	}
 	size_t pos = target.find(location->get_path());

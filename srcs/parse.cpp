@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/15 18:09:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/16 17:49:09 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 	Location	location;
 	string		tmp;
 	tmp = get_str_before_char(config, " ", pos);
+	if (tmp.length() > 0 && tmp.front() != '/')
+		tmp = '/' + tmp;
 	if (tmp.length() > 1 && tmp.back() == '/')
 		tmp.resize(tmp.length() - 1);
 	DEBUG("\t" << tmp);
@@ -55,10 +57,10 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
-				if (tmp.length() > 0 && tmp.back() == '/')
+				if (tmp.length() > 0 && tmp.front() != '/')
+					tmp = '/' + tmp;
+				if (tmp.length() > 1 && tmp.back() == '/')
 					tmp.resize(tmp.length() - 1);
-				if (tmp.length() > 0 && tmp.front() == '/')
-					tmp = tmp.substr(1);
 				location.set_location_root(tmp);
 				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
@@ -187,10 +189,10 @@ Server	*parse_server(const string &config, size_t *pos)
 		{
 			if((tmp = get_str_before_char(config, ";", pos)).length())
 			{
-				if (tmp.length() > 0 && tmp.back() == '/')
+				if (tmp.length() > 0 && tmp.front() != '/')
+					tmp = '/' + tmp;
+				if (tmp.length() > 1 && tmp.back() == '/')
 					tmp.resize(tmp.length() - 1);
-				if (tmp.length() > 0 && tmp.front() == '/')
-					tmp = tmp.substr(1);
 				server->set_root(tmp);
 				get_str_before_char(config, "\n", pos);
 			}
