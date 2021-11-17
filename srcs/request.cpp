@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 14:18:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 14:50:20 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,10 +288,8 @@ void get_auto_index(const Server *server, string &message, string filepath, stri
 	struct dirent *ent;
 	if ((dir = opendir(filepath.c_str())) != NULL)
 	{
-		/* print all the files and directories within directory */
 		while ((ent = readdir (dir)) != NULL)
 		{
-			// printf ("%s\n", ent->d_name);
 			string name = ent->d_name;
 			ifstream file(name.c_str(), ofstream::in);
 			if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
@@ -307,9 +305,8 @@ void get_auto_index(const Server *server, string &message, string filepath, stri
 	}
 	else
 	{
-		/* could not open directory */
-		// perror ("");
-		// return EXIT_FAILURE;
+		perror("");
+		exit(EXIT_FAILURE);
 	}
 	auto_index << "	</div>\n\
 					</body>\n\
@@ -416,7 +413,7 @@ bool method_allowed(const Location *location, const string &method)
 
 void Request::set_filepath()
 {
-	filepath = server->get_root().substr(1);
+	filepath = server->get_root();
 	if (target.compare("/") == 0)
 	{
 		filepath += '/' + server->get_index();
@@ -432,7 +429,7 @@ void Request::set_filepath()
 	if (pos == 0)
 	{
 		string tmp = target.substr(pos + location->get_path().length());
-		target.resize(pos);
+		// string target_copy = string(target).resize(pos);
 		filepath += location->get_location_root() + tmp;
 	}
 	else
@@ -446,7 +443,6 @@ void Request::set_filepath()
 		{
 			// 	filepath += server->get_index();
 		}
-
 	}
 	DEBUG("filepath: " << filepath << endl << endl);
 }
@@ -473,20 +469,20 @@ string	Request::respond(const list<Server*> &servers)
 	}
 	else if (type == "POST")
 	{
-		// mkdir((server->get_root() + '/' + location->get_upload_directory()).c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
-		// filepath = server->get_root() + '/' + location->get_upload_directory() + target;
-		// // ofstream file;
-		// // file.open(filepath);
-		// ofstream file_out(filepath, ios::app);
-		// file_out << headers["Body"] << endl;
-		// file_out.close();
+		string upload_dir = server->get_root() + location->get_upload_directory();
+		mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
+		string upload_file = upload_dir + target;
+		DEBUG("CREATE this file: " << upload_file);
+		ofstream file_out(upload_file, ios::app);
+		file_out << headers["Body"] << endl;
+		file_out.close();
 		return (get_response(server, location, "", filepath));
 	}
 	else if (type == "DELETE")
 	{
 		//todo
-		filepath = server->get_root() + '/' + location->get_upload_directory() + target;
-		remove(filepath.c_str());
+		string delete_file = server->get_root() + location->get_upload_directory() + target;
+		remove(delete_file.c_str());
 		return (get_response(server, location, "", filepath));
 	}
 	return (get_response(server, location, CODE_405, error_page(server, 405)));
