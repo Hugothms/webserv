@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/16 17:49:09 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 12:02:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,9 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 		{
 			if ((tmp = get_str_before_char(config, ";", pos, "\r\t /")).length())
 			{
-				if (tmp[tmp.length()] == '/')
+				if (tmp.length() > 0 && tmp.front() != '/')
+					tmp = '/' + tmp;
+				if (tmp.length() > 1 && tmp.back() == '/')
 					tmp.resize(tmp.length() - 1);
 				location.set_upload_directory(tmp);
 				DEBUG("\t\t\t" << tmp);
@@ -187,7 +189,7 @@ Server	*parse_server(const string &config, size_t *pos)
 		}
 		else if (tmp == "root")
 		{
-			if((tmp = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
 				if (tmp.length() > 0 && tmp.front() != '/')
 					tmp = '/' + tmp;
@@ -200,7 +202,7 @@ Server	*parse_server(const string &config, size_t *pos)
 		}
 		else if (tmp == "index")
 		{
-			if((tmp = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
 				server->set_index(tmp);
 				get_str_before_char(config, "\n", pos);
@@ -209,7 +211,7 @@ Server	*parse_server(const string &config, size_t *pos)
 		}
 		else if (tmp == "max_client_body_size")
 		{
-			if(is_integer(tmp = get_str_before_char(config, ";", pos)))
+			if (is_integer(tmp = get_str_before_char(config, ";", pos)))
 			{
 				get_str_before_char(config, "\n", pos);
 				server->set_max_client_body_size(atoi(tmp.c_str()));

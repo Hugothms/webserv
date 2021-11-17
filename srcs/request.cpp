@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/16 18:00:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 12:06:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,13 +220,30 @@ string get_header(const string &message, const string &type, const size_t length
 	return (header.str());
 }
 
-void launch_cgi(string &message, string &body)
+void launch_cgi(const Server *server, string &message, string filepath, string &body)
 {
-	// TODO: fork and pipe
 	pid_t pid = fork();
-	if(pid == 0)
+	if (pid == 0)
 	{
-		// Execute cgi
+		string tmp = string(getcwd(NULL, 0)) + "/" + filepath;
+		char *file = strdup(tmp.c_str());
+		char **argv = (char**) malloc(sizeof(char*) * 2);
+		argv[0] = file;
+		argv[1] = 0;
+		// argv[2] = 0;
+		size_t size = 1 + 0; //TODO: calculate size of envp and build it
+		char **envp = (char**) malloc(sizeof(char*) * size);
+		for (size_t i = 0; i < size - 1; i++)
+		{
+			/* code */
+		}
+		envp[size - 1] = 0;
+		message = CODE_200;
+		// TODO: pipe STDOUT into BODY ?
+		execve("/usr/bin/python", argv, envp);
+		free(file);
+		free(argv);
+		free(envp);
 		exit(EXIT_SUCCESS);
 	}
 }
@@ -273,17 +290,17 @@ void get_auto_index(const Server *server, string &message, string filepath, stri
 	body = auto_index.str();
 }
 
-void 	get_body(const Server *server, string &message, string filepath, string &body)
+void 	get_body(const Server *server, const Location *location, string &message, string filepath, string &body)
 {
-	if (is_directory(filepath) && filepath.back() == '/')
+	if (location->get_directory_listing() && is_directory(filepath) && filepath.back() == '/')
 		return (get_auto_index(server, message, filepath, body));
 	list<string> cgis = server->get_cgis();
 	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 	{
-		if (cgi->length() > 0 && filepath.find(*cgi) != string::npos)
+		if (filepath.find(*cgi) != string::npos)
 		{
 			DEBUG("CGI extention found !");
-			return (launch_cgi(message, body));
+			return (launch_cgi(server, message, filepath, body));
 		}
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
@@ -306,11 +323,11 @@ void 	get_body(const Server *server, string &message, string filepath, string &b
 	file.close();
 }
 
-string 	get_response(const Server *server, string message, string filepath)
+string 	get_response(const Server *server, const Location *location, string message, string filepath)
 {
 	string response;
 	string body;
-	get_body(server, message, filepath, body);
+	get_body(server, location, message, filepath, body);
 	response = get_header(message, get_type(filepath), body.length());
 	response += body;
 	// if (type == "text/html")
@@ -410,20 +427,20 @@ string	Request::respond(const list<Server*> &servers)
 {
 	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
 	if (!server)
-		return (get_response(server, CODE_404, error_page(server, 404)));
+		return (get_response(server, location, CODE_404, error_page(server, 404)));
 	location = select_location(server, target);
 	if (!location)
-		return (get_response(server, CODE_404, error_page(server, 404)));
+		return (get_response(server, location, CODE_404, error_page(server, 404)));
 	if (!method_allowed(location, type))
-		return (get_response(server, CODE_405, error_page(server, 405)));
+		return (get_response(server, location, CODE_405, error_page(server, 405)));
 	set_filepath();
 	string message;
 	if (type == "GET")
-		return(get_response(server, "", filepath));
+		return(get_response(server, location, "", filepath));
 	else if (type == "HEAD")
 	{
 		string body;
-		get_body(server, message, filepath, body);
+		get_body(server, location, message, filepath, body);
 		return (get_header(message, get_type(filepath), body.length()));
 	}
 	else if (type == "POST")
@@ -435,14 +452,14 @@ string	Request::respond(const list<Server*> &servers)
 		ofstream file_out(filepath, ios::app);
 		file_out << headers["Body"] << endl;
 		file_out.close();
-		return (get_response(server, "", filepath));
+		return (get_response(server, location, "", filepath));
 	}
 	else if (type == "DELETE")
 	{
 		//todo
 		filepath = server->get_root() + '/' + location->get_upload_directory() + target;
 		remove(filepath.c_str());
-		return (get_response(server, "", filepath));
+		return (get_response(server, location, "", filepath));
 	}
-	return (get_response(server, CODE_405, error_page(server, 405)));
+	return (get_response(server, location, CODE_405, error_page(server, 405)));
 }

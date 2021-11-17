@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/15 17:27:34 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 12:02:14 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,7 @@ class Server
 		Server();
 		~Server();
 		void	s_listen();
-
- 		// Client	*handle_new_conn();
 		int		setup();
-
-		// Client handle_new_conn(int listen_sock);
-		// int port;
 
 		list<Location>		get_locations() const;
 		list<string>		get_server_names() const;
@@ -73,8 +68,8 @@ class Server
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);
 		void set_server_names(const list<string> server_names);
-		void set_cgis(const list<string> cgi);
 		void push_back_server_name(const string server_name);
+		void set_cgis(const list<string> cgi);
 		void push_back_cgi(const string cgi);
 		void set_error_pages(const map<int, string> error_pages);
 		void push_back_error_page(const pair<int, string> error_page);
