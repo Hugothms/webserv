@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/15 16:30:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	Webserv::parse_config(const string config_file)
 	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
 }
 
-void Webserv::build()
+void Webserv::build(void)
 {
 	FD_ZERO(&listen_set);
 	FD_ZERO(&write_set);
@@ -146,7 +146,7 @@ void Webserv::clear_fd(Client *client)
 	client->set_fd(-1);
 }
 
-void	Webserv::listen()
+void	Webserv::listen(void)
 {
 	// build();
 	while (true)
@@ -186,7 +186,7 @@ void	Webserv::listen()
 	}
 }
 
-void Webserv::stop()
+void Webserv::stop(void)
 {
 	DEBUG("CLOSING");
 	for (list<Server *>::iterator server = _servers.begin(); server != _servers.end(); server++)

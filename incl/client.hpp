@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 16:33:09 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/17 16:13:54 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@ class Client
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
-		
+
 
 
 
 		list<Server*>		servers;
 
-		
+
 
 
 		int 				write_pos;
@@ -65,13 +65,13 @@ class Client
 		void set_fd(const int nfd);
 		int get_fd(void) const;
 
-		int receive();
+		int receive(void);
 
 		bool is_done_recv(void) const;
 		void set_done_recv(bool t);
 		void clear_recv(void);
 		string *get_rec_buff(void);
-		void set_response();
+		void set_response(void);
 
 		void send(void);
 

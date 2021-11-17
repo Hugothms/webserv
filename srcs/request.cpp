@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 16:01:39 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,11 @@ Request::Request(const string &buffer)
 	// DEBUG("****** REQUEST PARSED *******");
 }
 
-string	error_page(const Server *server, const int x)
+string	Request::error_page(const int error_code)
 {
-	if (server && server->get_error_pages().size() && server->get_error_pages()[x].length())
-			return (server->get_root() + server->get_error_pages()[x]);
-	return ("default_error_pages/" + to_string(x) + ".html");
+	if (server && server->get_error_pages().size() && server->get_error_pages()[error_code].length())
+			return (server->get_root() + server->get_error_pages()[error_code]);
+	return ("default_error_pages/" + to_string(error_code) + ".html");
 }
 
 /**
@@ -107,7 +107,7 @@ bool	Request::select_server(const list<Server*> &servers)
 	return true;
 }
 
-void launch_cgi(const Server *server, string &message, string filepath, string &body)
+void Request::launch_cgi(string &body)
 {
 	int fdpipe[2];
 	if (pipe(fdpipe) == -1)
@@ -163,7 +163,7 @@ void launch_cgi(const Server *server, string &message, string filepath, string &
 
 }
 
-void get_auto_index(const Server *server, string &message, string filepath, string &body)
+void	Request::get_auto_index(string &body)
 {
 	stringstream auto_index;
 	auto_index << "	<html lang=\"en\">\n\
@@ -202,17 +202,17 @@ void get_auto_index(const Server *server, string &message, string filepath, stri
 	body = auto_index.str();
 }
 
-void 	get_body(const Server *server, const Location *location, string &message, string filepath, string &body)
+void 	Request::get_body(string &body)
 {
 	if (location->get_directory_listing() && is_directory(filepath) && filepath.back() == '/')
-		return (get_auto_index(server, message, filepath, body));
+		return (get_auto_index(body));
 	list<string> cgis = server->get_cgis();
 	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 	{
 		if (filepath.find(*cgi) != string::npos)
 		{
 			DEBUG("CGI extention found !");
-			return (launch_cgi(server, message, filepath, body));
+			return (launch_cgi(body));
 		}
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
@@ -220,7 +220,7 @@ void 	get_body(const Server *server, const Location *location, string &message, 
 	{
 		message = CODE_404;
 		file.close();
-		file.open(error_page(server, 404), ofstream::in);
+		file.open(error_page(404), ofstream::in);
 	}
 	else if (message == "")
 		message = CODE_200;
@@ -235,12 +235,12 @@ void 	get_body(const Server *server, const Location *location, string &message, 
 	file.close();
 }
 
-string 	get_response(const Server *server, const Location *location, string message, string filepath)
+string 	Request::get_response(void)
 {
 	string response;
 	string body;
-	get_body(server, location, message, filepath, body);
-	response = get_header(message, get_type(filepath), body.length());
+	get_body(body);
+	response = get_header(body.length());
 	response += body;
 	// if (type == "text/html")
 	// {
@@ -251,7 +251,7 @@ string 	get_response(const Server *server, const Location *location, string mess
 	return response;
 }
 
-bool	Request::select_location()
+bool	Request::select_location(void)
 {
 	list<Location> locations = server->get_locations();
 	if (locations.size() == 0)
@@ -293,7 +293,20 @@ bool	Request::select_location()
 	return false;
 }
 
-bool Request::method_allowed()
+string Request::get_header(const size_t length)
+{
+	stringstream header;
+	header << "HTTP/1.1 " << message << endl;
+	header << "Date: " << get_time_stamp() << endl;
+	header << "Server: webserv/0.01" << endl;
+	header << "Content-Type: " << type << endl;
+	header << "Content-Length: " << length << endl;
+	header << "Connection: Closed" << endl;
+	header << endl;
+	return (header.str());
+}
+
+bool Request::method_allowed(void)
 {
 	list<string> HTTP_methods = location->get_HTTP_methods();
 	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
@@ -304,7 +317,7 @@ bool Request::method_allowed()
 	return false;
 }
 
-void Request::set_filepath()
+void Request::set_filepath(void)
 {
 	filepath = server->get_root();
 	if (target.compare("/") == 0)
@@ -343,20 +356,20 @@ void Request::set_filepath()
 string	Request::respond(const list<Server*> &servers)
 {
 	if (!select_server(servers))
-		return (get_response(server, location, CODE_404, error_page(server, 404)));
+		return (get_response());
 	if (!select_location())
-		return (get_response(server, location, CODE_404, error_page(server, 404)));
+		return (get_response());
 	if (!method_allowed())
-		return (get_response(server, location, CODE_405, error_page(server, 405)));
+		return (get_response());
 	set_filepath();
 	string message;
 	if (type == "GET")
-		return(get_response(server, location, "", filepath));
+		return(get_response());
 	else if (type == "HEAD")
 	{
 		string body;
-		get_body(server, location, message, filepath, body);
-		return (get_header(message, get_type(filepath), body.length()));
+		get_body(body);
+		return (get_header(body.length()));
 	}
 	else if (type == "POST")
 	{
@@ -371,14 +384,14 @@ string	Request::respond(const list<Server*> &servers)
 			// file_out.close();
 			// return (get_response(server, location, "", "success.html"));
 		// }
-		return (get_response(server, location, "", filepath));
+		return (get_response());
 	}
 	else if (type == "DELETE")
 	{
 		//todo
 		string delete_file = server->get_root() + location->get_upload_directory() + target;
 		remove(delete_file.c_str());
-		return (get_response(server, location, "", filepath));
+		return (get_response());
 	}
-	return (get_response(server, location, CODE_405, error_page(server, 405)));
+	return (get_response());
 }

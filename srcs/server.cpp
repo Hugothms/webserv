@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/12 14:37:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Server::~Server()
 	DEBUG("KILLED");
 }
 
-// Client* Server::handle_new_conn()
+// Client* Server::handle_new_conn(void)
 // {
 // 	DEBUG("New conn incomming, need to accept it !");
 

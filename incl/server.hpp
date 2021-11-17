@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 12:02:14 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 16:14:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,18 +50,18 @@ class Server
 	public:
 		Server();
 		~Server();
-		void	s_listen();
-		int		setup();
+		void	s_listen(void);
+		int		setup(void);
 
-		list<Location>		get_locations() const;
-		list<string>		get_server_names() const;
-		list<string>		get_cgis() const;
-		map<int, string>	get_error_pages() const;
-		string				get_ip_address() const;
-		unsigned int		get_port() const;
-		string				get_root() const;
-		string				get_index() const;
-		unsigned int		get_max_client_body_size() const;
+		list<Location>		get_locations(void) const;
+		list<string>		get_server_names(void) const;
+		list<string>		get_cgis(void) const;
+		map<int, string>	get_error_pages(void) const;
+		string				get_ip_address(void) const;
+		unsigned int		get_port(void) const;
+		string				get_root(void) const;
+		string				get_index(void) const;
+		unsigned int		get_max_client_body_size(void) const;
 		int 				get_listen_fd(void) const;
 		string				is_valid(void) const;
 
