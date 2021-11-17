@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 14:50:20 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 15:31:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -469,13 +469,17 @@ string	Request::respond(const list<Server*> &servers)
 	}
 	else if (type == "POST")
 	{
-		string upload_dir = server->get_root() + location->get_upload_directory();
-		mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
-		string upload_file = upload_dir + target;
-		DEBUG("CREATE this file: " << upload_file);
-		ofstream file_out(upload_file, ios::app);
-		file_out << headers["Body"] << endl;
-		file_out.close();
+		// if (is_file_upload())
+		// {
+			// string upload_dir = server->get_root() + location->get_upload_directory();
+			// mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
+			// string upload_file = upload_dir + target;
+			// DEBUG("CREATE this file: " << upload_file);
+			// ofstream file_out(upload_file, ios::app);
+			// file_out << headers["Body"] << endl;
+			// file_out.close();
+			// return (get_response(server, location, "", "success.html"));
+		// }
 		return (get_response(server, location, "", filepath));
 	}
 	else if (type == "DELETE")
