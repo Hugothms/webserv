@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 12:02:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 14:45:11 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,8 +191,8 @@ Server	*parse_server(const string &config, size_t *pos)
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)).length())
 			{
-				if (tmp.length() > 0 && tmp.front() != '/')
-					tmp = '/' + tmp;
+				if (tmp.length() > 0 && tmp.front() == '/')
+					tmp = tmp.substr(1);
 				if (tmp.length() > 1 && tmp.back() == '/')
 					tmp.resize(tmp.length() - 1);
 				server->set_root(tmp);
