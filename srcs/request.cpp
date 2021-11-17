@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 12:52:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 14:18:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,33 +222,58 @@ string get_header(const string &message, const string &type, const size_t length
 
 void launch_cgi(const Server *server, string &message, string filepath, string &body)
 {
+	int fdpipe[2];
+	if (pipe(fdpipe) == -1)
+	{
+		cerr << "cgi: pipe failed" << endl;
+		exit(EXIT_FAILURE);
+	}
 	pid_t pid = fork();
+	if (pid < 0)
+	{
+		cerr << "cgi: fork failed" << endl;
+		exit(EXIT_FAILURE);
+	}
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
-		char *file = &(server_root + "/" + filepath)[0];
+		char *file = strdup((server_root + "/" + filepath).c_str());
 		char **argv = (char**) malloc(sizeof(char*) * 2);
 		argv[0] = file;
 		argv[1] = 0;
-		size_t size = 7; //TODO: calculate size of envp and build it
-		char **envp = (char**) malloc(sizeof(char*) * size);
+		//TODO: calculate size of envp and build it
+		char **envp = (char**) malloc(sizeof(char*) * 6);
 		// envp[0] = malloc()
-		envp[0] = &("DOCUMENT_ROOT=" + server_root)[0];
-		// envp[1] = &("HTTP_HOST=" + (server->get_server_names()[0]))[0];
-		envp[2] = &("SCRIPT_FILENAME=" + tmp)[0];
-		envp[3] = &("SCRIPT_NAME=" + tmp)[0];
-		envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
-		envp[5] = &("HTTPS=" + tmp)[0];
-		envp[6] = &("PATH=" + tmp)[0];
-		envp[7] = 0;
+		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root).c_str());
+		envp[1] = strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
+		envp[2] = strdup(("SCRIPT_FILENAME=" + server_root + filepath).c_str());
+		envp[3] = strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
+		envp[4] = strdup(("PATH=" + server_root).c_str());
+		envp[5] = 0;
+		// envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
+		// envp[5] = &("HTTPS=" + tmp)[0];
 		message = CODE_200;
 		// TODO: pipe STDOUT into BODY ?
+		close(fdpipe[0]); // child doesn't read
+		dup2(STDOUT_FILENO, fdpipe[1]);
 		execve("/usr/bin/python", argv, envp);
-		free(file);
 		free(argv);
 		free(envp);
 		exit(EXIT_SUCCESS);
 	}
+	else
+	{
+		wait(0);
+		close(fdpipe[1]); // parent doesn't write
+		char reading_buf[1];
+        while(read(fdpipe[0], reading_buf, 1) > 0)
+        {
+           cout << reading_buf[0];
+		   body += reading_buf;
+        }
+        close(fdpipe[0]);
+	}
+
 }
 
 void get_auto_index(const Server *server, string &message, string filepath, string &body)
@@ -448,13 +473,13 @@ string	Request::respond(const list<Server*> &servers)
 	}
 	else if (type == "POST")
 	{
-		mkdir((server->get_root() + '/' + location->get_upload_directory()).c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
-		filepath = server->get_root() + '/' + location->get_upload_directory() + target;
-		// ofstream file;
-		// file.open(filepath);
-		ofstream file_out(filepath, ios::app);
-		file_out << headers["Body"] << endl;
-		file_out.close();
+		// mkdir((server->get_root() + '/' + location->get_upload_directory()).c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
+		// filepath = server->get_root() + '/' + location->get_upload_directory() + target;
+		// // ofstream file;
+		// // file.open(filepath);
+		// ofstream file_out(filepath, ios::app);
+		// file_out << headers["Body"] << endl;
+		// file_out.close();
 		return (get_response(server, location, "", filepath));
 	}
 	else if (type == "DELETE")
