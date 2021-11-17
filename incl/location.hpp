@@ -36,14 +36,14 @@ class Location
 		~Location();
 		string			is_valid(void) const;
 
-		Server			*get_server() const;
-		list<string>	get_HTTP_methods() const;
-		string			get_path() const;
-		string			get_HTTP_redirection() const;
-		string			get_location_root() const;
-		string			get_index() const;
-		string			get_upload_directory() const;
-		bool			get_directory_listing() const;
+		Server			*get_server(void) const;
+		list<string>	get_HTTP_methods(void) const;
+		string			get_path(void) const;
+		string			get_HTTP_redirection(void) const;
+		string			get_location_root(void) const;
+		string			get_index(void) const;
+		string			get_upload_directory(void) const;
+		bool			get_directory_listing(void) const;
 
 		void set_server(Server *server);
 		void set_HTTP_methods(const list<string> HTTP_methods);

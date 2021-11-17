@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 17:26:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ Client::Client(int new_listen_fd)
 	// inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
 
 	// printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
-	
+
 }
 
 
@@ -70,7 +70,7 @@ void Client::set_response(void)
 
 	// send_buffer = req.respond(servers);
 	send_buffer = req.respond(servers);
-	
+
 	send_rdy = 1;
 
 	_done_send = 0;
@@ -97,7 +97,7 @@ void Client::clear_send(void)
 	send_buffer.clear();
 }
 
-int Client::receive()
+int Client::receive(void)
 {
 	char buff[BUFF_S];
 	int len;
@@ -115,7 +115,7 @@ int Client::receive()
 		}
 		else
 		{
-			DEBUG("Data did not fit in the buffer, read more plz");		
+			DEBUG("Data did not fit in the buffer, read more plz");
 			_done_recv = 0;
 		}
 		rec_buffer += string(buff, len);
@@ -129,14 +129,14 @@ int Client::receive()
 	}
 }
 
-void Client::send()
+void Client::send(void)
 {
 	int actual = BUFF_S;
 
 
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
-	
+
 	// DEBUG("actual = " << actual);
 	// DEBUG("Sending response");
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);

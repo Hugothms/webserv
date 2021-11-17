@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 15:43:40 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 15:46:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ string	getmonth(const int month)
 	}
 }
 
-string	get_time_stamp()
+string	get_time_stamp(void)
 {
 	time_t now = time(0);
 
@@ -115,17 +115,4 @@ string	get_type(const string &str)
 	else
 		ret = "text/html";
 	return ret;
-}
-
-string get_header(const string &message, const string &type, const size_t length)
-{
-	stringstream header;
-	header << "HTTP/1.1 " << message << endl;
-	header << "Date: " << get_time_stamp() << endl;
-	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << type << endl;
-	header << "Content-Length: " << length << endl;
-	header << "Connection: Closed" << endl;
-	header << endl;
-	return (header.str());
 }

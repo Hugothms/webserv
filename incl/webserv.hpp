@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 16:05:34 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/17 16:14:11 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ class Webserv
 		bool	conflict_ip_address_port_server_names(const string &ip_address, const unsigned int port, const list<string> &server_names) const;
 		void	parse_config(const string config);
 
-		void	listen();
-		void	loop_prep();
+		void	listen(void);
+		void	loop_prep(void);
 		void 	accept_new_conn(void);
-		static void sig();
-		void 	stop();
+		static void sig(void);
+		void 	stop(void);
 		void 	clear_fd(Client *client);
 		void 	build(void);
 		void 	process(Client *client);

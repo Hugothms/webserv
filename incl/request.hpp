@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 15:56:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 16:15:50 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Request
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
+		string				message;
 
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;
@@ -63,18 +64,23 @@ class Request
 	public :
 		Request(const string &buffer);
 		~Request();
-		bool	select_server(const list<Server*> &servers);
-		bool	select_location();
-		bool	method_allowed();
-		void	set_filepath(void);
-		// string	respond(void);
 		string	respond(const list<Server*> &servers);
+		bool	select_server(const list<Server*> &servers);
+		bool	select_location(void);
+		string 	get_response(void);
+		void 	get_body(string &body);
+		string	get_header(const size_t length);
+		void 	launch_cgi(string &body);
+		void	get_auto_index(string &body);
+		void	set_filepath(void);
+		bool 	method_allowed(void);
+		string	error_page(const int error_code);
 };
 
+// * utils_header.cpp
 string	getdayofweek(const int day);
 string	getmonth(const int month);
-string	get_time_stamp();
+string	get_time_stamp(void);
 string	get_type(const string &str);
-string get_header(const string &message, const string &type, const size_t length);
 
 #endif
