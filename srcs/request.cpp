@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 15:31:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 15:34:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,7 +283,7 @@ void get_auto_index(const Server *server, string &message, string filepath, stri
 					<body style=\"background-color: grey; color: lightgrey;\">\n\
 					<div style=\"display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;\">\n\
 						<h1>Auto Index</h1>\n";
-	auto_index << filepath.substr(server->get_root().length());
+	auto_index << filepath.substr(server->get_root().length() + 1);
 	DIR *dir;
 	struct dirent *ent;
 	if ((dir = opendir(filepath.c_str())) != NULL)
