@@ -6,13 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 15:34:33 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 16:01:39 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
 
-Request::~Request() {}
+Request::~Request()
+{}
 
 Request::Request(const string &buffer)
 {
@@ -62,111 +63,6 @@ Request::Request(const string &buffer)
 	// DEBUG("****** REQUEST PARSED *******");
 }
 
-string	getdayofweek(const int day)
-{
-	switch(day)
-	{
-		case 1:
-			return "Mon";
-		case 2:
-			return "Tue";
-		case 3:
-			return "Wed";
-		case 4:
-			return "Thu";
-		case 5:
-			return "Fri";
-		case 6:
-			return "Sat";
-		case 0:
-			return "Sun";
-		default :
-			return "UNDEFINED_DAY";
-	}
-}
-
-string	getmonth(const int month)
-{
-	switch(month)
-	{
-		case 0:
-			return "Jan";
-		case 1:
-			return "Feb";
-		case 2:
-			return "Mar";
-		case 3:
-			return "Apr";
-		case 4:
-			return "May";
-		case 5:
-			return "Jun";
-		case 6:
-			return "Jul";
-		case 7:
-			return "Aug";
-		case 8:
-			return "Sep";
-		case 9:
-			return "Oct";
-		case 10:
-			return "Nov";
-		case 11:
-			return "Dec";
-		default :
-			return "UNDEFINED_MONTH";
-	}
-}
-
-string	get_time_stamp()
-{
-	time_t now = time(0);
-
-	tm *time = gmtime(&now);
-	stringstream output;
-	output << getdayofweek(time->tm_wday);
-
-	if (time->tm_mday < 10)
-		output  << ", 0" << time->tm_mday;
-	else
-		output  << ", " << time->tm_mday;
-	output << " " << getmonth(time->tm_mon);
-	output << " " << time->tm_year + 1900 << " ";
-	if (time->tm_hour < 10)
-		output << "0";
-	output << time->tm_hour << ":";
-	if (time->tm_min < 10)
-		output << "0";
-	output << time->tm_min << ":";
-	if (time->tm_sec < 10)
-		output << "0";
-	output << time->tm_sec << " GMT";
-
-	return (output.str());
-}
-
-string	get_type(const string &str)
-{
-	string ret;
-	if (str.find(".png", str.length() - 4) != string::npos)
-		ret = "image/png";
-	else if (str.find(".jpg", str.length() - 4) != string::npos)
-		ret = "image/jpg";
-	else if (str.find(".png", str.length() - 4) != string::npos)
-		ret = "image/x-icon";
-	else if (str.find(".ico", str.length() - 4) != string::npos)
-		ret = "image/x-icon";
-	else if (str.find(".css", str.length() - 4) != string::npos)
-		ret = "text/css";
-	else if (str.find(".js", str.length() - 3) != string::npos)
-		ret = "application/javascript";
-	else if (str.find(".html", str.length() - 5) != string::npos)
-		ret = "text/html";
-	else
-		ret = "text/html";
-	return ret;
-}
-
 string	error_page(const Server *server, const int x)
 {
 	if (server && server->get_error_pages().size() && server->get_error_pages()[x].length())
@@ -180,16 +76,18 @@ string	error_page(const Server *server, const int x)
  * @param port		specified in the conf by the 'listen' keyword (ip_address:port)
  * @return			a pointer to the server corresponding to the couple (host, port) or the default server for this port if it exist, null overwise.
 **/
-Server	*select_server(const list<Server*> &servers, string &host, unsigned int port)
+bool	Request::select_server(const list<Server*> &servers)
 {
+	string host = headers["Host"];
+	unsigned int port = atoi(headers["Port"].c_str());
 	// DEBUG("Looking for " << host << ":" << port);
-	Server *default_server = NULL;
+	this->server = NULL;
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
 		if ((*server)->get_port() == port)
 		{
-			if (default_server == NULL)
-				default_server = *server;
+			if (this->server == NULL)
+				this->server = *server;
 			list<string> server_names = (*server)->get_server_names();
 			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 			{
@@ -197,27 +95,16 @@ Server	*select_server(const list<Server*> &servers, string &host, unsigned int p
 				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
 				{
 					// DEBUG("Found " << *server_name << ":" << (*server)->get_port());
-					return (*server);
+					this->server = *server;
+					return true;
 				}
 			}
 		}
 	}
-	// if (default_server)
-		// DEBUG("Found default server for port: " << port);
-	return default_server;
-}
-
-string get_header(const string &message, const string &type, const size_t length)
-{
-	stringstream header;
-	header << "HTTP/1.1 " << message << endl;
-	header << "Date: " << get_time_stamp() << endl;
-	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << type << endl;
-	header << "Content-Length: " << length << endl;
-	header << "Connection: Closed" << endl;
-	header << endl;
-	return (header.str());
+	if (!this->server)
+		return false;
+	DEBUG("Found default server for port: " << port);
+	return true;
 }
 
 void launch_cgi(const Server *server, string &message, string filepath, string &body)
@@ -364,23 +251,27 @@ string 	get_response(const Server *server, const Location *location, string mess
 	return response;
 }
 
-Location	*select_location(const Server *server, const string &target)
+bool	Request::select_location()
 {
 	list<Location> locations = server->get_locations();
 	if (locations.size() == 0)
-		return NULL;
+	{
+		location = NULL;
+		return false;
+	}
 	string searched_path = target;
 	// DEBUG("tmp: " << target);
 	while (searched_path != "")
 	{
 		// DEBUG(searched_path);
-		for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+		for (list<Location>::iterator it_location = locations.begin(); it_location != locations.end(); it_location++)
 		{
-			// DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*location).get_path());
-			if (searched_path == location->get_path())
+			// DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*it_location).get_path());
+			if (searched_path == it_location->get_path())
 			{
 				// DEBUG("Location found: " << location->get_path());
-				return ((new Location(*location)));
+				this->location = new Location(*it_location);
+				return true;
 			}
 		}
 		size_t pos = searched_path.find_last_of("/");
@@ -389,23 +280,25 @@ Location	*select_location(const Server *server, const string &target)
 		searched_path = searched_path.substr(0, pos);
 	}
 	searched_path = "/";
-	for (list<Location>::iterator location = locations.begin(); location != locations.end(); location++)
+	for (list<Location>::iterator it_location = locations.begin(); it_location != locations.end(); it_location++)
 	{
-		if (searched_path == location->get_path())
+		if (searched_path == it_location->get_path())
 		{
-			// DEBUG("Default location found: " << location->get_path());
-			return ((new Location(*location)));
+			// DEBUG("Default it_location found: " << it_location->get_path());
+			this->location = new Location(*it_location);
+			return true;
 		}
 	}
-	return NULL;
+	this->location = NULL;
+	return false;
 }
 
-bool method_allowed(const Location *location, const string &method)
+bool Request::method_allowed()
 {
 	list<string> HTTP_methods = location->get_HTTP_methods();
 	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
 	{
-		if (*HTTP_method == method)
+		if (*HTTP_method == type)
 			return true;
 	}
 	return false;
@@ -449,13 +342,11 @@ void Request::set_filepath()
 
 string	Request::respond(const list<Server*> &servers)
 {
-	server = select_server(servers, headers["Host"], atoi(headers["Port"].c_str()));
-	if (!server)
+	if (!select_server(servers))
 		return (get_response(server, location, CODE_404, error_page(server, 404)));
-	location = select_location(server, target);
-	if (!location)
+	if (!select_location())
 		return (get_response(server, location, CODE_404, error_page(server, 404)));
-	if (!method_allowed(location, type))
+	if (!method_allowed())
 		return (get_response(server, location, CODE_405, error_page(server, 405)));
 	set_filepath();
 	string message;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 17:27:30 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/17 15:56:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include "includes.hpp"
 # include "server.hpp"
-
 
 class Server;
 class Location;
@@ -64,9 +63,18 @@ class Request
 	public :
 		Request(const string &buffer);
 		~Request();
+		bool	select_server(const list<Server*> &servers);
+		bool	select_location();
+		bool	method_allowed();
 		void	set_filepath(void);
 		// string	respond(void);
 		string	respond(const list<Server*> &servers);
 };
+
+string	getdayofweek(const int day);
+string	getmonth(const int month);
+string	get_time_stamp();
+string	get_type(const string &str);
+string get_header(const string &message, const string &type, const size_t length);
 
 #endif

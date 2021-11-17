@@ -29,6 +29,7 @@ SRC			=	main.cpp			\
 				parse.cpp			\
 				request.cpp			\
 				server.cpp			\
+				utils_header.cpp	\
 				utils_parsing.cpp	\
 				client.cpp			\
 				webserv.cpp
