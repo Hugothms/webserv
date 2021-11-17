@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/09 16:21:43 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/17 11:47:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 	if (argc == 2)
 	{
 		ifstream file(argv[1]);
-		if(!file.is_open())
+		if (!file.is_open())
 		{
 			cerr << "ERROR: File does not exist" << endl;
 			return -1;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 		file.close();
 	}
 	Webserv webserv((argc == 1) ? "" : argv[1]);
-	
+
 	ptr = &webserv;
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGSTOP, &stop);

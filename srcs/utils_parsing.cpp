@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/15 18:05:30 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 11:47:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 bool is_integer(const string &s)
 {
-	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
+	if (s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
 		return false;
 	char *p;
 	strtol(s.c_str(), &p, 10);
