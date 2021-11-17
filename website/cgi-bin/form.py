@@ -2,8 +2,8 @@
 import cgi, cgitb
 cgitb.enable()
 input_data = cgi.FieldStorage()
-name = input_data.getvalue('fname')
-print("Name of the user is:",name)
+# name = input_data.getvalue('fname')
+# print("Name of the user is:",name)
 
 
 print('Content-Type: text/html')	# HTML is following
