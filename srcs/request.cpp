@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 12:06:45 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/17 12:52:28 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,19 +225,22 @@ void launch_cgi(const Server *server, string &message, string filepath, string &
 	pid_t pid = fork();
 	if (pid == 0)
 	{
-		string tmp = string(getcwd(NULL, 0)) + "/" + filepath;
-		char *file = strdup(tmp.c_str());
+		string server_root = string(getcwd(NULL, 0));
+		char *file = &(server_root + "/" + filepath)[0];
 		char **argv = (char**) malloc(sizeof(char*) * 2);
 		argv[0] = file;
 		argv[1] = 0;
-		// argv[2] = 0;
-		size_t size = 1 + 0; //TODO: calculate size of envp and build it
+		size_t size = 7; //TODO: calculate size of envp and build it
 		char **envp = (char**) malloc(sizeof(char*) * size);
-		for (size_t i = 0; i < size - 1; i++)
-		{
-			/* code */
-		}
-		envp[size - 1] = 0;
+		// envp[0] = malloc()
+		envp[0] = &("DOCUMENT_ROOT=" + server_root)[0];
+		// envp[1] = &("HTTP_HOST=" + (server->get_server_names()[0]))[0];
+		envp[2] = &("SCRIPT_FILENAME=" + tmp)[0];
+		envp[3] = &("SCRIPT_NAME=" + tmp)[0];
+		envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
+		envp[5] = &("HTTPS=" + tmp)[0];
+		envp[6] = &("PATH=" + tmp)[0];
+		envp[7] = 0;
 		message = CODE_200;
 		// TODO: pipe STDOUT into BODY ?
 		execve("/usr/bin/python", argv, envp);
