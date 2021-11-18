@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 17:18:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 17:56:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,7 @@ void	Request::get_auto_index(string &body)
 
 void 	Request::get_body(string &body)
 {
-	if (location->get_directory_listing() && is_directory(filepath) && filepath.back() == '/')
+	if (location->get_autoindex() && is_directory(filepath) && filepath.back() == '/')
 		return (get_auto_index(body));
 	if (!is_file_upload())
 	{
@@ -331,10 +331,10 @@ string Request::get_header(const size_t length)
 	return (header.str());
 }
 
-bool Request::method_allowed(void)
+bool Request::method_allow(void)
 {
-	list<string> HTTP_methods = location->get_HTTP_methods();
-	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+	list<string> allow = location->get_allow();
+	for (list<string>::iterator HTTP_method = allow.begin(); HTTP_method != allow.end(); HTTP_method++)
 	{
 		if (*HTTP_method == type)
 			return true;
@@ -395,7 +395,7 @@ bool Request::is_file_upload(void)
 
 string	Request::respond(const list<Server*> &servers)
 {
-	if (!select_server(servers) || !select_location() || !method_allowed())
+	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
 	set_filepath();
 	if (type == "GET")

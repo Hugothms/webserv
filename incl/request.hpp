@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/18 15:18:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 17:52:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ class Request
 		void 	launch_cgi(string &body);
 		void	get_auto_index(string &body);
 		void	set_filepath(void);
-		bool 	method_allowed(void);
+		bool 	method_allow(void);
 		string	error_page(const int error_code);
 		bool	is_file_upload(void);
 };

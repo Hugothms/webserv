@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 14:45:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 17:56:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 		}
 		else if (tmp.length())
 			DEBUG("\t\t" << tmp << ":");
-		if (tmp == "HTTP_methods")
+		if (tmp == "allow")
 		{
 			while ((tmp = get_str_before_char(config, " ;", pos)).length())
 			{
@@ -88,11 +88,11 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else if (tmp == "directory_listing")
+		else if (tmp == "autoindex")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
 			{
-				location.set_directory_listing(atoi(tmp.c_str()));
+				location.set_autoindex(atoi(tmp.c_str()));
 				DEBUG("\t\t\t" << tmp);
 				get_str_before_char(config, "\n", pos);
 			}
