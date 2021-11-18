@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 15:11:21 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 15:28:28 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,13 +228,16 @@ void 	Request::get_body(string &body)
 {
 	if (location->get_directory_listing() && is_directory(filepath) && filepath.back() == '/')
 		return (get_auto_index(body));
-	list<string> cgis = server->get_cgis();
-	for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+	if (!is_file_upload())
 	{
-		if (filepath.find(*cgi) != string::npos)
+		list<string> cgis = server->get_cgis();
+		for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
-			DEBUG("CGI extention found !");
-			return (launch_cgi(body));
+			if (filepath.find(*cgi) != string::npos)
+			{
+				DEBUG("CGI extention found !");
+				return (launch_cgi(body));
+			}
 		}
 	}
 	ifstream file(filepath.c_str(), ofstream::in);
@@ -375,6 +378,13 @@ void Request::set_filepath(void)
 	// DEBUG("filepath: " << filepath << endl << endl);
 }
 
+bool Request::is_file_upload(void)
+{
+	if (1)
+		return true;
+	return false;
+}
+
 string	Request::respond(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allowed())
@@ -390,17 +400,19 @@ string	Request::respond(const list<Server*> &servers)
 	}
 	else if (type == "POST")
 	{
-		// if (is_file_upload())
-		// {
-			// string upload_dir = server->get_root() + location->get_upload_directory();
-			// mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
-			// string upload_file = upload_dir + target;
-			// DEBUG("CREATE this file: " << upload_file);
-			// ofstream file_out(upload_file, ios::app);
-			// file_out << headers["Body"] << endl;
-			// file_out.close();
-			// return (get_response(server, location, "", "success.html"));
-		// }
+		if (is_file_upload())
+		{
+			string upload_dir = server->get_root() + location->get_upload_directory() + target.substr(0, target.find_last_of('/') + 1);
+			DEBUG("upload_dir: " << upload_dir);
+			mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
+			string upload_file = server->get_root() + location->get_upload_directory() + target;
+			DEBUG("CREATE this file: " << upload_file);
+			ofstream file_out(upload_file, ios::app);
+			file_out << headers["Body"] << endl;
+			file_out.close();
+			filepath = "success.html";
+			return (get_response());
+		}
 		return (get_response());
 	}
 	else if (type == "DELETE")

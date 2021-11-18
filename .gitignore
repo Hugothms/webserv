@@ -41,4 +41,4 @@ log
 err
 test
 *.DS_Store
-website/tmp/hugo
+website/tmp/*
