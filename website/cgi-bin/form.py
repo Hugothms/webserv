@@ -13,7 +13,6 @@ name = input_data["name"].value
 email = input_data["email"].value
 print('<output>{0} and {1}</output>'.format(name, email))
 
-# cgi.parse()
 
 # http://www.cgi101.com/book/ch3/text.html
 # DOCUMENT_ROOT # ROOT DIRECTORY OF THE SERVER
