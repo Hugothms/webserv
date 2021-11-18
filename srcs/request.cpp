@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 15:28:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 16:20:31 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void Request::launch_cgi(string &body)
 	else
 	{
 		wait(0);
-		// waitpid(pid, &child_status, 0);
+		// waitpid(0, NULL, 0);
 		// size_t i = 0;
 		// while (argv[i])
 		// {
@@ -380,7 +380,11 @@ void Request::set_filepath(void)
 
 bool Request::is_file_upload(void)
 {
-	if (1)
+	// https://stackoverflow.com/questions/8659808/how-does-http-file-upload-work
+	// headers["Body"];
+	// headers["Content-Type"];
+	// string(strtok(,));
+	if (0)
 		return true;
 	return false;
 }
