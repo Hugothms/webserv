@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 12:47:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,14 +133,19 @@ void Request::launch_cgi(string &body)
 		cerr << "cgi: fork failed" << endl;
 		exit(EXIT_FAILURE);
 	}
+	char **argv = (char**) malloc(sizeof(char*) * 4);
+	char **envp = (char**) malloc(sizeof(char*) * 6);
 	if (pid == 0)
 	{
 
 		string server_root = string(getcwd(NULL, 0));
-
-		char **envp = (char**) malloc(sizeof(char*) * 6);
-		// envp[0] = malloc()
-		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root + "/").c_str());
+		char *file = strdup((server_root + "/" + filepath).c_str());
+		argv[0] = strdup("/usr/bin/python");
+		argv[1] = file;
+		argv[2] = strdup(headers["Body"].c_str());
+		argv[3] = 0;
+		//TODO: calculate size of envp and build it
+		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root).c_str());
 		envp[1] = strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
 		envp[2] = strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
 		envp[3] = strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
@@ -160,38 +165,25 @@ void Request::launch_cgi(string &body)
 		//TODO: calculate size of envp and build it
 
 		message = CODE_200;
-		// TODO: pipe STDOUT into BODY ?
 		close(fdpipe[0]); // child doesn't read
 		dup2(STDOUT_FILENO, fdpipe[1]);
-
-		for(int i = 0; i < 5; i++)
-		{
-			DEBUG( i << ": "<<envp[i]);
-		}
-		string ret = get_bin(envp[3]);
-		if (ret == "NULL")
-			DEBUG("NO PATH FOR THIS CGI");
-		if (execve(ret.c_str(), argv, envp))
-		{
-			perror("execve");
-		}
-		free(argv);
-		free(envp);
-		exit(EXIT_SUCCESS);
+		execve("/usr/bin/python", argv, envp);
 	}
 	else
 	{
 		wait(0);
+		free(argv);
+		free(envp);
 		close(fdpipe[1]); // parent doesn't write
 		char reading_buf[1];
-        while(read(fdpipe[0], reading_buf, 1) > 0)
-        {
-           cout << reading_buf[0];
+		DEBUG("Body:");
+		while(read(fdpipe[0], reading_buf, 1) > 0)
+		{
+		   cout << reading_buf[0];
 		   body += reading_buf;
-        }
-        close(fdpipe[0]);
+		}
+		close(fdpipe[0]);
 	}
-
 }
 
 void	Request::get_auto_index(string &body)
@@ -386,14 +378,9 @@ void Request::set_filepath(void)
 
 string	Request::respond(const list<Server*> &servers)
 {
-	if (!select_server(servers))
-		return (get_response());
-	if (!select_location())
-		return (get_response());
-	if (!method_allowed())
+	if (!select_server(servers) || !select_location() || !method_allowed())
 		return (get_response());
 	set_filepath();
-	string message;
 	if (type == "GET")
 		return(get_response());
 	else if (type == "HEAD")
