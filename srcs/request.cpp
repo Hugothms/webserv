@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 12:47:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 12:59:21 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,9 +126,8 @@ void Request::launch_cgi(string &body)
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
-		char *file = strdup((server_root + "/" + filepath).c_str());
 		argv[0] = strdup("/usr/bin/python");
-		argv[1] = file;
+		argv[1] = strdup((server_root + "/" + filepath).c_str());
 		argv[2] = strdup(headers["Body"].c_str());
 		argv[3] = 0;
 		//TODO: calculate size of envp and build it
@@ -148,6 +147,17 @@ void Request::launch_cgi(string &body)
 	else
 	{
 		wait(0);
+		// waitpid(pid, &child_status, 0);
+		size_t i = 0;
+		// while (argv[i])
+		// {
+		// 	DEBUG(i);
+		// 	DEBUG(argv[i]);
+		// 	free(argv[i++]);
+		// }
+		// i = 0;
+		// while (envp[i])
+		// 	free(envp[i++]);
 		free(argv);
 		free(envp);
 		close(fdpipe[1]); // parent doesn't write
