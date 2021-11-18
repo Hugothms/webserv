@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 14:46:26 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 14:49:06 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void Request::launch_cgi(string &body)
 		//TODO: calculate size of envp and build it
 		message = CODE_200;
 		close(fdpipe[0]); // child doesn't read
-		dup2(STDOUT_FILENO, fdpipe[1]);
+		dup2(fdpipe[1], STDOUT_FILENO);
 		execve(bin_path.c_str(), argv, envp);
 	}
 	else
