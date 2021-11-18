@@ -107,6 +107,18 @@ bool	Request::select_server(const list<Server*> &servers)
 	return true;
 }
 
+string get_bin(char *path)
+{
+	string ex(path);
+
+	
+	if (ex.find(".php") != string::npos)
+		return ("/usr/bin/php");
+	else if (ex.find(".py") != string::npos)
+		return ("/usr/bin/python");
+	return "NULL";
+}
+
 void Request::launch_cgi(string &body)
 {
 	int fdpipe[2];
@@ -123,27 +135,46 @@ void Request::launch_cgi(string &body)
 	}
 	if (pid == 0)
 	{
+
 		string server_root = string(getcwd(NULL, 0));
-		char *file = strdup((server_root + "/" + filepath).c_str());
-		char **argv = (char**) malloc(sizeof(char*) * 2);
-		argv[0] = file;
-		argv[1] = 0;
-		//TODO: calculate size of envp and build it
+
 		char **envp = (char**) malloc(sizeof(char*) * 6);
 		// envp[0] = malloc()
-		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root).c_str());
+		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root + "/").c_str());
 		envp[1] = strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
-		envp[2] = strdup(("SCRIPT_FILENAME=" + server_root + filepath).c_str());
+		envp[2] = strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
 		envp[3] = strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
-		envp[4] = strdup(("PATH=" + server_root).c_str());
+		envp[4] = strdup(("PATH=" + server_root +"/").c_str());
 		envp[5] = 0;
+
 		// envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
 		// envp[5] = &("HTTPS=" + tmp)[0];
+
+		string bin_path = get_bin(envp[3]);
+
+		char *file = strdup((server_root + "/" + filepath).c_str());
+		char **argv = (char**) malloc(sizeof(char*) * 3);
+		argv[0] = strdup(bin_path.c_str());
+		argv[1] = file;
+		argv[2] = 0;
+		//TODO: calculate size of envp and build it
+
 		message = CODE_200;
 		// TODO: pipe STDOUT into BODY ?
 		close(fdpipe[0]); // child doesn't read
 		dup2(STDOUT_FILENO, fdpipe[1]);
-		execve("/usr/bin/python", argv, envp);
+
+		for(int i = 0; i < 5; i++)
+		{
+			DEBUG( i << ": "<<envp[i]);
+		}
+		string ret = get_bin(envp[3]);
+		if (ret == "NULL")
+			DEBUG("NO PATH FOR THIS CGI");
+		if (execve(ret.c_str(), argv, envp))
+		{
+			perror("execve");
+		}
 		free(argv);
 		free(envp);
 		exit(EXIT_SUCCESS);
