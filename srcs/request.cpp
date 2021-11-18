@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 16:20:31 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 17:18:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -381,9 +381,13 @@ void Request::set_filepath(void)
 bool Request::is_file_upload(void)
 {
 	// https://stackoverflow.com/questions/8659808/how-does-http-file-upload-work
-	// headers["Body"];
-	// headers["Content-Type"];
-	// string(strtok(,));
+	string multipart = "multipart/form-data; boundary=";
+	if (headers["Content-Type"].find(multipart) != 0)
+		return false;
+	string boundary = string("--") + &headers["Content-Type"][multipart.length()];
+	DEBUG("Parsed boundary:" << boundary);
+	// TODO: parse headers["Body"] to find the 'filename' header or something like next line
+	// Content-Disposition: form-data; name="uploaded_file"; filename="test.php"
 	if (0)
 		return true;
 	return false;
@@ -407,7 +411,7 @@ string	Request::respond(const list<Server*> &servers)
 		if (is_file_upload())
 		{
 			string upload_dir = server->get_root() + location->get_upload_directory() + target.substr(0, target.find_last_of('/') + 1);
-			DEBUG("upload_dir: " << upload_dir);
+			// DEBUG("upload_dir: " << upload_dir);
 			mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
 			string upload_file = server->get_root() + location->get_upload_directory() + target;
 			DEBUG("CREATE this file: " << upload_file);
