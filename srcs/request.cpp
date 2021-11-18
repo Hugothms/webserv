@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 14:49:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 15:11:21 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ void Request::launch_cgi(string &body)
 	}
 	char **argv = (char**) malloc(sizeof(char*) * 4);
 	char **envp = (char**) malloc(sizeof(char*) * 6);
+	message = CODE_200;
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
@@ -154,16 +155,16 @@ void Request::launch_cgi(string &body)
 		argv[2] = strdup(headers["Body"].c_str());
 		argv[3] = 0;
 		//TODO: calculate size of envp and build it
-		message = CODE_200;
 		close(fdpipe[0]); // child doesn't read
 		dup2(fdpipe[1], STDOUT_FILENO);
-		execve(bin_path.c_str(), argv, envp);
+		if (execve(bin_path.c_str(), argv, envp) < 0)
+			message = CODE_404;
 	}
 	else
 	{
 		wait(0);
 		// waitpid(pid, &child_status, 0);
-		size_t i = 0;
+		// size_t i = 0;
 		// while (argv[i])
 		// {
 		// 	DEBUG(i);
@@ -177,12 +178,9 @@ void Request::launch_cgi(string &body)
 		free(envp);
 		close(fdpipe[1]); // parent doesn't write
 		char reading_buf;
-		DEBUG("Body:");
 		while(read(fdpipe[0], &reading_buf, 1) > 0)
-		{
-		   cout << reading_buf;
 		   body += reading_buf;
-		}
+		DEBUG("qwerty:" << body);
 		close(fdpipe[0]);
 	}
 }
@@ -323,7 +321,7 @@ string Request::get_header(const size_t length)
 	header << "HTTP/1.1 " << message << endl;
 	header << "Date: " << get_time_stamp() << endl;
 	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << type << endl;
+	header << "Content-Type: " << get_type(filepath) << endl;
 	header << "Content-Length: " << length << endl;
 	header << "Connection: Closed" << endl;
 	header << endl;
@@ -350,12 +348,12 @@ void Request::set_filepath(void)
 		return ;
 	}
 	size_t pos = target.find(location->get_path());
-	DEBUG("filepath: " << filepath);
-	DEBUG("target: " << target);
-	DEBUG("path(): " << location->get_path());
-	DEBUG("root(): " << location->get_location_root());
-	DEBUG("pos:" << pos);
-	DEBUG("");
+	// DEBUG("filepath: " << filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("path(): " << location->get_path());
+	// DEBUG("root(): " << location->get_location_root());
+	// DEBUG("pos:" << pos);
+	// DEBUG("");
 	if (pos == 0)
 	{
 		string tmp = target.substr(pos + location->get_path().length());
@@ -374,7 +372,7 @@ void Request::set_filepath(void)
 			// 	filepath += server->get_index();
 		}
 	}
-	DEBUG("filepath: " << filepath << endl << endl);
+	// DEBUG("filepath: " << filepath << endl << endl);
 }
 
 string	Request::respond(const list<Server*> &servers)
