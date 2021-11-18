@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 12:59:21 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 14:46:26 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,18 @@ bool	Request::select_server(const list<Server*> &servers)
 	return true;
 }
 
+string get_bin(char *path)
+{
+	string ex(path);
+
+
+	if (ex.find(".php") != string::npos)
+		return ("/usr/bin/php");
+	else if (ex.find(".py") != string::npos)
+		return ("/usr/bin/python");
+	return "NULL";
+}
+
 void Request::launch_cgi(string &body)
 {
 	int fdpipe[2];
@@ -126,23 +138,26 @@ void Request::launch_cgi(string &body)
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
-		argv[0] = strdup("/usr/bin/python");
+		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root).c_str());
+		envp[1] = strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
+		envp[2] = strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
+		envp[3] = strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
+		envp[4] = strdup(("PATH=" + server_root +"/").c_str());
+		envp[5] = 0;
+		// envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
+		// envp[5] = &("HTTPS=" + tmp)[0];
+
+		string bin_path = get_bin(envp[3]);
+
+		argv[0] = strdup(bin_path.c_str());
 		argv[1] = strdup((server_root + "/" + filepath).c_str());
 		argv[2] = strdup(headers["Body"].c_str());
 		argv[3] = 0;
 		//TODO: calculate size of envp and build it
-		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root).c_str());
-		envp[1] = strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
-		envp[2] = strdup(("SCRIPT_FILENAME=" + server_root + filepath).c_str());
-		envp[3] = strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
-		envp[4] = strdup(("PATH=" + server_root).c_str());
-		envp[5] = 0;
-		// envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
-		// envp[5] = &("HTTPS=" + tmp)[0];
 		message = CODE_200;
 		close(fdpipe[0]); // child doesn't read
 		dup2(STDOUT_FILENO, fdpipe[1]);
-		execve("/usr/bin/python", argv, envp);
+		execve(bin_path.c_str(), argv, envp);
 	}
 	else
 	{
@@ -161,11 +176,11 @@ void Request::launch_cgi(string &body)
 		free(argv);
 		free(envp);
 		close(fdpipe[1]); // parent doesn't write
-		char reading_buf[1];
+		char reading_buf;
 		DEBUG("Body:");
-		while(read(fdpipe[0], reading_buf, 1) > 0)
+		while(read(fdpipe[0], &reading_buf, 1) > 0)
 		{
-		   cout << reading_buf[0];
+		   cout << reading_buf;
 		   body += reading_buf;
 		}
 		close(fdpipe[0]);
