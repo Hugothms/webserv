@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 12:00:57 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 17:56:32 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location.hpp"
 
 Location::Location()
-: directory_listing(true)
+: autoindex(false)
 {
 	// map_pointer_function.insert(make_pair("HTTP_redirection", &(Location::set_HTTP_redirection)));
 	// map_pointer_function.insert(make_pair("root", &(Location::set_path)));
@@ -28,10 +28,10 @@ string		Location::is_valid(void) const
 {
 	if (get_path() == "")
 		return (get_path() + " location: path is not set");
-	list<string> HTTP_methods = get_HTTP_methods();
-	if (HTTP_methods.size() == 0)
-		return (get_path() + " location: HTTP_methods is not set");
-	for (list<string>::iterator HTTP_method = HTTP_methods.begin(); HTTP_method != HTTP_methods.end(); HTTP_method++)
+	list<string> allow = get_allow();
+	if (allow.size() == 0)
+		return (get_path() + " location: allow is not set");
+	for (list<string>::iterator HTTP_method = allow.begin(); HTTP_method != allow.end(); HTTP_method++)
 	{
 		if (*HTTP_method == "POST" && get_upload_directory().length() == 0)
 			return "directory_upload is not set (and HTTP_method POST is accepted)";
@@ -46,9 +46,9 @@ Server			*Location::get_server() const
 	return (this->server);
 }
 
-list<string>	Location::get_HTTP_methods() const
+list<string>	Location::get_allow() const
 {
-	return (this->HTTP_methods);
+	return (this->allow);
 }
 
 string			Location::get_path() const
@@ -76,9 +76,9 @@ string			Location::get_upload_directory() const
 	return (this->upload_directory);
 }
 
-bool			Location::get_directory_listing() const
+bool			Location::get_autoindex() const
 {
-	return (this->directory_listing);
+	return (this->autoindex);
 }
 
 void Location::set_server(Server *server)
@@ -86,14 +86,14 @@ void Location::set_server(Server *server)
 	this->server = server;
 }
 
-void Location::set_HTTP_methods(const list<string> HTTP_methods)
+void Location::set_allow(const list<string> allow)
 {
-	this->HTTP_methods = HTTP_methods;
+	this->allow = allow;
 }
 
 void Location::push_back_HTTP_method(const string HTTP_method)
 {
-	this->HTTP_methods.push_back(HTTP_method);
+	this->allow.push_back(HTTP_method);
 }
 void Location::set_path(const string path)
 {
@@ -120,7 +120,7 @@ void Location::set_upload_directory(const string upload_directory)
 	this->upload_directory = upload_directory;
 }
 
-void Location::set_directory_listing(const bool directory_listing)
+void Location::set_autoindex(const bool autoindex)
 {
-	this->directory_listing = directory_listing;
+	this->autoindex = autoindex;
 }

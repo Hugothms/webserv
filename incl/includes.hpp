@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/15 17:54:21 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/18 17:52:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	err_parsing_config(const Server *server, const string error);
 # define CODE_402 "402 Payment Required"
 # define CODE_403 "403 Forbidden"
 # define CODE_404 "404 Not Found"
-# define CODE_405 "405 Method Not Allowed"
+# define CODE_405 "405 Method Not allow"
 # define CODE_406 "406 Not Acceptable"
 # define CODE_408 "408 Request Timeout"
 # define CODE_409 "409 Conflict"
