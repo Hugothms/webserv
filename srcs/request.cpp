@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/18 17:56:32 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:19:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,10 +230,10 @@ void 	Request::get_body(string &body)
 		return (get_auto_index(body));
 	if (!is_file_upload())
 	{
-		list<string> cgis = server->get_cgis();
-		for (list<string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+		map<string, string> cgis = server->get_cgis();
+		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
-			if (filepath.find(*cgi) != string::npos)
+			if (filepath.find(cgi->first) != string::npos)
 			{
 				DEBUG("CGI extention found !");
 				return (launch_cgi(body));

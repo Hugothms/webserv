@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 11:47:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:06:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ void stop(int num)
 
 int main(int argc, char *argv[])
 {
-	if (argc != 1 && argc != 2)
+	if (argc != 2)
 	{
-		cerr << "ERROR: Wrong number of arguments" << endl;
+		cerr << "Error: exactly one argument is required (config file path)" << endl;
 		return -1;
 	}
 	if (argc == 2)
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 		ifstream file(argv[1]);
 		if (!file.is_open())
 		{
-			cerr << "ERROR: File does not exist" << endl;
+			cerr << "Error: File does not exist" << endl;
 			return -1;
 		}
 		file.close();
