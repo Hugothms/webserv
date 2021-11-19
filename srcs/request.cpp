@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 15:58:54 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 16:27:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ void	Request::set_filepath(void)
 			// 	filepath += server->get_index();
 		}
 	}
-	// DEBUG("filepath: " << filepath << endl << endl);
+	DEBUG("filepath: " << filepath << endl << endl);
 }
 
 void 	Request::get_body(string &body)
@@ -265,7 +265,7 @@ void 	Request::get_body(string &body)
 	if (is_directory(filepath))
 	{
 		if (filepath.back() == '/' && location->get_autoindex())
-				return (get_auto_index(body));
+			return (get_auto_index(body));
 		else
 		{
 			message = CODE_403;
