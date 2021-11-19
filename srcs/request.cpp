@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 15:08:16 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 15:58:54 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ string get_bin(char *path)
 	return "NULL";
 }
 
-void Request::launch_cgi(string &body, const string extention_name)
+void	Request::launch_cgi(string &body, const string extention_name)
 {
 	int fdpipe[2];
 	if (pipe(fdpipe) == -1)
@@ -223,10 +223,56 @@ void	Request::get_auto_index(string &body)
 	body = auto_index.str();
 }
 
+void	Request::set_filepath(void)
+{
+	filepath = server->get_root();
+	if (target.compare("/") == 0)
+	{
+		filepath += '/' + server->get_index();
+		return ;
+	}
+	size_t pos = target.find(location->get_path());
+	// DEBUG("filepath: " << filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("path(): " << location->get_path());
+	// DEBUG("root(): " << location->get_location_root());
+	// DEBUG("pos:" << pos);
+	// DEBUG("");
+	if (pos == 0)
+	{
+		string tmp = target.substr(pos + location->get_path().length());
+		filepath += location->get_location_root() + tmp;
+	}
+	else
+		filepath += target;
+	if (filepath[filepath.length() - 1] == '/')
+	{
+		DEBUG("Target is a DIRECTORY !");
+		if (location->get_index().length())
+			filepath += location->get_index();
+		else
+		{
+			// 	filepath += server->get_index();
+		}
+	}
+	// DEBUG("filepath: " << filepath << endl << endl);
+}
+
 void 	Request::get_body(string &body)
 {
-	if (location->get_autoindex() && is_directory(filepath) && filepath.back() == '/')
-		return (get_auto_index(body));
+	set_filepath();
+	ifstream file(filepath.c_str(), ofstream::in);
+	if (is_directory(filepath))
+	{
+		if (filepath.back() == '/' && location->get_autoindex())
+				return (get_auto_index(body));
+		else
+		{
+			message = CODE_403;
+			file.close();
+			file.open(error_page(403), ofstream::in);
+		}
+	}
 	if (!is_file_upload())
 	{
 		map<string, string> cgis = server->get_cgis();
@@ -236,11 +282,11 @@ void 	Request::get_body(string &body)
 			if ((pos = filepath.find(cgi->first) )!= string::npos)
 			{
 				DEBUG("CGI extention found !");
+				file.close();
 				return (launch_cgi(body, filepath.substr(pos)));
 			}
 		}
 	}
-	ifstream file(filepath.c_str(), ofstream::in);
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad() || file_is_empty(file))
 	{
 		message = CODE_404;
@@ -318,7 +364,7 @@ bool	Request::select_location(void)
 	return false;
 }
 
-string Request::get_header(const size_t length)
+string	Request::get_header(const size_t length)
 {
 	stringstream header;
 	header << "HTTP/1.1 " << message << endl;
@@ -331,7 +377,7 @@ string Request::get_header(const size_t length)
 	return (header.str());
 }
 
-bool Request::method_allow(void)
+bool	Request::method_allow(void)
 {
 	list<string> allow = location->get_allow();
 	for (list<string>::iterator HTTP_method = allow.begin(); HTTP_method != allow.end(); HTTP_method++)
@@ -342,43 +388,7 @@ bool Request::method_allow(void)
 	return false;
 }
 
-void Request::set_filepath(void)
-{
-	filepath = server->get_root();
-	if (target.compare("/") == 0)
-	{
-		filepath += '/' + server->get_index();
-		return ;
-	}
-	size_t pos = target.find(location->get_path());
-	// DEBUG("filepath: " << filepath);
-	// DEBUG("target: " << target);
-	// DEBUG("path(): " << location->get_path());
-	// DEBUG("root(): " << location->get_location_root());
-	// DEBUG("pos:" << pos);
-	// DEBUG("");
-	if (pos == 0)
-	{
-		string tmp = target.substr(pos + location->get_path().length());
-		// string target_copy = string(target).resize(pos);
-		filepath += location->get_location_root() + tmp;
-	}
-	else
-		filepath += target;
-	if (filepath[filepath.length() - 1] == '/')
-	{
-		DEBUG("Target is a DIRECTORY !");
-		if (location->get_index().length())
-			filepath += location->get_index();
-		else
-		{
-			// 	filepath += server->get_index();
-		}
-	}
-	// DEBUG("filepath: " << filepath << endl << endl);
-}
-
-bool Request::is_file_upload(void)
+bool	Request::is_file_upload(void)
 {
 	// https://stackoverflow.com/questions/8659808/how-does-http-file-upload-work
 	string multipart = "multipart/form-data; boundary=";
@@ -397,7 +407,6 @@ string	Request::respond(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
-	set_filepath();
 	if (type == "GET")
 		return(get_response());
 	else if (type == "HEAD")
@@ -418,7 +427,7 @@ string	Request::respond(const list<Server*> &servers)
 			ofstream file_out(upload_file, ios::app);
 			file_out << headers["Body"] << endl;
 			file_out.close();
-			filepath = "success.html";
+			// filepath = "success.html";
 			return (get_response());
 		}
 		return (get_response());
