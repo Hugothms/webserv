@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 14:19:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:35:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ string get_bin(char *path)
 	return "NULL";
 }
 
-void Request::launch_cgi(string &body)
+void Request::launch_cgi(string &body, const string extention_name)
 {
 	int fdpipe[2];
 	if (pipe(fdpipe) == -1)
@@ -148,8 +148,7 @@ void Request::launch_cgi(string &body)
 		// envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
 		// envp[5] = &("HTTPS=" + tmp)[0];
 
-		string bin_path = get_bin(envp[3]);
-
+		string bin_path = server->get_cgis()[extention_name];
 		argv[0] = strdup(bin_path.c_str());
 		argv[1] = strdup((server_root + "/" + filepath).c_str());
 		argv[2] = strdup(headers["Body"].c_str());
@@ -231,12 +230,14 @@ void 	Request::get_body(string &body)
 	if (!is_file_upload())
 	{
 		map<string, string> cgis = server->get_cgis();
+		string extention_name;
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
-			if (filepath.find(cgi->first) != string::npos)
+			size_t pos;
+			if ((pos = filepath.find(cgi->first) )!= string::npos)
 			{
 				DEBUG("CGI extention found !");
-				return (launch_cgi(body));
+				return (launch_cgi(body, filepath.substr(pos)));
 			}
 		}
 	}
