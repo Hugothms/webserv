@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/19 14:58:39 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 17:00:11 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,11 @@ string			Location::get_path() const
 	return (this->path);
 }
 
+unsigned int	Location::get_HTTP_redirection_type() const
+{
+	return (this->HTTP_redirection_type);
+}
+
 string			Location::get_HTTP_redirection() const
 {
 	return (this->HTTP_redirection);
@@ -98,6 +103,11 @@ void Location::push_back_HTTP_method(const string HTTP_method)
 void Location::set_path(const string path)
 {
 	this->path = path;
+}
+
+void Location::set_HTTP_redirection_type(const unsigned int HTTP_redirection_type)
+{
+	this->HTTP_redirection_type = HTTP_redirection_type;
 }
 
 void Location::set_HTTP_redirection(const string HTTP_redirection)
