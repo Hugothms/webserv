@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/18 17:52:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:32:10 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ class Request
 		string 	get_response(void);
 		void 	get_body(string &body);
 		string	get_header(const size_t length);
-		void 	launch_cgi(string &body);
+		void 	launch_cgi(string &body, const string extention_name);
 		void	get_auto_index(string &body);
 		void	set_filepath(void);
 		bool 	method_allow(void);

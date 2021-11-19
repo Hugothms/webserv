@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 14:26:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:34:28 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,6 @@ Server	*parse_server(const string &config, size_t *pos)
 				string extention = tmp;
 				if (config[*pos - 1] != ' ')
 					err_parsing_config(server, "cgi not well configured");
-				(*pos)++;
 				if ((tmp = get_str_before_char(config, ";", pos)).length())
 				{
 					server->push_back_cgi(extention, tmp);
