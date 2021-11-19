@@ -2,10 +2,10 @@
 The objective of this project is to create a fully functional HTTP web server.
 
 ## Usage
-	make && ./webserv file.conf
+	make && ./webserv base.conf
 or more conveniently:
 
-	make run_config file
+	make run_config base
 
 ## Features
 ### ✅ It supports:
