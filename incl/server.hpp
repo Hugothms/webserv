@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/19 14:17:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:53:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class Server
 		~Server();
 		void	s_listen(void);
 		int		setup(void);
+		bool	is_valid(string &error) const;
 
 		list<Location>		get_locations(void) const;
 		list<string>		get_server_names(void) const;
@@ -63,7 +64,6 @@ class Server
 		string				get_index(void) const;
 		unsigned int		get_max_client_body_size(void) const;
 		int 				get_listen_fd(void) const;
-		string				is_valid(void) const;
 
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);

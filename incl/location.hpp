@@ -34,8 +34,7 @@ class Location
 	public:
 		Location();
 		~Location();
-		string			is_valid(void) const;
-
+		bool			is_valid(string &error) const;
 		Server			*get_server(void) const;
 		list<string>	get_allow(void) const;
 		string			get_path(void) const;

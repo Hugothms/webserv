@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 14:34:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:56:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,8 +232,8 @@ Server	*parse_server(const string &config, size_t *pos)
 	}
 	if (tmp != "}")
 		err_parsing_config(server, "no closing bracket");
-	string error = server->is_valid();
-	if (error.length() > 0)
+	string error;
+	if (!server->is_valid(error))
 		err_parsing_config(server, error);
 	return server;
 }
