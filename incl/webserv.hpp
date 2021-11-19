@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 16:14:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:38:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,6 @@ class Webserv
 		void 	clear_fd(Client *client);
 		void 	build(void);
 		void 	process(Client *client);
-		bool	is_a_valid_server(	const list<Location>	locations,
-									const list<string>		server_names,
-									const map<int, string>	error_pages,
-									const string			host,
-									const unsigned int 		port,
-									const string			root,
-									const string			index,
-									const unsigned int		max_client_body_size);
 		bool	conflict_host_port_server_names(const string host, const unsigned int port, const list<string> server_names);
 
 };
