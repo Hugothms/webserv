@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 14:56:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 16:57:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,21 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 			}
 			get_str_before_char(config, "\n", pos);
 		}
-		else if (tmp == "HTTP_redirection")
+		else if (tmp == "return")
 		{
-			if ((tmp = get_str_before_char(config, ";", pos)).length())
+			if ((tmp = get_str_before_char(config, " =;", pos)).length())
 			{
-				location.set_HTTP_redirection(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
+				int type = atoi(tmp.c_str());
+				if (config[*pos - 1] != ' ')
+					err_parsing_config(server, "redirection not well configured");
+				if ((tmp = get_str_before_char(config, ";", pos)).length())
+				{
+					location.set_HTTP_redirection_type(type);
+					location.set_HTTP_redirection(tmp);
+					DEBUG("\t\t" << type << " " << tmp);
+				}
 			}
+			get_str_before_char(config, "\n", pos);
 		}
 		else if (tmp == "root")
 		{
@@ -151,13 +158,13 @@ Server	*parse_server(const string &config, size_t *pos)
 		{
 			if ((tmp = get_str_before_char(config, " =;", pos)).length())
 			{
-				int error = atoi(tmp.c_str());
+				unsigned int error = atoi(tmp.c_str());
 				if (config[*pos] != '=')
 					err_parsing_config(server, "error page not well configured");
 				(*pos)++;
 				if ((tmp = get_str_before_char(config, ";", pos)).length())
 				{
-					server->push_back_error_page(pair<int, string>(error, tmp));
+					server->push_back_error_page(pair<unsigned int, string>(error, tmp));
 					DEBUG("\t\t" << error << " = " << tmp);
 				}
 			}
