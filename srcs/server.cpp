@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:19:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ list<string>	Server::get_server_names() const
 	return server_names;
 }
 
-list<string>	Server::get_cgis() const
+map<string, string>	Server::get_cgis() const
 {
 	return cgis;
 }
@@ -169,14 +169,14 @@ void	Server::push_back_server_name(string server_name)
 	this->server_names.push_back(server_name);
 }
 
-void	Server::set_cgis(const list<string> cgis)
+void	Server::set_cgis(const map<string, string> cgis)
 {
 	this->cgis = cgis;
 }
 
-void	Server::push_back_cgi(string cgi)
+void	Server::push_back_cgi(const string extention_name, const string exec_path)
 {
-	this->cgis.push_back(cgi);
+	this->cgis.insert(pair<string, string>(extention_name, exec_path));
 }
 
 void	Server::set_error_pages(const map<int, string> error_pages)
