@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 16:28:27 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 16:29:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,13 +296,6 @@ void 	Request::get_body(string &body)
 	else if (message == "")
 		message = CODE_200;
 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	// if (body == "")
-	// {
-	// 	message = CODE_404;
-	// 	file.close();
-	// 	file.open(error_page(server, 404), ofstream::in);
-	// 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	// }
 	file.close();
 }
 
