@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 14:35:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 15:08:16 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,6 @@ void 	Request::get_body(string &body)
 	if (!is_file_upload())
 	{
 		map<string, string> cgis = server->get_cgis();
-		string extention_name;
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
 			size_t pos;
