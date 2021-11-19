@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 16:27:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 16:28:27 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,7 +287,7 @@ void 	Request::get_body(string &body)
 			}
 		}
 	}
-	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad() || file_is_empty(file))
+	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
 		message = CODE_404;
 		file.close();
@@ -296,7 +296,7 @@ void 	Request::get_body(string &body)
 	else if (message == "")
 		message = CODE_200;
 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	// if (body == "") // if file is a directory or is empty
+	// if (body == "")
 	// {
 	// 	message = CODE_404;
 	// 	file.close();
