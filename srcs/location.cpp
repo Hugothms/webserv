@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/18 17:56:32 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/19 14:58:39 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,21 @@ Location::Location()
 
 Location::~Location() {}
 
-string		Location::is_valid(void) const
+bool	Location::is_valid(string &error) const
 {
 	if (get_path() == "")
-		return (get_path() + " location: path is not set");
+		error = (get_path() + " location: path is not set");
 	list<string> allow = get_allow();
 	if (allow.size() == 0)
-		return (get_path() + " location: allow is not set");
+		error = (get_path() + " location: allowed method(s) are not set");
 	for (list<string>::iterator HTTP_method = allow.begin(); HTTP_method != allow.end(); HTTP_method++)
 	{
 		if (*HTTP_method == "POST" && get_upload_directory().length() == 0)
-			return "directory_upload is not set (and HTTP_method POST is accepted)";
+			error = (get_path() + " location: directory_upload is not set (and HTTP method POST is allowed)");
 	}
 	if (get_location_root() == "")
-		return (get_path() + " location: location_root is not set");
-	return "";
+		error = (get_path() + " location: location_root is not set");
+	return (error.length() == 0);
 }
 
 Server			*Location::get_server() const
