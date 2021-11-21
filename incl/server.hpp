@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/19 17:01:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 18:53:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ class Server
 		list<string>				server_names; // "Host" header in HTTP request (domain names)
 		map<string, string>			cgis; // CGI's extentions names and exec paths
 		map<unsigned int, string>	error_pages; //
-		string						ip_address;
-		unsigned int				port; // port to listen and send on ("listen" in config file)
 		string						root; // directory where the webste is
 		string						index; // file served when "/" is requested
+		string						ip_address;
+		unsigned int				port; // port to listen and send on ("listen" in config file)
 		unsigned int				max_client_body_size;
 
 		// * FOR INTERNAL USE *

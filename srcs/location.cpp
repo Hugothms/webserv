@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/21 18:05:55 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 18:57:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location.hpp"
 
 Location::Location()
-: HTTP_redirection_type(0), autoindex(false)
+: max_client_body_size(1024), HTTP_redirection_type(0), autoindex(false)
 {
 	// map_pointer_function.insert(make_pair("HTTP_redirection", &(Location::set_HTTP_redirection)));
 	// map_pointer_function.insert(make_pair("root", &(Location::set_path)));
@@ -54,6 +54,11 @@ list<string>	Location::get_allow() const
 string			Location::get_path() const
 {
 	return (this->path);
+}
+
+unsigned int	Location::get_max_client_body_size() const
+{
+	return (this->max_client_body_size);
 }
 
 unsigned int	Location::get_HTTP_redirection_type() const
@@ -103,6 +108,11 @@ void Location::push_back_HTTP_method(const string HTTP_method)
 void Location::set_path(const string path)
 {
 	this->path = path;
+}
+
+void Location::set_max_client_body_size(const unsigned int max_client_body_size)
+{
+	this->max_client_body_size = max_client_body_size;
 }
 
 void Location::set_HTTP_redirection_type(const unsigned int HTTP_redirection_type)

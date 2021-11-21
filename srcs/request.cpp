@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/21 18:17:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 19:10:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,6 +446,11 @@ string	Request::respond(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
+	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > location->get_max_client_body_size())
+	{
+		message = codes[413];
+		return (get_response());
+	}
 	if (location->get_HTTP_redirection_type() > 0)
 	{
 		message = codes[location->get_HTTP_redirection_type()];

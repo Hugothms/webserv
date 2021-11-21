@@ -25,6 +25,7 @@ class Location
 		Server			*server;
 		string			path;
 		list<string>	allow;
+		unsigned int	max_client_body_size;
 		unsigned int	HTTP_redirection_type;
 		string			HTTP_redirection;
 		string			location_root;
@@ -39,6 +40,7 @@ class Location
 		Server			*get_server(void) const;
 		list<string>	get_allow(void) const;
 		string			get_path(void) const;
+		unsigned int	get_max_client_body_size(void) const;
 		unsigned int	get_HTTP_redirection_type(void) const;
 		string			get_HTTP_redirection(void) const;
 		string			get_location_root(void) const;
@@ -50,6 +52,7 @@ class Location
 		void set_allow(const list<string> allow);
 		void push_back_HTTP_method(const string HTTP_method);
 		void set_path(const string location);
+		void set_max_client_body_size(const unsigned int max_client_body_size);
 		void set_HTTP_redirection_type(const unsigned int type);
 		void set_HTTP_redirection(const string HTTP_redirection);
 		void set_location_root(const string location_root);
