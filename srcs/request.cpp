@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/21 17:01:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 17:35:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 	}
 	char **argv = (char**) malloc(sizeof(char*) * 4);
 	char **envp = (char**) malloc(sizeof(char*) * 6);
-	message = CODE_200;
+	message = codes[200];
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
@@ -157,7 +157,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		close(fdpipe[0]); // child doesn't read
 		dup2(fdpipe[1], STDOUT_FILENO);
 		if (execve(bin_path.c_str(), argv, envp) < 0)
-			message = CODE_404;
+			message = codes[404];
 	}
 	else
 	{
@@ -219,20 +219,13 @@ void	Request::get_auto_index(string &body)
 	auto_index << "	</div>\n\
 					</body>\n\
 					</html>";
-	message = CODE_200;
+	message = codes[200];
 	body = auto_index.str();
 }
 
 void	Request::set_filepath(void)
 {
 	filepath = server->get_root();
-	if (location->get_HTTP_redirection_type() > 0)
-	{
-		DEBUG("target before: " << target);
-		target = location->get_HTTP_redirection();
-		target = target.substr(location->get_HTTP_redirection().find("://localhost/") + 12);
-		DEBUG("target after: " << target);
-	}
 	if (target.compare("/") == 0)
 	{
 		filepath += '/' + server->get_index();
@@ -275,7 +268,7 @@ void 	Request::get_body(string &body)
 			return (get_auto_index(body));
 		else
 		{
-			message = CODE_403;
+			message = codes[403];
 			file.close();
 			file.open(error_page(403), ofstream::in);
 		}
@@ -296,12 +289,12 @@ void 	Request::get_body(string &body)
 	}
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
-		message = CODE_404;
+		message = codes[404];
 		file.close();
 		file.open(error_page(404), ofstream::in);
 	}
 	else if (message == "")
-		message = CODE_200;
+		message = codes[200];
 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 }
@@ -373,6 +366,8 @@ string	Request::get_header(const size_t length)
 	header << "Content-Type: " << get_type(filepath) << endl;
 	header << "Content-Length: " << length << endl;
 	header << "Connection: Closed" << endl;
+	if (location->get_HTTP_redirection_type() > 0)
+		header << "Location: " << location->get_HTTP_redirection() << endl;
 	header << endl;
 	return (header.str());
 }
@@ -407,6 +402,11 @@ string	Request::respond(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
+	if (location->get_HTTP_redirection_type() > 0)
+	{
+		message = codes[location->get_HTTP_redirection_type()];
+		return (get_header(0));
+	}
 	if (type == "GET")
 		return(get_response());
 	else if (type == "HEAD")
