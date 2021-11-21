@@ -19,4 +19,6 @@ or more conveniently:
 ⚒️ In construction...
 
 ## Collaborators
-This project was developed in team with @endcerro (Enzo Dal Cerro)
+This project was developed in team with [@endcerro][1] (Enzo Dal Cerro)
+
+[1]: https://github.com/endcerro
