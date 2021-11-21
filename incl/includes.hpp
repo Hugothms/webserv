@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/18 17:52:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 17:28:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,42 +62,5 @@ string	get_str_before_char(const string &str, const string stop, size_t *pos, co
 bool	file_is_empty(ifstream &file);
 bool	is_directory(const string &filename);
 void	err_parsing_config(const Server *server, const string error);
-
-# define CODE_100 "100 Continue"
-# define CODE_101 "101 Switching Protocols"
-# define CODE_200 "200 OK"
-# define CODE_201 "201 Created"
-# define CODE_202 "202 Accepted"
-# define CODE_203 "203 Non-Authoritative Information"
-# define CODE_204 "204 No Content"
-# define CODE_205 "205 Reset Content"
-# define CODE_300 "300 Multiple Choices"
-# define CODE_301 "301 Moved Permanently"
-# define CODE_302 "302 Found"
-# define CODE_303 "303 See Other"
-# define CODE_305 "305 Use Proxy"
-# define CODE_306 "306 (Unused)"
-# define CODE_307 "307 Temporary Redirect"
-# define CODE_400 "400 Bad Request"
-# define CODE_402 "402 Payment Required"
-# define CODE_403 "403 Forbidden"
-# define CODE_404 "404 Not Found"
-# define CODE_405 "405 Method Not allow"
-# define CODE_406 "406 Not Acceptable"
-# define CODE_408 "408 Request Timeout"
-# define CODE_409 "409 Conflict"
-# define CODE_410 "410 Gone"
-# define CODE_411 "411 Length Required"
-# define CODE_413 "413 Payload Too Large"
-# define CODE_414 "414 URI Too Long"
-# define CODE_415 "415 Unsupported Media Type"
-# define CODE_417 "417 Expectation Failed"
-# define CODE_426 "426 Upgrade Required"
-# define CODE_500 "500 Internal Server Error"
-# define CODE_501 "501 Not Implemented"
-# define CODE_502 "502 Bad Gateway"
-# define CODE_503 "503 Service Unavailable"
-# define CODE_504 "504 Gateway Timeout"
-# define CODE_505 "505 HTTP Version Not Supported"
 
 #endif
