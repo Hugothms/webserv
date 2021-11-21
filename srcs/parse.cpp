@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 16:57:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 16:30:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 		{
 			if ((tmp = get_str_before_char(config, " =;", pos)).length())
 			{
+				if (location.get_HTTP_redirection_type() != 0)
+					err_parsing_config(server, "only 1 redirection can be set for a given location");
 				int type = atoi(tmp.c_str());
 				if (config[*pos - 1] != ' ')
 					err_parsing_config(server, "redirection not well configured");

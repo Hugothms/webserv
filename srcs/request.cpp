@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 16:29:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 16:52:33 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,12 @@ void	Request::get_auto_index(string &body)
 void	Request::set_filepath(void)
 {
 	filepath = server->get_root();
+	if (location->get_HTTP_redirection_type() > 0)
+	{
+		DEBUG("target: " << target);
+		target = location->get_HTTP_redirection().substr(location->get_HTTP_redirection().find("://localhost/") + 12);
+		DEBUG("target: " << target);
+	}
 	if (target.compare("/") == 0)
 	{
 		filepath += '/' + server->get_index();
