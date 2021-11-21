@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/19 17:01:11 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 19:06:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
-// : ip_address("0.0.0.0"), port(80), root("website"), index("index.html"), max_client_body_size(2048)
+: max_client_body_size(1024)
 {}
 
 Server::~Server()
