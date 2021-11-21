@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/21 19:05:21 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 19:13:07 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,8 +124,6 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 	DEBUG("\t}");
 	if (location.get_location_root().length() == 0)
 		location.set_location_root(location.get_path());
-	if (location.get_max_client_body_size() == 0)
-		location.set_max_client_body_size(server->get_max_client_body_size());
 	location.set_server(server);
 	return location;
 }
