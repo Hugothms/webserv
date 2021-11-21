@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/21 16:30:47 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/21 18:05:55 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location.hpp"
 
 Location::Location()
-: autoindex(false), HTTP_redirection_type(0)
+: HTTP_redirection_type(0), autoindex(false)
 {
 	// map_pointer_function.insert(make_pair("HTTP_redirection", &(Location::set_HTTP_redirection)));
 	// map_pointer_function.insert(make_pair("root", &(Location::set_path)));
