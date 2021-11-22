@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/21 18:17:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/22 13:41:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Request
 		const Location		*location;
 		string				filepath;
 		string				message;
+		bool 				passed_cgi;
 
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;
@@ -82,6 +83,6 @@ class Request
 string	getdayofweek(const int day);
 string	getmonth(const int month);
 string	get_time_stamp(void);
-string	get_type(const string &str);
+string	get_type(const string &str, const bool &pass);
 
 #endif

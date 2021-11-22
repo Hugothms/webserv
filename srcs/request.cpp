@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 12:58:56 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/22 13:47:14 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ Request::~Request()
 Request::Request(const string &buffer)
 {
 	size_t pos = 0;
-
+	passed_cgi = false;
 
 	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
@@ -360,6 +360,7 @@ void 	Request::get_body(string &body)
 			if ((pos = filepath.find(cgi->first) )!= string::npos)
 			{
 				DEBUG("CGI extention found !");
+				passed_cgi = true;
 				file.close();
 				launch_cgi(body, filepath.substr(pos));
 				return ;
@@ -367,6 +368,11 @@ void 	Request::get_body(string &body)
 			else
 			{
 				DEBUG("CGI NOT FOUND");
+				passed_cgi = false;
+				body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+				DEBUG("BODY IS " << body);
+				file.close();
+				return;
 			}
 		}
 	}
@@ -462,7 +468,7 @@ string	Request::get_header(const size_t length)
 	header << "HTTP/1.1 " << message << endl;
 	header << "Date: " << get_time_stamp() << endl;
 	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << get_type(filepath) << endl;
+	header << "Content-Type: " << get_type(filepath, passed_cgi) << endl;
 	header << "Content-Length: " << length << endl;
 	header << "Connection: Closed" << endl;
 	if (location->get_HTTP_redirection_type() > 0)
