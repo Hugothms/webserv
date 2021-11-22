@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_header.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 15:43:40 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/22 13:34:03 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ string	get_time_stamp(void)
 
 string	get_type(const string &str)
 {
+	DEBUG("STR IS " << str);
 	string ret;
 	if (str.find(".png", str.length() - 4) != string::npos)
 		ret = "image/png";
@@ -112,7 +113,9 @@ string	get_type(const string &str)
 		ret = "application/javascript";
 	else if (str.find(".html", str.length() - 5) != string::npos)
 		ret = "text/html";
+	else if (str.find(".txt", str.length() - 4) != string::npos)
+		ret = "text/plain";
 	else
-		ret = "text/html";
+		ret = "application/octet-stream";
 	return ret;
 }
