@@ -37,8 +37,8 @@ SRC			=	main.cpp			\
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
 
-CFLAGS		=	-Wall -Wextra -std=c++98 -g3 -fsanitize=address #-Werror
-CC			=	clang++
+CFLAGS		=	-Wall -Wextra -std=c++98 -g3 #-fsanitize=leak #-Werror
+CC			=	g++
 RM			=	rm -rf
 
 DEBUG		=	1

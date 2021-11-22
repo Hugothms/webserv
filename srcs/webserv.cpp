@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/22 12:44:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ Webserv::Webserv(const string config_file)
 
 Webserv::~Webserv()
 {
-	stop();
+	this->stop();
 }
 
 void	Webserv::push_back_server(Server *server)
 {
+	DEBUG("PUSHING");
 	_servers.push_back(server);
 }
 
@@ -52,11 +53,12 @@ void	Webserv::parse_config(const string config_file)
 {
 	if (config_file == "")
 	{
-		DEBUG("Default config (no config provided)");
+		DEBUG("Please provide something");
+		exit (1);
 		//TODEL
+
 		Server *srv = new Server();
 		srv->set_port(80);
-		//
 		push_back_server(srv);
 		return ;
 	}
@@ -75,6 +77,7 @@ void	Webserv::parse_config(const string config_file)
 			{
 				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
 			}
+			DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
 	}
@@ -191,13 +194,16 @@ void Webserv::stop(void)
 	DEBUG("CLOSING");
 	for (list<Server *>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
+		DEBUG("DELETING SRVER");
 		delete (*server);
 		*server = 0;
 	}
+	_servers.clear();
 	for (list<Client *>::iterator client = _clients.begin(); client != _clients.end(); client++)
 	{
 		delete (*client);
 		*client = 0;
 	}
+	_clients.clear();
 	DEBUG("CLOSED");
 }
