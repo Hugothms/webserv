@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 12:46:05 by user42           ###   ########.fr       */
+/*   Updated: 2021/11/22 12:58:56 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,6 +198,7 @@ char *ft_strdup(string msg)
 
 void	Request::launch_cgi(string &body, const string extention_name)
 {
+	DEBUG("launch_cgi");	
 	int fdpipe[2];
 	if (pipe(fdpipe) == -1)
 	{
@@ -360,7 +361,12 @@ void 	Request::get_body(string &body)
 			{
 				DEBUG("CGI extention found !");
 				file.close();
-				return (launch_cgi(body, filepath.substr(pos)));
+				launch_cgi(body, filepath.substr(pos));
+				return ;
+			}
+			else
+			{
+				DEBUG("CGI NOT FOUND");
 			}
 		}
 	}
