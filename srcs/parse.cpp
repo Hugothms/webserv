@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 10:27:26 by user42           ###   ########.fr       */
+/*   Updated: 2021/11/22 10:46:38 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 	tmp = get_str_before_char(config, " ", pos);
 	if (tmp.length() > 0 && tmp[0] != '/')
 		tmp = '/' + tmp;
-	if (tmp.length() > 1 && tmp[tmp.size()] == '/')
+	if (tmp.length() > 1 && tmp[tmp.size() - 1] == '/')
 		tmp.resize(tmp.length() - 1);
 	DEBUG("\t" << tmp);
 	DEBUG("\t{");
@@ -70,7 +70,7 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 			{
 				if (tmp.length() > 0 && tmp[0] != '/')
 					tmp = '/' + tmp;
-				if (tmp.length() > 1 && tmp[tmp.size()] == '/')
+				if (tmp.length() > 1 && tmp[tmp.size() - 1] == '/')
 					tmp.resize(tmp.length() - 1);
 				location.set_location_root(tmp);
 				DEBUG("\t\t\t" << tmp);
@@ -92,7 +92,7 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 			{
 				if (tmp.length() > 0 && tmp[0] != '/')
 					tmp = '/' + tmp;
-				if (tmp.length() > 1 && tmp[tmp.size()] == '/')
+				if (tmp.length() > 1 && tmp[tmp.size() - 1] == '/')
 					tmp.resize(tmp.length() - 1);
 				location.set_upload_directory(tmp);
 				DEBUG("\t\t\t" << tmp);
@@ -210,7 +210,7 @@ Server	*parse_server(const string &config, size_t *pos)
 			{
 				if (tmp.length() > 0 && tmp[0] == '/')
 					tmp = tmp.substr(1);
-				if (tmp.length() > 1 && tmp[tmp.size()] == '/')
+				if (tmp.length() > 1 && tmp[tmp.size() - 1] == '/')
 					tmp.resize(tmp.length() - 1);
 				server->set_root(tmp);
 				get_str_before_char(config, "\n", pos);

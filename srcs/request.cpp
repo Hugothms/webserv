@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/21 19:12:49 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/22 12:46:05 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "request.hpp"
+
+#include <string>
+#include <unistd.h>
+
+#include <sys/types.h>
+#include <sys/wait.h>
 
 map<unsigned int, string> create_map_return_codes(void)
 {
@@ -57,7 +64,11 @@ map<unsigned int, string> create_map_return_codes(void)
 map<unsigned int, string> codes = create_map_return_codes();
 
 Request::~Request()
-{}
+{
+	if (this->location)
+		delete(this->location);
+	// free(static_cast<void *>(this->location));
+}
 
 Request::Request(const string &buffer)
 {
@@ -66,6 +77,7 @@ Request::Request(const string &buffer)
 
 	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
+	this->location = 0;
 
 	// string buffer(buffer, size);
 	type = get_str_before_char(buffer, " ", &pos);
@@ -107,11 +119,18 @@ Request::Request(const string &buffer)
 	// DEBUG("****** REQUEST PARSED *******");
 }
 
+string to_string_custom(const int &error_code)
+{
+	stringstream ret;
+	ret << error_code;
+	return ret.str();
+}
+
 string	Request::error_page(const int error_code)
 {
 	if (server && server->get_error_pages().size() && server->get_error_pages()[error_code].length())
 			return (server->get_root() + server->get_error_pages()[error_code]);
-	return ("default_error_pages/" + to_string(error_code) + ".html");
+	return ("default_error_pages/" + to_string_custom(error_code) + ".html");
 }
 
 /**
@@ -163,6 +182,20 @@ string get_bin(char *path)
 	return "NULL";
 }
 
+char *ft_strdup(string msg)
+{
+	char *ret = static_cast<char*>(malloc(sizeof(char) * (msg.size() + 1)));
+
+	unsigned int i = 0;
+	while (i < msg.size())
+	{
+		ret[i] = msg[i];
+		i++;
+	}
+	ret[i] = 0;
+	return ret;
+}
+
 void	Request::launch_cgi(string &body, const string extention_name)
 {
 	int fdpipe[2];
@@ -183,19 +216,19 @@ void	Request::launch_cgi(string &body, const string extention_name)
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
-		envp[0] = strdup(("DOCUMENT_ROOT=" + server_root).c_str());
-		envp[1] = strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
-		envp[2] = strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
-		envp[3] = strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
-		envp[4] = strdup(("PATH=" + server_root +"/").c_str());
+		envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root).c_str());
+		envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
+		envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
+		envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
+		envp[4] = ft_strdup(("PATH=" + server_root +"/").c_str());
 		envp[5] = 0;
 		// envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
 		// envp[5] = &("HTTPS=" + tmp)[0];
 
 		string bin_path = server->get_cgis()[extention_name];
-		argv[0] = strdup(bin_path.c_str());
-		argv[1] = strdup((server_root + "/" + filepath).c_str());
-		argv[2] = strdup(headers["Body"].c_str());
+		argv[0] = ft_strdup(bin_path.c_str());
+		argv[1] = ft_strdup((server_root + "/" + filepath).c_str());
+		argv[2] = ft_strdup(headers["Body"].c_str());
 		argv[3] = 0;
 		//TODO: calculate size of envp and build it
 		close(fdpipe[0]); // child doesn't read
@@ -308,13 +341,13 @@ void 	Request::get_body(string &body)
 	ifstream file(filepath.c_str(), ofstream::in);
 	if (is_directory(filepath))
 	{
-		if (filepath.back() == '/' && location->get_autoindex())
+		if (filepath[filepath.size() - 1] == '/' && location->get_autoindex())
 			return (get_auto_index(body));
 		else
 		{
 			message = codes[403];
 			file.close();
-			file.open(error_page(403), ofstream::in);
+			file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
 		}
 	}
 	if (!is_file_upload())
@@ -335,7 +368,7 @@ void 	Request::get_body(string &body)
 	{
 		message = codes[404];
 		file.close();
-		file.open(error_page(404), ofstream::in);
+		file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
 	}
 	else if (message == "")
 		message = codes[200];
@@ -378,6 +411,14 @@ bool	Request::select_location(void)
 			if (searched_path == it_location->get_path())
 			{
 				// DEBUG("Location found: " << location->get_path());
+				if (this->location != NULL)
+				{
+					DEBUG("ERASING POINTER");
+				}
+				else
+				{
+					DEBUG("PROPER ASSING");
+				}
 				this->location = new Location(*it_location);
 				return true;
 			}
@@ -393,6 +434,14 @@ bool	Request::select_location(void)
 		if (searched_path == it_location->get_path())
 		{
 			// DEBUG("Default it_location found: " << it_location->get_path());
+			if (this->location != NULL)
+			{
+				DEBUG("ERASING POINTER");
+			}
+			else
+			{
+				DEBUG("PROPER ASSING");
+			}
 			this->location = new Location(*it_location);
 			return true;
 		}
@@ -473,7 +522,7 @@ string	Request::respond(const list<Server*> &servers)
 			mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
 			string upload_file = server->get_root() + location->get_upload_directory() + target;
 			DEBUG("CREATE this file: " << upload_file);
-			ofstream file_out(upload_file, ios::app);
+			ofstream file_out(static_cast<const char *>(upload_file.c_str()), ios::app);
 			file_out << headers["Body"] << endl;
 			file_out.close();
 			// filepath = "success.html";
