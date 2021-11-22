@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/21 19:06:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/22 10:52:08 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ int Server::setup(void)
 	if (bind(listen_fd, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
 	{
 		perror("bind");
+		//Leak when we exit here
 		exit(1);
 	}
 	//Chanege max number of clients
