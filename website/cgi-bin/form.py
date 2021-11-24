@@ -5,12 +5,16 @@ input_data = cgi.FieldStorage()
 # name = input_data.getvalue('fname')
 # print("Name of the user is:",name)
 
-
-print('<h1>Input data</h1>')
 name = input_data["name"].value
 email = input_data["email"].value
-print('<output>{0} and {1}</output>'.format(name, email))
-
+print(	"<html lang=\"en\">\n\
+			<body style=\"background-color: darkslateblue; color: lightgrey;\">\n\
+				<div style=\"display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;\">\n\
+					<h1>form.py</h1>\n\
+					<p>name: {0}</br>email: {1}</p>\n\
+				</div>\n\
+			</body>\n\
+		</html>".format(name, email))
 
 # http://www.cgi101.com/book/ch3/text.html
 # DOCUMENT_ROOT # ROOT DIRECTORY OF THE SERVER
