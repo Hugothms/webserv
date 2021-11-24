@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 13:47:14 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/24 14:48:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,7 @@ char *ft_strdup(string msg)
 
 void	Request::launch_cgi(string &body, const string extention_name)
 {
-	DEBUG("launch_cgi");	
+	DEBUG("launch_cgi");
 	int fdpipe[2];
 	if (pipe(fdpipe) == -1)
 	{
