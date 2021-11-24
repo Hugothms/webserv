@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/24 14:48:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/24 15:05:59 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		exit(EXIT_FAILURE);
 	}
 	char **argv = (char**) malloc(sizeof(char*) * 4);
-	char **envp = (char**) malloc(sizeof(char*) * 6);
+	char **envp = (char**) malloc(sizeof(char*) * 7);
 	message = codes[200];
 	if (pid == 0)
 	{
@@ -221,10 +221,11 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
 		envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
 		envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
-		envp[4] = ft_strdup(("PATH=" + server_root +"/").c_str());
-		envp[5] = 0;
-		// envp[4] = &("HTTP_USER_AGENT=" + tmp)[0];
-		// envp[5] = &("HTTPS=" + tmp)[0];
+		envp[4] = ft_strdup(("PATH=" + server_root + "/").c_str());
+		envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath).c_str());
+		envp[6] = 0;
+		// envp[] = &("HTTP_USER_AGENT=" + tmp)[0];
+		// envp[] = &("HTTPS=" + tmp)[0];
 
 		string bin_path = server->get_cgis()[extention_name];
 		argv[0] = ft_strdup(bin_path.c_str());
