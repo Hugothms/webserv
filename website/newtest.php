@@ -1,4 +1,9 @@
 <?php
+if (!isset($_SERVER["HTTP_HOST"])) 
+{
+  parse_str($argv[1], $_GET);
+  parse_str($argv[1], $_POST);
+}
    if(isset($_FILES['image']))
    {
       echo "IS SET";

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/25 12:26:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/25 13:29:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,17 +169,17 @@ bool	Request::select_server(const list<Server*> &servers)
 	return true;
 }
 
-string get_bin(char *path)
-{
-	string ex(path);
+// string get_bin(char *path)
+// {
+// 	string ex(path);
 
 
-	if (ex.find(".php") != string::npos)
-		return ("/usr/bin/php");
-	else if (ex.find(".py") != string::npos)
-		return ("/usr/bin/python");
-	return "NULL";
-}
+// 	if (ex.find(".php") != string::npos)
+// 		return ("./website/cgi-bin/php");
+// 	else if (ex.find(".py") != string::npos)
+// 		return ("/usr/bin/python");
+// 	return "NULL";
+// }
 
 char *ft_strdup(string msg)
 {
@@ -216,27 +216,29 @@ void	Request::launch_cgi(string &body, const string extention_name)
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
-		envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root).c_str());
-		envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
-		envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
-		envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
-		envp[4] = ft_strdup(("PATH=" + server_root + "/").c_str());
-		envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath).c_str());
+		envp[0] = 0;
+		// envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root).c_str());
+		// envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
+		// envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
+		// envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
+		// envp[4] = ft_strdup(("PATH=" + server_root + "/").c_str());
+		// envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath).c_str());
 		envp[6] = 0;
 
-		for (int i =0; i < 6; i++)
-		{
-			DEBUG(i << ":" << envp[i]);
-		}
+		// for (int i =0; i < 6; i++)
+		// {
+		// 	DEBUG(i << ":" << envp[i]);
+		// }
 		// envp[] = &("HTTP_USER_AGENT=" + tmp)[0];
 		// envp[] = &("HTTPS=" + tmp)[0];
 
 		string bin_path = server->get_cgis()[extention_name];
 		argv[0] = ft_strdup(bin_path.c_str());
 		argv[1] = ft_strdup((server_root + "/" + filepath).c_str());
-		// DEBUG("AV2 : " << headers["Body"]);
+		DEBUG("AV2 : " << headers["Body"]);
 		argv[2] = ft_strdup(headers["Body"].c_str());
 		argv[3] = 0;
+		// argv[4] = 0;
 		for (int i =0; i < 3; i++)
 		{
 			DEBUG(i << "!:" << argv[i]);
@@ -244,7 +246,9 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		//TODO: calculate size of envp and build it
 		close(fdpipe[0]); // child doesn't read
 		dup2(fdpipe[1], STDOUT_FILENO);
-		if (execve(bin_path.c_str(), argv, envp) < 0)
+		// DEBUG("Path is : " << bin_path);
+
+		if (execve(bin_path.c_str(), argv, 0) < 0)
 			code = 404;
 	}
 	else
@@ -369,7 +373,7 @@ void 	Request::get_body(string &body)
 	}
 	if (filepath.length() && get_type(filepath, false) != "text/html")
 	{
-		DEBUG("CGI NOT FOUND");
+		// DEBUG("CGI NOT FOUND");
 		map<string, string> cgis = server->get_cgis();
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
