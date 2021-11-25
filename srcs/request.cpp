@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/25 12:26:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/25 12:31:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -369,7 +369,7 @@ void 	Request::get_body(string &body)
 	}
 	if (filepath.length() && get_type(filepath, false) != "text/html")
 	{
-		DEBUG("CGI NOT FOUND");
+		DEBUG("CGI SEARCHED");
 		map<string, string> cgis = server->get_cgis();
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
