@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/21 17:28:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/25 12:42:24 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include <ctime>
 # include <sys/stat.h> // mkdir
 # include <dirent.h> // dirent readdir
+# include <sys/types.h>
+# include <sys/wait.h>
 
 //* NETWORK INCLUDES
 # include <netinet/in.h>
