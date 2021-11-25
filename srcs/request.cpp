@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/24 15:05:59 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/25 11:48:06 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,12 @@ Request::~Request()
 }
 
 Request::Request(const string &buffer)
+: passed_cgi(false)
 {
 	size_t pos = 0;
-	passed_cgi = false;
 
 	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
-	this->location = 0;
 
 	// string buffer(buffer, size);
 	type = get_str_before_char(buffer, " ", &pos);
@@ -266,6 +265,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 void	Request::get_auto_index(string &body)
 {
 	stringstream auto_index;
+	passed_cgi = true;
 	auto_index << "	<html lang=\"en\">\n\
 					<body style=\"background-color: grey; color: lightgrey;\">\n\
 					<div style=\"display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;\">\n\
@@ -352,8 +352,9 @@ void 	Request::get_body(string &body)
 			file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
 		}
 	}
-	if (!is_file_upload())
+	if (get_type(filepath, false) != "text/html")
 	{
+		DEBUG("CGI NOT FOUND");
 		map<string, string> cgis = server->get_cgis();
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
@@ -366,16 +367,8 @@ void 	Request::get_body(string &body)
 				launch_cgi(body, filepath.substr(pos));
 				return ;
 			}
-			else
-			{
-				DEBUG("CGI NOT FOUND");
-				passed_cgi = false;
-				body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-				DEBUG("BODY IS " << body);
-				file.close();
-				return;
-			}
 		}
+		DEBUG("CGI NOT FOUND");
 	}
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
@@ -489,20 +482,20 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-bool	Request::is_file_upload(void)
-{
-	// https://stackoverflow.com/questions/8659808/how-does-http-file-upload-work
-	string multipart = "multipart/form-data; boundary=";
-	if (headers["Content-Type"].find(multipart) != 0)
-		return false;
-	string boundary = string("--") + &headers["Content-Type"][multipart.length()];
-	DEBUG("Parsed boundary:" << boundary);
-	// TODO: parse headers["Body"] to find the 'filename' header or something like next line
-	// Content-Disposition: form-data; name="uploaded_file"; filename="test.php"
-	if (0)
-		return true;
-	return false;
-}
+// bool	Request::is_file_upload(void)
+// {
+// 	// https://stackoverflow.com/questions/8659808/how-does-http-file-upload-work
+// 	string multipart = "multipart/form-data; boundary=";
+// 	if (headers["Content-Type"].find(multipart) != 0)
+// 		return false;
+// 	string boundary = string("--") + &headers["Content-Type"][multipart.length()];
+// 	DEBUG("Parsed boundary:" << boundary);
+// 	// TODO: parse headers["Body"] to find the 'filename' header or something like next line
+// 	// Content-Disposition: form-data; name="uploaded_file"; filename="test.php"
+// 	if (0)
+// 		return true;
+// 	return false;
+// }
 
 string	Request::respond(const list<Server*> &servers)
 {
@@ -528,19 +521,19 @@ string	Request::respond(const list<Server*> &servers)
 	}
 	else if (type == "POST")
 	{
-		if (is_file_upload())
-		{
-			string upload_dir = server->get_root() + location->get_upload_directory() + target.substr(0, target.find_last_of('/') + 1);
-			// DEBUG("upload_dir: " << upload_dir);
-			mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
-			string upload_file = server->get_root() + location->get_upload_directory() + target;
-			DEBUG("CREATE this file: " << upload_file);
-			ofstream file_out(static_cast<const char *>(upload_file.c_str()), ios::app);
-			file_out << headers["Body"] << endl;
-			file_out.close();
-			// filepath = "success.html";
-			return (get_response());
-		}
+		// if (is_file_upload())
+		// {
+		// 	string upload_dir = server->get_root() + location->get_upload_directory() + target.substr(0, target.find_last_of('/') + 1);
+		// 	// DEBUG("upload_dir: " << upload_dir);
+		// 	mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
+		// 	string upload_file = server->get_root() + location->get_upload_directory() + target;
+		// 	DEBUG("CREATE this file: " << upload_file);
+		// 	ofstream file_out(static_cast<const char *>(upload_file.c_str()), ios::app);
+		// 	file_out << headers["Body"] << endl;
+		// 	file_out.close();
+		// 	// filepath = "success.html";
+		// 	return (get_response());
+		// }
 		return (get_response());
 	}
 	else if (type == "DELETE")
