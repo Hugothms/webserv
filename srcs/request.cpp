@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/25 12:15:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/25 12:26:35 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,14 +223,24 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		envp[4] = ft_strdup(("PATH=" + server_root + "/").c_str());
 		envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath).c_str());
 		envp[6] = 0;
+
+		for (int i =0; i < 6; i++)
+		{
+			DEBUG(i << ":" << envp[i]);
+		}
 		// envp[] = &("HTTP_USER_AGENT=" + tmp)[0];
 		// envp[] = &("HTTPS=" + tmp)[0];
 
 		string bin_path = server->get_cgis()[extention_name];
 		argv[0] = ft_strdup(bin_path.c_str());
 		argv[1] = ft_strdup((server_root + "/" + filepath).c_str());
+		// DEBUG("AV2 : " << headers["Body"]);
 		argv[2] = ft_strdup(headers["Body"].c_str());
 		argv[3] = 0;
+		for (int i =0; i < 3; i++)
+		{
+			DEBUG(i << "!:" << argv[i]);
+		}
 		//TODO: calculate size of envp and build it
 		close(fdpipe[0]); // child doesn't read
 		dup2(fdpipe[1], STDOUT_FILENO);
@@ -470,7 +480,7 @@ string	Request::get_header(const size_t length)
 	header << "Content-Type: " << get_type(filepath, passed_cgi) << endl;
 	header << "Content-Length: " << length << endl;
 	header << "Connection: Closed" << endl;
-	if (location->get_HTTP_redirection_type() > 0)
+	if (location && location->get_HTTP_redirection_type() > 0)
 		header << "Location: " << location->get_HTTP_redirection() << endl;
 	header << endl;
 	return (header.str());
