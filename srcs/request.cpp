@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/25 11:48:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/25 11:58:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ Request::~Request()
 }
 
 Request::Request(const string &buffer)
-: passed_cgi(false)
+: passed_cgi(false), code(0)
 {
 	size_t pos = 0;
 
@@ -212,7 +212,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 	}
 	char **argv = (char**) malloc(sizeof(char*) * 4);
 	char **envp = (char**) malloc(sizeof(char*) * 7);
-	message = codes[200];
+	code = 200;
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
@@ -235,7 +235,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		close(fdpipe[0]); // child doesn't read
 		dup2(fdpipe[1], STDOUT_FILENO);
 		if (execve(bin_path.c_str(), argv, envp) < 0)
-			message = codes[404];
+			code = 404;
 	}
 	else
 	{
@@ -292,13 +292,13 @@ void	Request::get_auto_index(string &body)
 	}
 	else
 	{
-		perror("");
+		perror("opendir");
 		exit(EXIT_FAILURE);
 	}
 	auto_index << "	</div>\n\
 					</body>\n\
 					</html>";
-	message = codes[200];
+	code = 200;
 	body = auto_index.str();
 }
 
@@ -347,7 +347,7 @@ void 	Request::get_body(string &body)
 			return (get_auto_index(body));
 		else
 		{
-			message = codes[403];
+			code = 403;
 			file.close();
 			file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
 		}
@@ -372,12 +372,12 @@ void 	Request::get_body(string &body)
 	}
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
-		message = codes[404];
+		code = 404;
 		file.close();
 		file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
 	}
-	else if (message == "")
-		message = codes[200];
+	else if (code == 0)
+		code = 200;
 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	file.close();
 }
@@ -459,7 +459,7 @@ bool	Request::select_location(void)
 string	Request::get_header(const size_t length)
 {
 	stringstream header;
-	header << "HTTP/1.1 " << message << endl;
+	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
 	header << "Server: webserv/0.01" << endl;
 	header << "Content-Type: " << get_type(filepath, passed_cgi) << endl;
@@ -479,6 +479,7 @@ bool	Request::method_allow(void)
 		if (*HTTP_method == type)
 			return true;
 	}
+	code = 405;
 	return false;
 }
 
@@ -503,12 +504,12 @@ string	Request::respond(const list<Server*> &servers)
 		return (get_response());
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
 	{
-		message = codes[413];
+		code = 413;
 		return (get_response());
 	}
 	if (location->get_HTTP_redirection_type() > 0)
 	{
-		message = codes[location->get_HTTP_redirection_type()];
+		code = location->get_HTTP_redirection_type();
 		return (get_header(0));
 	}
 	if (type == "GET")
