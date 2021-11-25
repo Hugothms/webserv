@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/25 11:57:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/25 12:42:50 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ class Request
 		void	set_filepath(void);
 		bool 	method_allow(void);
 		string	error_page(const int error_code);
-		// bool	is_file_upload(void);
 };
 
 // * utils_header.cpp
