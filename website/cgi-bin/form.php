@@ -1,10 +1,10 @@
 Hi <?php echo $_POST['name']; 
 
-if (!isset($_SERVER["HTTP_HOST"])) 
-{
-  parse_str($argv[1], $_GET);
-  parse_str($argv[1], $_POST);
-}
+// if (!isset($_SERVER["HTTP_HOST"])) 
+// {
+//   parse_str($argv[1], $_GET);
+//   parse_str($argv[1], $_POST);
+// }
 ?>.
 
 <?php
