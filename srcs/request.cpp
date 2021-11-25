@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/25 11:58:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/25 12:15:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ Request::~Request()
 }
 
 Request::Request(const string &buffer)
-: passed_cgi(false), code(0)
+:  code(0), passed_cgi(false)
 {
 	size_t pos = 0;
 
@@ -304,6 +304,11 @@ void	Request::get_auto_index(string &body)
 
 void	Request::set_filepath(void)
 {
+	if (!server || !location)
+	{
+		filepath = "";
+		return;
+	}
 	filepath = server->get_root();
 	if (target.compare("/") == 0)
 	{
@@ -352,7 +357,7 @@ void 	Request::get_body(string &body)
 			file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
 		}
 	}
-	if (get_type(filepath, false) != "text/html")
+	if (filepath.length() && get_type(filepath, false) != "text/html")
 	{
 		DEBUG("CGI NOT FOUND");
 		map<string, string> cgis = server->get_cgis();
