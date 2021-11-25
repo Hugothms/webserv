@@ -6,18 +6,11 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/25 13:29:22 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/25 13:38:39 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
+                                                                   
 #include "request.hpp"
-
-#include <string>
-#include <unistd.h>
-
-#include <sys/types.h>
-#include <sys/wait.h>
 
 map<unsigned int, string> create_map_return_codes(void)
 {
@@ -78,18 +71,16 @@ Request::Request(const string &buffer)
 	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
 
-	// string buffer(buffer, size);
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
 	get_str_before_char(buffer, "\n", &pos);
 
 	size_t len = buffer.length();
-	while (pos <= len && buffer[pos]) // headers parsing loop
+	while (pos <= len && buffer[pos])
 	{
 		if (buffer[pos] == '\n')
 			pos++;
 		string header = get_str_before_char(buffer, ":\n", &pos);
-		// DEBUG((int)header[0] << "/" << (int)header[1] << "\t|" << header << "|");
 		if (header.length() == 0)
 			break ; // case empty line
 		if (header == "Host")
@@ -103,8 +94,6 @@ Request::Request(const string &buffer)
 				ip_address = get_str_before_char(buffer, "\r\n", &pos);
 				port = "80";
 			}
-			// if (ip_address == "localhost")
-			// 	ip_address = "127.0.0.1";
 			headers.insert(pair<string, string>("Host", ip_address));
 			headers.insert(pair<string, string>("Port", port));
 			continue;
@@ -142,7 +131,6 @@ bool	Request::select_server(const list<Server*> &servers)
 {
 	string host = headers["Host"];
 	unsigned int port = atoi(headers["Port"].c_str());
-	// DEBUG("Looking for " << host << ":" << port);
 	this->server = NULL;
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
@@ -153,10 +141,8 @@ bool	Request::select_server(const list<Server*> &servers)
 			list<string> server_names = (*server)->get_server_names();
 			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 			{
-				// DEBUG("Candidate " << *server_name << ":" << (*server)->get_port());
 				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
 				{
-					// DEBUG("Found " << *server_name << ":" << (*server)->get_port());
 					this->server = *server;
 					return true;
 				}
@@ -235,7 +221,6 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		string bin_path = server->get_cgis()[extention_name];
 		argv[0] = ft_strdup(bin_path.c_str());
 		argv[1] = ft_strdup((server_root + "/" + filepath).c_str());
-		DEBUG("AV2 : " << headers["Body"]);
 		argv[2] = ft_strdup(headers["Body"].c_str());
 		argv[3] = 0;
 		// argv[4] = 0;
@@ -330,12 +315,6 @@ void	Request::set_filepath(void)
 		return ;
 	}
 	size_t pos = target.find(location->get_path());
-	// DEBUG("filepath: " << filepath);
-	// DEBUG("target: " << target);
-	// DEBUG("path(): " << location->get_path());
-	// DEBUG("root(): " << location->get_location_root());
-	// DEBUG("pos:" << pos);
-	// DEBUG("");
 	if (pos == 0)
 	{
 		string tmp = target.substr(pos + location->get_path().length());
@@ -373,7 +352,8 @@ void 	Request::get_body(string &body)
 	}
 	if (filepath.length() && get_type(filepath, false) != "text/html")
 	{
-		// DEBUG("CGI NOT FOUND");
+
+		DEBUG("CGI SEARCHED");
 		map<string, string> cgis = server->get_cgis();
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
@@ -426,16 +406,13 @@ bool	Request::select_location(void)
 		return false;
 	}
 	string searched_path = target;
-	// DEBUG("tmp: " << target);
 	while (searched_path != "")
 	{
 		// DEBUG(searched_path);
 		for (list<Location>::iterator it_location = locations.begin(); it_location != locations.end(); it_location++)
 		{
-			// DEBUG("searched_path: " << searched_path << "\t\t" << "path: " << (*it_location).get_path());
 			if (searched_path == it_location->get_path())
 			{
-				// DEBUG("Location found: " << location->get_path());
 				if (this->location != NULL)
 				{
 					DEBUG("ERASING POINTER");
@@ -458,7 +435,6 @@ bool	Request::select_location(void)
 	{
 		if (searched_path == it_location->get_path())
 		{
-			// DEBUG("Default it_location found: " << it_location->get_path());
 			if (this->location != NULL)
 			{
 				DEBUG("ERASING POINTER");
@@ -502,21 +478,6 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-// bool	Request::is_file_upload(void)
-// {
-// 	// https://stackoverflow.com/questions/8659808/how-does-http-file-upload-work
-// 	string multipart = "multipart/form-data; boundary=";
-// 	if (headers["Content-Type"].find(multipart) != 0)
-// 		return false;
-// 	string boundary = string("--") + &headers["Content-Type"][multipart.length()];
-// 	DEBUG("Parsed boundary:" << boundary);
-// 	// TODO: parse headers["Body"] to find the 'filename' header or something like next line
-// 	// Content-Disposition: form-data; name="uploaded_file"; filename="test.php"
-// 	if (0)
-// 		return true;
-// 	return false;
-// }
-
 string	Request::respond(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
@@ -541,19 +502,6 @@ string	Request::respond(const list<Server*> &servers)
 	}
 	else if (type == "POST")
 	{
-		// if (is_file_upload())
-		// {
-		// 	string upload_dir = server->get_root() + location->get_upload_directory() + target.substr(0, target.find_last_of('/') + 1);
-		// 	// DEBUG("upload_dir: " << upload_dir);
-		// 	mkdir(upload_dir.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
-		// 	string upload_file = server->get_root() + location->get_upload_directory() + target;
-		// 	DEBUG("CREATE this file: " << upload_file);
-		// 	ofstream file_out(static_cast<const char *>(upload_file.c_str()), ios::app);
-		// 	file_out << headers["Body"] << endl;
-		// 	file_out.close();
-		// 	// filepath = "success.html";
-		// 	return (get_response());
-		// }
 		return (get_response());
 	}
 	else if (type == "DELETE")
