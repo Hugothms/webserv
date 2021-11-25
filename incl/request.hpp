@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/25 11:47:48 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/11/25 11:57:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class Request
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
-		string				message;
+		unsigned int		code;
 		bool 				passed_cgi;
 
 		/* Ignored because not HTTP/1.1 compliant
