@@ -3,13 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/25 14:06:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/11/26 01:33:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-                                                                   
+
 #include "request.hpp"
 
 map<unsigned int, string> create_map_return_codes(void)
@@ -183,6 +183,7 @@ char *ft_strdup(string msg)
 
 void	Request::launch_cgi(string &body, const string extention_name)
 {
+	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
 	int fdpipe[2];
 	if (pipe(fdpipe) == -1)
