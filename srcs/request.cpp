@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/26 01:33:40 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/01 18:05:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,12 +205,12 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		string server_root = string(getcwd(NULL, 0));
 		envp[0] = 0;
 		envp[1] = ft_strdup("CONTENT_LENGHT=" + to_string(headers["Body"].length()));
-		// envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root).c_str());
-		// envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
-		// envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
-		// envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
-		// envp[4] = ft_strdup(("PATH=" + server_root + "/").c_str());
-		// envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath).c_str());
+		envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root).c_str());
+		envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
+		envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
+		envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
+		envp[4] = ft_strdup(("PATH=" + server_root + "/").c_str());
+		envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath).c_str());
 		envp[6] = 0;
 
 		// for (int i =0; i < 6; i++)
@@ -235,7 +235,8 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		dup2(fdpipe[1], STDOUT_FILENO);
 		// DEBUG("Path is : " << bin_path);
 
-		if (execve(bin_path.c_str(), argv, 0) < 0)
+		// TODO: must execve php-cgi
+		if (execve(bin_path.c_str(), argv, envp) < 0)
 			code = 404;
 	}
 	else
