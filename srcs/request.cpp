@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/03 16:46:27 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/03 17:19:16 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,19 +228,32 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		// envp[6] = 0;
 
 		char **argv = (char**) malloc(sizeof(char*) * 4);
-		char **envp = (char**) malloc(sizeof(char*) * 7);
+		char **envp = (char**) malloc(sizeof(char*) * 8);
 
 
+		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
+		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
+		//TODO
+		envp[2] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
+		// envp[2] = ft_strdup("QUERY_STRING=name=enzo");
 
-		std::vector<std::string> env_vector; 
-		env_vector.push_back("GATEWAY_INTERFACE=CGI/1.1");
-		env_vector.push_back("SERVER_PROTOCOL=HTTP/1.1");
-		env_vector.push_back("QUERY_STRING=name=enzo");
-		env_vector.push_back("REDIRECT_STATUS=200");
-		env_vector.push_back("REQUEST_METHOD=POST");
-		env_vector.push_back("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
-		env_vector.push_back(("SCRIPT_FILENAME=" + server_root + "/" + filepath));
-		env_vector.push_back("CONTENT_LENGTH="+ to_string(sData.length()) );
+		envp[3] = ft_strdup("REDIRECT_STATUS=200");
+		envp[4] = ft_strdup("REQUEST_METHOD=POST");
+
+		// envp[5] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
+
+
+		envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
+		envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
+		envp[7] = 0;
+		// env_vector.push_back("GATEWAY_INTERFACE=CGI/1.1");
+		// env_vector.push_back("SERVER_PROTOCOL=HTTP/1.1");
+		// env_vector.push_back("QUERY_STRING=name=enzo");
+		// env_vector.push_back("REDIRECT_STATUS=200");
+		// env_vector.push_back("REQUEST_METHOD=POST");
+		// env_vector.push_back("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
+		// env_vector.push_back(("SCRIPT_FILENAME=" + server_root + "/" + filepath));
+		// env_vector.push_back("CONTENT_LENGTH="+ to_string(sData.length()) );
 
 		// for (int i =0; i < 6; i++)
 		// {
@@ -249,9 +262,12 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		// envp[] = &("HTTP_USER_AGENT=" + tmp)[0];
 		// envp[] = &("HTTPS=" + tmp)[0];
 
-		string bin_path = server->get_cgis()[extention_name];
+		// string bin_path = server->get_cgis()[extention_name];
+		string bin_path = "./website/cgi-bin/php-cgi";
+		DEBUG("BIN PATH " << bin_path);
 		argv[0] = ft_strdup(bin_path);
-		argv[1] = ft_strdup(server_root + "/" + filepath);
+		// argv[1] = ft_strdup(server_root + "/" + filepath);
+		argv[1] = ft_strdup(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 		argv[2] = ft_strdup(headers["Body"]);
 		argv[3] = 0;
 		// argv[4] = 0;
@@ -265,13 +281,17 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		}
 		DEBUG("DONE");
 		//TODO: calculate size of envp and build it
+		
+		//Pipes don't do much at this point
+		
 		close(fdpipe[0]); // child doesn't read
 		dup2(fdpipe[1], STDOUT_FILENO);
-		// DEBUG("Path is : " << bin_path);
 
+		
 		// TODO: must execve php-cgi
 		if (execve(bin_path.c_str(), argv, envp) < 0)
 			code = 404;
+		//Need to free
 		DEBUG("EXECVE DONE");
 	}
 	else
@@ -288,8 +308,8 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		// i = 0;
 		// while (envp[i])
 		// 	free(envp[i++]);
-		free(argv);
-		free(envp);
+		// free(argv);
+		// free(envp);
 		close(fdpipe[1]); // parent doesn't write
 		char reading_buf;
 		while(read(fdpipe[0], &reading_buf, 1) > 0)
