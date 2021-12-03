@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/02 21:28:50 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/03 16:46:27 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ Request::Request(const string &buffer)
 
 	DEBUG(endl << endl << "******* NEW REQUEST: ********");
 	DEBUG(buffer);
+	DEBUG("END");
 
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
@@ -98,10 +99,15 @@ Request::Request(const string &buffer)
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
+		// DEBUG("INSERTING");
 		headers.insert(pair<string, string>(header, get_str_before_char(buffer, "\r\n", &pos)));
 	}
+	// DEBUG("HEADERS BE LIKE " << headers.count("Content-Length"))
 	if (headers.count("Content-Length") > 0)
+	{
+		// DEBUG("WE ARE INSERTING");
 		headers.insert(pair<string, string>("Body", &buffer[pos]));
+	}
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
 	// DEBUG("****** REQUEST PARSED *******");
@@ -185,6 +191,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 {
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
+	// DEBUG("BODY IS " << body);
 	int fdpipe[2];
 	if (pipe(fdpipe) == -1)
 	{
@@ -197,21 +204,43 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		cerr << "cgi: fork failed" << endl;
 		exit(EXIT_FAILURE);
 	}
-	char **argv = (char**) malloc(sizeof(char*) * 4);
-	char **envp = (char**) malloc(sizeof(char*) * 7);
+
 	code = 200;
+	//https://stackoverflow.com/questions/33052169/call-php-cgi-from-c-with-request-method-post
 	if (pid == 0)
 	{
 		string server_root = string(getcwd(NULL, 0));
 		// envp[0] = 0;
-		envp[1] = ft_strdup("CONTENT_LENGHT=" + to_string(headers["Body"].length()));
-		envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root).c_str());
-		// envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())).c_str());
-		envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath).c_str());
-		envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)).c_str());
-		envp[4] = ft_strdup(("PATH=" + server_root + "/").c_str());
-		envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath).c_str());
-		envp[6] = 0;
+		DEBUG("BODYIS " << headers["Body"]);
+		// DEBUG("OR " << body);
+
+		// envp[1] = ft_strdup("CONTENT_LENGHT=" + to_string(headers["Body"].length()));
+		
+		// //This is wrong it seems
+		
+
+		// envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root));
+		// // envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())));
+		// envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath));
+		// envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)));
+		// envp[4] = ft_strdup(("PATH=" + server_root + "/"));
+		// envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath));
+		// envp[6] = 0;
+
+		char **argv = (char**) malloc(sizeof(char*) * 4);
+		char **envp = (char**) malloc(sizeof(char*) * 7);
+
+
+
+		std::vector<std::string> env_vector; 
+		env_vector.push_back("GATEWAY_INTERFACE=CGI/1.1");
+		env_vector.push_back("SERVER_PROTOCOL=HTTP/1.1");
+		env_vector.push_back("QUERY_STRING=name=enzo");
+		env_vector.push_back("REDIRECT_STATUS=200");
+		env_vector.push_back("REQUEST_METHOD=POST");
+		env_vector.push_back("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
+		env_vector.push_back(("SCRIPT_FILENAME=" + server_root + "/" + filepath));
+		env_vector.push_back("CONTENT_LENGTH="+ to_string(sData.length()) );
 
 		// for (int i =0; i < 6; i++)
 		// {
@@ -221,9 +250,9 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		// envp[] = &("HTTPS=" + tmp)[0];
 
 		string bin_path = server->get_cgis()[extention_name];
-		argv[0] = ft_strdup(bin_path.c_str());
-		argv[1] = ft_strdup((server_root + "/" + filepath).c_str());
-		argv[2] = ft_strdup(headers["Body"].c_str());
+		argv[0] = ft_strdup(bin_path);
+		argv[1] = ft_strdup(server_root + "/" + filepath);
+		argv[2] = ft_strdup(headers["Body"]);
 		argv[3] = 0;
 		// argv[4] = 0;
 		for (int i =0; i < 3; i++)
@@ -372,6 +401,7 @@ void 	Request::get_body(string &body)
 				DEBUG("CGI extention found !");
 				passed_cgi = true;
 				file.close();
+				DEBUG("BODY B4 CGI " << body)
 				launch_cgi(body, filepath.substr(pos));
 				return ;
 			}
