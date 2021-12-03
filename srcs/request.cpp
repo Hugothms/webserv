@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/03 17:19:16 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/03 18:02:12 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ char *ft_strdup(string msg)
 	return ret;
 }
 
-void	Request::launch_cgi(string &body, const string extention_name)
+void	Request::launch_cgi(string &body, string extention_name)
 {
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
@@ -226,26 +226,54 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		// envp[4] = ft_strdup(("PATH=" + server_root + "/"));
 		// envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath));
 		// envp[6] = 0;
-
+		
 		char **argv = (char**) malloc(sizeof(char*) * 4);
 		char **envp = (char**) malloc(sizeof(char*) * 8);
 
-
 		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
 		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
+		envp[2] = ft_strdup("REDIRECT_STATUS=200");
+
+		if (type == "GET")
+		{
+			envp[3] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
+			envp[4] = ft_strdup("REQUEST_METHOD=GET");
+			envp[5] = ft_strdup("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
+			envp[6] = ft_strdup("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
+			extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
+		}
+		else if (type == "POST")
+		{
+			envp[3] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");			
+			envp[4] = ft_strdup("REQUEST_METHOD=POST");
+			envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
+			envp[5] = ft_strdup("SCRIPT_FILENAME=" + server_root + "/" + filepath);
+		}
+		else
+		{
+			DEBUG(type);
+		}
+		envp[7] = 0;
+		// envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
+		// envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
+		
+		// envp[4] = ft_strdup("REQUEST_METHOD=POST");		
+
+
+		
 		//TODO
-		envp[2] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
+		// envp[2] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
 		// envp[2] = ft_strdup("QUERY_STRING=name=enzo");
 
-		envp[3] = ft_strdup("REDIRECT_STATUS=200");
-		envp[4] = ft_strdup("REQUEST_METHOD=POST");
+		// envp[3] = ft_strdup("REDIRECT_STATUS=200");
+		// envp[4] = ft_strdup("REQUEST_METHOD=POST");
 
 		// envp[5] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
 
 
-		envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
-		envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
-		envp[7] = 0;
+		// envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
+		// envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
+		
 		// env_vector.push_back("GATEWAY_INTERFACE=CGI/1.1");
 		// env_vector.push_back("SERVER_PROTOCOL=HTTP/1.1");
 		// env_vector.push_back("QUERY_STRING=name=enzo");
@@ -262,9 +290,9 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		// envp[] = &("HTTP_USER_AGENT=" + tmp)[0];
 		// envp[] = &("HTTPS=" + tmp)[0];
 
-		// string bin_path = server->get_cgis()[extention_name];
-		string bin_path = "./website/cgi-bin/php-cgi";
-		DEBUG("BIN PATH " << bin_path);
+		string bin_path = server->get_cgis()[extention_name];
+		// string bin_path = "./website/cgi-bin/php-cgi";
+		// DEBUG("EXAME PATH " << extention_name);
 		argv[0] = ft_strdup(bin_path);
 		// argv[1] = ft_strdup(server_root + "/" + filepath);
 		argv[1] = ft_strdup(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
@@ -275,7 +303,7 @@ void	Request::launch_cgi(string &body, const string extention_name)
 		{
 			DEBUG(i << "A!:" << argv[i]);
 		}
-		for (int i =0; i < 6; i++)
+		for (int i =0; i < 7; i++)
 		{
 			DEBUG(i << "E!:" << envp[i]);
 		}

@@ -1,14 +1,19 @@
-<!-- Hi <?php echo $_POST['name']; 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test</title>
+</head>
+<body>
+  <br>
+Hi <?php echo $_GET['name'];?>.
 
-// if (!isset($_SERVER["HTTP_HOST"])) 
-// {
-//   parse_str($argv[1], $_GET);
-//   parse_str($argv[1], $_POST);
-// }
-?>. -->
+
+You are <?php echo (int)$_GET['age']; ?> years old.
+<br>
 
 <?php
-  echo "POST :";
+echo "POST :";
   foreach ($_POST as $key => $value) {
         echo "<tr>";
         echo "<td>";
@@ -31,4 +36,5 @@
         echo "</tr>";
     }
 ?>
-<!-- You are <?php echo (int)$_POST['age']; ?> years old. -->
+</body>
+</html>
