@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 21:26:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 22:41:35 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,17 @@ Request::Request(const string &buffer, string *ptr)
 	DEBUG(endl << endl << "******* NEW REQUEST: ********\n");
 	DEBUG(buffer);
 	DEBUG("******* END: ********\n\n");
+	
+
+	size_t t_pos = buffer.find("Content-Type: ");
+	if (t_pos != string::npos)
+	{
+		content_type = buffer.substr(t_pos, buffer.find(t_pos, '\n'));
+		content_type = content_type.substr(content_type.find(' ') + 1);
+		// if (!content_type.empty())
+			DEBUG("CONTENT TYPE IS" << content_type << "/////////////");		
+	}
+
 
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
@@ -116,6 +127,7 @@ Request::Request(const string &buffer, string *ptr)
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
 	// DEBUG("****** REQUEST PARSED *******");
+	// DEBUG("Done")
 }
 
 string to_string_custom(const int &error_code)
@@ -233,11 +245,11 @@ void	Request::launch_cgi(string &body, string extention_name)
 		// envp[6] = 0;
 
 
-		int avl = 3;
-		int envl = 10;
+		int avl = 4;
+		int envl = 11;
 
-		char **argv = (char**) malloc(sizeof(char*) * avl + 1);
-		char **envp = (char**) malloc(sizeof(char*) * envl + 1);
+		char **argv = (char**) malloc(sizeof(char*) * avl--);
+		char **envp = (char**) malloc(sizeof(char*) * envl--);
 
 		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
 		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
@@ -254,6 +266,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 		envp[7] = ft_strdup("SCRIPT_NAME=" + newfilepath);
 		// envp[7] = 0;
 
+		envp[10] = 0;
 		if (type == "GET")
 		{
 			envp[8] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
@@ -262,15 +275,33 @@ void	Request::launch_cgi(string &body, string extention_name)
 		}
 		else if (type == "POST")
 		{
-			//To change according to content type
-			envp[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
+			//To change according to content typefor
+			envp[8] = ft_strdup("CONTENT_TYPE=" + content_type);
 			envp[9] = ft_strdup("CONTENT_LENGTH="+ to_string(data_buff->length()) );
+		
+
+			int n_pip[2];
+			pipe(n_pip);
+			// data_buff->resize(data_buff->size() - 1);
+			DEBUG("DATA PASS--------------------------------");
+			DEBUG("|"<< *data_buff << "|");
+			DEBUG("DATA OK-----------------------------------");
+		
+			write(n_pip[1], data_buff->c_str(), data_buff->length());
+
+			dup2(n_pip[0], STDIN_FILENO);
+
+			close(n_pip[1]);
+
+
+
+
 		}
 		// else
 		// {
 		// 	DEBUG(type);
 		// }
-		envp[10] = 0;
+		
 		
 
 		string bin_path = server->get_cgis()[extention_name];
@@ -304,15 +335,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 
 		// write(fdpipe[0], data_buff->c_str(), data_buff->length());
 
-		int n_pip[2];
-		pipe(n_pip);
 
-
-		write(n_pip[1], data_buff->c_str(), data_buff->length());
-
-		dup2(n_pip[0], STDIN_FILENO);
-
-		close(n_pip[1]);
 
 
 		dup2(fdpipe[1], STDOUT_FILENO);
