@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 18:53:39 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 21:26:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,8 +233,11 @@ void	Request::launch_cgi(string &body, string extention_name)
 		// envp[6] = 0;
 
 
-		char **argv = (char**) malloc(sizeof(char*) * 4);
-		char **envp = (char**) malloc(sizeof(char*) * 11);
+		int avl = 3;
+		int envl = 10;
+
+		char **argv = (char**) malloc(sizeof(char*) * avl + 1);
+		char **envp = (char**) malloc(sizeof(char*) * envl + 1);
 
 		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
 		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
@@ -279,11 +282,11 @@ void	Request::launch_cgi(string &body, string extention_name)
 		argv[2] = ft_strdup(headers["Body"]);
 		argv[3] = 0;
 		// argv[4] = 0;
-		for (int i =0; i < 3; i++)
+		for (int i =0; i < avl; i++)
 		{
 			DEBUG(i << "A!:" << argv[i]);
 		}
-		for (int i =0; i < 10; i++)
+		for (int i =0; i < envl; i++)
 		{
 			DEBUG(i << "E!:" << envp[i]);
 		}
