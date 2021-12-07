@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 18:30:11 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 18:48:13 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,6 +245,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 		envp[6] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
 		envp[7] = ft_strdup("SCRIPT_NAME=" + newfilepath);
+		// envp[7] = 0;
 
 		if (type == "GET")
 		{
@@ -258,10 +259,10 @@ void	Request::launch_cgi(string &body, string extention_name)
 			envp[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
 			envp[9] = ft_strdup("CONTENT_LENGTH="+ to_string(data_buff->length()) );
 		}
-		else
-		{
-			DEBUG(type);
-		}
+		// else
+		// {
+		// 	DEBUG(type);
+		// }
 		envp[10] = 0;
 		
 
