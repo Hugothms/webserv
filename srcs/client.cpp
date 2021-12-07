@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 18:09:20 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 18:50:51 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,20 +88,20 @@ void Client::set_response(void)
 	// send_buffer = req.respond(servers);
 	if (req->g_type() == "GET")
 	{
-		DEBUG("GET RQ");
+		// DEBUG("GET RQ");
 		send_rdy = 1;
 		send_buffer = req->respond(servers);
 	}
 	else if (req->g_type() == "POST" && data_buff.empty())
 	{
-		DEBUG("POST BUT NO DATA");
+		// DEBUG("POST BUT NO DATA");
 		send_rdy = 0;
 	}
 	else if (data_buff.empty() == false) //Post case we need data
 	{
 		
-		DEBUG("DATA READY");
-		DEBUG(data_buff);
+		// DEBUG("DATA READY");
+		// DEBUG(data_buff);
 		send_rdy = 1;
 		send_buffer = req->respond(servers);	
 	}
@@ -174,7 +174,7 @@ int Client::receive(void)
 		DEBUG("Data did not fit in the buffer, read more plz");
 		_done_recv = 0;
 	}
-	DEBUG("DONE RECV IS " << _done_recv);
+	// DEBUG("DONE RECV IS " << _done_recv);
 	return (_done_recv);
 	// }
 	// else
@@ -189,7 +189,7 @@ void Client::send(void)
 {
 	int actual = BUFF_S;
 
-	DEBUG("TRYINT TO SEND " << send_buffer);
+	// DEBUG("TRYINT TO SEND " << send_buffer);
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
 
