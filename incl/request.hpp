@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/25 12:42:50 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/07 16:48:42 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,10 @@ class Request
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
+		const string		*data_buff;
 		unsigned int		code;
 		bool 				passed_cgi;
+		// bool 				_data;
 
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;
@@ -65,9 +67,10 @@ class Request
 	public :
 		Request(const string &buffer);
 		~Request();
-		string	respond(const list<Server*> &servers);
+		string	respond(const list<Server*> &servers, string* data = 0);
 		bool	select_server(const list<Server*> &servers);
 		bool	select_location(void);
+		string 	g_type(void) const;
 		string 	get_response(void);
 		void 	get_body(string &body);
 		string	get_header(const size_t length);

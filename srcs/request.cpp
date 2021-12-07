@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 15:26:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 16:48:46 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,13 @@ Request::~Request()
 	// free(static_cast<void *>(this->location));
 }
 
+string Request::g_type(void) const
+{
+	return type;
+}
+
 Request::Request(const string &buffer)
-:  code(0), passed_cgi(false)
+:  code(0), passed_cgi(false), data_buff(0)
 {
 	size_t pos = 0;
 
@@ -514,7 +519,7 @@ string	Request::get_header(const size_t length)
 	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
 	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << get_type(filepath, passed_cgi) << endl;
+	header << "Content-Type: " << ::get_type(filepath, passed_cgi) << endl;
 	header << "Content-Length: " << length << endl;
 	header << "Connection: Closed" << endl;
 	if (location && location->get_HTTP_redirection_type() > 0)
@@ -535,8 +540,13 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-string	Request::respond(const list<Server*> &servers)
+string	Request::respond(const list<Server*> &servers, string* data)
 {
+	if(data != 0)
+	{
+		data_buff = data;
+		//Do stuff
+	}
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
