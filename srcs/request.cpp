@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 14:52:43 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/07 15:19:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,8 +234,8 @@ void	Request::launch_cgi(string &body, string extention_name)
 		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
 		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
 		envp[2] = ft_strdup("REDIRECT_STATUS=200");
-		envp[3] = ft_strdup("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0));
-		envp[4] = ft_strdup("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1);
+		envp[3] = ft_strdup("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
+		envp[4] = ft_strdup("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
 		envp[5] = ft_strdup("REQUEST_METHOD=" + type);
 		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 		envp[6] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
