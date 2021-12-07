@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/03 18:05:01 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 14:41:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,53 +215,54 @@ void	Request::launch_cgi(string &body, string extention_name)
 		// DEBUG("OR " << body);
 
 		// envp[1] = ft_strdup("CONTENT_LENGHT=" + to_string(headers["Body"].length()));
-		
+
 		// //This is wrong it seems
-		
+
 
 		// envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root));
-		// // envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())));
+		// envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())));
 		// envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath));
 		// envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)));
 		// envp[4] = ft_strdup(("PATH=" + server_root + "/"));
 		// envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath));
 		// envp[6] = 0;
-		
+
+
 		char **argv = (char**) malloc(sizeof(char*) * 4);
-		char **envp = (char**) malloc(sizeof(char*) * 8);
+		char **envp = (char**) malloc(sizeof(char*) * 9);
 
 		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
 		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
 		envp[2] = ft_strdup("REDIRECT_STATUS=200");
+		envp[3] = ft_strdup("REQUEST_METHOD=" + type);
+		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
+		envp[4] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
+		envp[5] = ft_strdup("SCRIPT_NAME=" + newfilepath);
 
 		if (type == "GET")
 		{
-			envp[3] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-			envp[4] = ft_strdup("REQUEST_METHOD=GET");
-			envp[5] = ft_strdup("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
-			envp[6] = ft_strdup("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
+			envp[6] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
+			envp[7] = ft_strdup("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
 			extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
 		}
 		else if (type == "POST")
 		{
 			//To change according to content type
-			envp[3] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");		
-			envp[4] = ft_strdup("REQUEST_METHOD=POST");
-			envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
-			envp[5] = ft_strdup("SCRIPT_FILENAME=" + server_root + "/" + filepath);
+			envp[6] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
+			envp[7] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
 		}
 		else
 		{
 			DEBUG(type);
 		}
-		envp[7] = 0;
+		envp[8] = 0;
 		// envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
 		// envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
-		
-		// envp[4] = ft_strdup("REQUEST_METHOD=POST");		
+
+		// envp[4] = ft_strdup("REQUEST_METHOD=POST");
 
 
-		
+
 		//TODO
 		// envp[2] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
 		// envp[2] = ft_strdup("QUERY_STRING=name=enzo");
@@ -274,7 +275,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 
 		// envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
 		// envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
-		
+
 		// env_vector.push_back("GATEWAY_INTERFACE=CGI/1.1");
 		// env_vector.push_back("SERVER_PROTOCOL=HTTP/1.1");
 		// env_vector.push_back("QUERY_STRING=name=enzo");
@@ -310,13 +311,13 @@ void	Request::launch_cgi(string &body, string extention_name)
 		}
 		DEBUG("DONE");
 		//TODO: calculate size of envp and build it
-		
+
 		//Pipes don't do much at this point
-		
+
 		close(fdpipe[0]); // child doesn't read
 		dup2(fdpipe[1], STDOUT_FILENO);
 
-		
+
 		// TODO: must execve php-cgi
 		if (execve(bin_path.c_str(), argv, envp) < 0)
 			code = 404;
