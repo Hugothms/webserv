@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 18:10:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 22:26:41 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,12 @@ class Request
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
-		const string		*data_buff;
+		string				*data_buff;
 		unsigned int		code;
 		bool 				passed_cgi;
 		// bool 				_data;
+
+		string 				content_type;
 
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;

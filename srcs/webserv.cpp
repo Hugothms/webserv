@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 18:02:26 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 21:54:21 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ void	Webserv::listen(void)
 				}
 				else if ((*client)->is_done_send() == 0) //Transmit response
 				{
-					DEBUG("Sending response");
+					// DEBUG("Sending response");
 					(*client)->send();
 				}
 			}
