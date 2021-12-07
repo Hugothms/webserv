@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 14:41:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/07 14:52:43 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,33 +229,35 @@ void	Request::launch_cgi(string &body, string extention_name)
 
 
 		char **argv = (char**) malloc(sizeof(char*) * 4);
-		char **envp = (char**) malloc(sizeof(char*) * 9);
+		char **envp = (char**) malloc(sizeof(char*) * 11);
 
 		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
 		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
 		envp[2] = ft_strdup("REDIRECT_STATUS=200");
-		envp[3] = ft_strdup("REQUEST_METHOD=" + type);
+		envp[3] = ft_strdup("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0));
+		envp[4] = ft_strdup("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1);
+		envp[5] = ft_strdup("REQUEST_METHOD=" + type);
 		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
-		envp[4] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
-		envp[5] = ft_strdup("SCRIPT_NAME=" + newfilepath);
+		envp[6] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
+		envp[7] = ft_strdup("SCRIPT_NAME=" + newfilepath);
 
 		if (type == "GET")
 		{
-			envp[6] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-			envp[7] = ft_strdup("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
+			envp[8] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
+			envp[9] = ft_strdup("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
 			extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
 		}
 		else if (type == "POST")
 		{
 			//To change according to content type
-			envp[6] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
-			envp[7] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
+			envp[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
+			envp[9] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
 		}
 		else
 		{
 			DEBUG(type);
 		}
-		envp[8] = 0;
+		envp[10] = 0;
 		// envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
 		// envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
 
