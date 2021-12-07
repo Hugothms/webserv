@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 16:49:34 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 18:09:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Client::Client()
 	_done_recv = 0;
 	_done_send = 0;
 	send_rdy = 0;
+	req = 0;
 	client_len = sizeof(client_addr);
 }
 
@@ -26,6 +27,7 @@ Client::Client(int new_listen_fd)
 	_done_recv = 0;
 	_done_send = 0;
 	send_rdy = 0;
+	req = 0;
 	client_len = sizeof(client_addr);
 
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -64,32 +66,45 @@ string* Client::get_send_buff(void)
 	return (&send_buffer);
 }
 
+bool Client::is_send_rdy() const
+{
+	return send_rdy;
+	// if (req->g_type() == "GET" && send_rdy)
+	// {
+	// 	return true;
+	// }
+	// else if (req->g_type() == "POST" && data_buff.empty() == false)
+	// {
+	// 	//
+	// 	return true;
+	// }
+	// return false; 
+}
+
 void Client::set_response(void)
 {
-	Request req(*get_rec_buff());
+	// Request req(*get_rec_buff());
 
 	// send_buffer = req.respond(servers);
-	if (req.g_type() == "GET")
+	if (req->g_type() == "GET")
 	{
+		DEBUG("GET RQ");
 		send_rdy = 1;
-		send_buffer = req.respond(servers);
+		send_buffer = req->respond(servers);
 	}
-	else if (!data_buff.empty())
+	else if (req->g_type() == "POST" && data_buff.empty())
 	{
+		DEBUG("POST BUT NO DATA");
+		send_rdy = 0;
+	}
+	else if (data_buff.empty() == false) //Post case we need data
+	{
+		
+		DEBUG("DATA READY");
+		DEBUG(data_buff);
 		send_rdy = 1;
-		DEBUG("GOT ALL POST DATA");
-		send_buffer = req.respond(servers);
+		send_buffer = req->respond(servers);	
 	}
-	else //Post case we need data
-	{
-		DEBUG("THIS IS POST");
-		send_rdy = 0;	
-	}
-
-
-	
-
-	
 
 	_done_send = 0;
 	send_offset = 0;
@@ -120,51 +135,61 @@ int Client::receive(void)
 	char buff[BUFF_S];
 	int len;
 
-	DEBUG("Receiving....");
+	// DEBUG("Receiving....");
 	len = recv(_fd, buff, BUFF_S, 0);
-	DEBUG("Received :" << len);
-
-	if (len > 0)
-	{
-		rec_buffer += string(buff, len);
-		if (len < BUFF_S)
-		{
-			DEBUG("Data fit in the buffer, read done");
-			_done_recv = 1;
-			DEBUG(rec_buffer);
-			if (rec_buffer.find ("------WebKitFormBoundary") == 0 )
-			{
-				DEBUG("THIS IS DATA");
-				data_buff = rec_buffer;
-				
-			}
-			else
-			{
-				DEBUG("THIS IS NOT");
-			}
-			
-		}
-		else
-		{
-			DEBUG("Data did not fit in the buffer, read more plz");
-			_done_recv = 0;
-		}
-			
-		return (_done_recv);
-	}
-	else
+	// DEBUG("Received :" << len);
+	if (len <= 0)
 	{
 		DEBUG("No data received, client is done");
 		_done_recv = 1;
 		return (-1);
 	}
+
+	// if (len > 0)
+	// {
+	
+	if (req != 0) //If we are in post mode
+		data_buff += string(buff, len);
+	else
+		rec_buffer += string(buff, len);
+	
+	if (len < BUFF_S)
+	{
+		if (req == 0)
+		{
+			req = new Request(*get_rec_buff(), &data_buff);
+			
+			if (req->g_type() == "POST")
+				_done_recv = 0;
+			else
+				_done_recv = 1;
+		}
+		else
+		{
+			_done_recv = 1;
+		}
+	}
+	else
+	{
+		DEBUG("Data did not fit in the buffer, read more plz");
+		_done_recv = 0;
+	}
+	DEBUG("DONE RECV IS " << _done_recv);
+	return (_done_recv);
+	// }
+	// else
+	// {
+	// 	DEBUG("No data received, client is done");
+	// 	_done_recv = 1;
+	// 	return (-1);
+	// }
 }
 
 void Client::send(void)
 {
 	int actual = BUFF_S;
 
-
+	DEBUG("TRYINT TO SEND " << send_buffer);
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
 
@@ -178,6 +203,9 @@ void Client::send(void)
 	{
 		DEBUG("Done sending the whole thing")
 		_done_send = 1;
+		// if (req != 0)
+		// 	delete req;
+		req = 0;
 		send_rdy = 0;
 		_done_recv = 0;
 		send_buffer.clear();

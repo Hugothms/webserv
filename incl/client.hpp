@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 16:12:52 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 17:40:46 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class Client
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
 
-
+		Request 			*req;
 
 
 		list<Server*>		servers;
@@ -65,6 +65,8 @@ class Client
 
 		void set_fd(const int nfd);
 		int get_fd(void) const;
+
+		bool is_send_rdy() const;
 
 		int receive(void);
 

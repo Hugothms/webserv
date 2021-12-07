@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 12:44:30 by user42           ###   ########.fr       */
+/*   Updated: 2021/12/07 18:02:26 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Webserv::~Webserv()
 
 void	Webserv::push_back_server(Server *server)
 {
-	DEBUG("PUSHING");
+	// DEBUG("PUSHING");
 	_servers.push_back(server);
 }
 
@@ -77,7 +77,7 @@ void	Webserv::parse_config(const string config_file)
 			{
 				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
 			}
-			DEBUG("PUSHING SERV");
+			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
 	}
@@ -99,7 +99,7 @@ void Webserv::build(void)
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
-		DEBUG("Port added to the FD_SET !");
+		// DEBUG("Port added to the FD_SET !");
 	}
 }
 
@@ -174,12 +174,12 @@ void	Webserv::listen(void)
 			}
 			else if ((*client)->is_done_recv())
 			{
-				if ((*client)->send_rdy == 0)
+				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
 				{
 					DEBUG("Building response");
 					(*client)->set_response();
 				}
-				else if ((*client)->is_done_send() == 0)
+				else if ((*client)->is_done_send() == 0) //Transmit response
 				{
 					DEBUG("Sending response");
 					(*client)->send();

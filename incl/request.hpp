@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 16:48:42 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 18:10:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Request
 		*/
 
 	public :
-		Request(const string &buffer);
+		Request(const string &buffer, string *ptr = 0);
 		~Request();
 		string	respond(const list<Server*> &servers, string* data = 0);
 		bool	select_server(const list<Server*> &servers);

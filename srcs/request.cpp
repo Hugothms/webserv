@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 16:48:46 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 18:30:11 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,14 @@ string Request::g_type(void) const
 	return type;
 }
 
-Request::Request(const string &buffer)
-:  code(0), passed_cgi(false), data_buff(0)
+Request::Request(const string &buffer, string *ptr)
+:  code(0), passed_cgi(false), data_buff(ptr)
 {
 	size_t pos = 0;
 
-	DEBUG(endl << endl << "******* NEW REQUEST: ********");
+	DEBUG(endl << endl << "******* NEW REQUEST: ********\n");
 	DEBUG(buffer);
-	DEBUG("END");
+	DEBUG("******* END: ********\n\n");
 
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
@@ -162,7 +162,7 @@ bool	Request::select_server(const list<Server*> &servers)
 	}
 	if (!this->server)
 		return false;
-	DEBUG("Found default server for port: " << port);
+	// DEBUG("Found default server for port: " << port);
 	return true;
 }
 
@@ -216,7 +216,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 	{
 		string server_root = string(getcwd(NULL, 0));
 		// envp[0] = 0;
-		DEBUG("BODYIS " << headers["Body"]);
+		// DEBUG("BODYIS " << headers["Body"]);
 		// DEBUG("OR " << body);
 
 		// envp[1] = ft_strdup("CONTENT_LENGHT=" + to_string(headers["Body"].length()));
@@ -256,7 +256,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 		{
 			//To change according to content type
 			envp[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
-			envp[9] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
+			envp[9] = ft_strdup("CONTENT_LENGTH="+ to_string(data_buff->length()) );
 		}
 		else
 		{
@@ -278,16 +278,35 @@ void	Request::launch_cgi(string &body, string extention_name)
 		{
 			DEBUG(i << "A!:" << argv[i]);
 		}
-		for (int i =0; i < 7; i++)
+		for (int i =0; i < 10; i++)
 		{
 			DEBUG(i << "E!:" << envp[i]);
 		}
-		DEBUG("DONE");
+		// DEBUG("DONE");
 		//TODO: calculate size of envp and build it
 
 		//Pipes don't do much at this point
 
-		close(fdpipe[0]); // child doesn't read
+		// close(fdpipe[0]); // child doesn't read
+		// dup2(fdpipe[0], STDIN_FILENO);
+
+		// DEBUG("DATA TO PIPE : " << *data_buff);
+		// write(fdpipe[0], data_buff->c_str(), data_buff->length());
+		// close(fdpipe[0]);
+
+		// write(fdpipe[0], data_buff->c_str(), data_buff->length());
+
+		int n_pip[2];
+		pipe(n_pip);
+
+
+		write(n_pip[1], data_buff->c_str(), data_buff->length());
+
+		dup2(n_pip[0], STDIN_FILENO);
+
+		close(n_pip[1]);
+
+
 		dup2(fdpipe[1], STDOUT_FILENO);
 
 
@@ -393,7 +412,7 @@ void	Request::set_filepath(void)
 			// 	filepath += server->get_index();
 		}
 	}
-	DEBUG("filepath: " << filepath << endl << endl);
+	// DEBUG("filepath: " << filepath << endl << endl);
 }
 
 void 	Request::get_body(string &body)
@@ -414,22 +433,22 @@ void 	Request::get_body(string &body)
 	if (filepath.length() && get_type(filepath, false) != "text/html")
 	{
 
-		DEBUG("CGI SEARCHED");
+		// DEBUG("CGI SEARCHED");
 		map<string, string> cgis = server->get_cgis();
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
 			size_t pos;
 			if ((pos = filepath.find(cgi->first) )!= string::npos)
 			{
-				DEBUG("CGI extention found !");
+				// DEBUG("CGI extention found !");
 				passed_cgi = true;
 				file.close();
-				DEBUG("BODY B4 CGI " << body)
+				// DEBUG("BODY B4 CGI " << body)
 				launch_cgi(body, filepath.substr(pos));
 				return ;
 			}
 		}
-		DEBUG("CGI NOT FOUND");
+		// DEBUG("CGI NOT FOUND");
 	}
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
@@ -475,14 +494,14 @@ bool	Request::select_location(void)
 		{
 			if (searched_path == it_location->get_path())
 			{
-				if (this->location != NULL)
-				{
-					DEBUG("ERASING POINTER");
-				}
-				else
-				{
-					DEBUG("PROPER ASSING");
-				}
+				// if (this->location != NULL)
+				// {
+				// 	DEBUG("ERASING POINTER");
+				// }
+				// else
+				// {
+				// 	DEBUG("PROPER ASSING");
+				// }
 				this->location = new Location(*it_location);
 				return true;
 			}
@@ -497,14 +516,14 @@ bool	Request::select_location(void)
 	{
 		if (searched_path == it_location->get_path())
 		{
-			if (this->location != NULL)
-			{
-				DEBUG("ERASING POINTER");
-			}
-			else
-			{
-				DEBUG("PROPER ASSING");
-			}
+			// if (this->location != NULL)
+			// {
+			// 	DEBUG("ERASING POINTER");
+			// }
+			// else
+			// {
+			// 	DEBUG("PROPER ASSING");
+			// }
 			this->location = new Location(*it_location);
 			return true;
 		}
@@ -542,11 +561,11 @@ bool	Request::method_allow(void)
 
 string	Request::respond(const list<Server*> &servers, string* data)
 {
-	if(data != 0)
-	{
-		data_buff = data;
-		//Do stuff
-	}
+	// if(data != 0)
+	// {
+	// 	data_buff = data;
+	// 	//Do stuff
+	// }
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
