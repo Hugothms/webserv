@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 16:15:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/07 16:49:34 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,27 @@ void Client::set_response(void)
 	Request req(*get_rec_buff());
 
 	// send_buffer = req.respond(servers);
-	send_buffer = req.respond(servers);
+	if (req.g_type() == "GET")
+	{
+		send_rdy = 1;
+		send_buffer = req.respond(servers);
+	}
+	else if (!data_buff.empty())
+	{
+		send_rdy = 1;
+		DEBUG("GOT ALL POST DATA");
+		send_buffer = req.respond(servers);
+	}
+	else //Post case we need data
+	{
+		DEBUG("THIS IS POST");
+		send_rdy = 0;	
+	}
 
-	send_rdy = 1;
+
+	
+
+	
 
 	_done_send = 0;
 	send_offset = 0;
@@ -108,17 +126,30 @@ int Client::receive(void)
 
 	if (len > 0)
 	{
+		rec_buffer += string(buff, len);
 		if (len < BUFF_S)
 		{
 			DEBUG("Data fit in the buffer, read done");
 			_done_recv = 1;
+			DEBUG(rec_buffer);
+			if (rec_buffer.find ("------WebKitFormBoundary") == 0 )
+			{
+				DEBUG("THIS IS DATA");
+				data_buff = rec_buffer;
+				
+			}
+			else
+			{
+				DEBUG("THIS IS NOT");
+			}
+			
 		}
 		else
 		{
 			DEBUG("Data did not fit in the buffer, read more plz");
 			_done_recv = 0;
 		}
-		rec_buffer += string(buff, len);
+			
 		return (_done_recv);
 	}
 	else

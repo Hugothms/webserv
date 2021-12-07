@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 16:13:54 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/07 16:12:52 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Client
 
 
 		string				rec_buffer;
+		string 				data_buff;
 		string				send_buffer;
 
 	public :
