@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 15:19:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/07 15:26:44 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,41 +258,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 			DEBUG(type);
 		}
 		envp[10] = 0;
-		// envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
-		// envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
-
-		// envp[4] = ft_strdup("REQUEST_METHOD=POST");
-
-
-
-		//TODO
-		// envp[2] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-		// envp[2] = ft_strdup("QUERY_STRING=name=enzo");
-
-		// envp[3] = ft_strdup("REDIRECT_STATUS=200");
-		// envp[4] = ft_strdup("REQUEST_METHOD=POST");
-
-		// envp[5] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
-
-
-		// envp[5] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0))));
-		// envp[6] = ft_strdup("CONTENT_LENGTH="+ to_string(headers["Body"].length()) );
-
-		// env_vector.push_back("GATEWAY_INTERFACE=CGI/1.1");
-		// env_vector.push_back("SERVER_PROTOCOL=HTTP/1.1");
-		// env_vector.push_back("QUERY_STRING=name=enzo");
-		// env_vector.push_back("REDIRECT_STATUS=200");
-		// env_vector.push_back("REQUEST_METHOD=POST");
-		// env_vector.push_back("CONTENT_TYPE=application/x-www-form-urlencoded;charset=utf-8");
-		// env_vector.push_back(("SCRIPT_FILENAME=" + server_root + "/" + filepath));
-		// env_vector.push_back("CONTENT_LENGTH="+ to_string(sData.length()) );
-
-		// for (int i =0; i < 6; i++)
-		// {
-		// 	DEBUG(i << ":" << envp[i]);
-		// }
-		// envp[] = &("HTTP_USER_AGENT=" + tmp)[0];
-		// envp[] = &("HTTPS=" + tmp)[0];
+		
 
 		string bin_path = server->get_cgis()[extention_name];
 		// string bin_path = "./website/cgi-bin/php-cgi";
