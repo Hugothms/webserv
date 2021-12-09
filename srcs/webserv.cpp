@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 21:54:21 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/09 17:59:28 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,8 @@ void	Webserv::listen(void)
 					DEBUG("client seems to have left, clearing his marks");
 					clear_fd(*client);
 				}
+				else
+					DEBUG("DID RECV");
 			}
 			else if ((*client)->is_done_recv())
 			{
@@ -181,10 +183,14 @@ void	Webserv::listen(void)
 				}
 				else if ((*client)->is_done_send() == 0) //Transmit response
 				{
-					// DEBUG("Sending response");
+					DEBUG("Sending response");
 					(*client)->send();
 				}
 			}
+			// else
+			// {
+			// 	DEBUG("Oh no");
+			// }
 		}
 	}
 }

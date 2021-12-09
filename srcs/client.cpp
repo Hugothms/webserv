@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 18:50:51 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/09 17:58:30 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,23 +88,49 @@ void Client::set_response(void)
 	// send_buffer = req.respond(servers);
 	if (req->g_type() == "GET")
 	{
-		// DEBUG("GET RQ");
+		DEBUG("GET RQ");
 		send_rdy = 1;
 		send_buffer = req->respond(servers);
 	}
-	else if (req->g_type() == "POST" && data_buff.empty())
+	else if (req->g_type() == "POST")
 	{
-		// DEBUG("POST BUT NO DATA");
-		send_rdy = 0;
+		if (req->headers["Content-Type"].find("multipart/form-data") != string::npos)
+		{
+			DEBUG("Need to gather data");
+			if (data_buff.empty())
+			{
+				send_rdy = 0;
+			}
+			else
+			{
+				send_rdy = 1;
+				send_buffer = req->respond(servers);
+			}
+		}
+		else
+		{
+			send_rdy = 1;
+			send_buffer = req->respond(servers);
+		}
 	}
-	else if (data_buff.empty() == false) //Post case we need data
+	else
 	{
+		DEBUG("OHNO");
+	}
+	// else if (req->g_type() == "POST" && data_buff.empty() && req->headers["Content-Type"].find("multipart/form-data") != string::npos)
+	// {
+	// 	DEBUG("POST BUT NO DATA");
+	// 	send_rdy = 0;
+	// }
+	// else if (data_buff.empty() == false || req->headers["Content-Type"].find("multipart/form-data") == string::npos) //Post case we need data
+	// {
 		
-		// DEBUG("DATA READY");
-		// DEBUG(data_buff);
-		send_rdy = 1;
-		send_buffer = req->respond(servers);	
-	}
+	// 	DEBUG("DATA READY");
+	// 	// DEBUG(data_buff);
+	// 	send_rdy = 1;
+	// 	send_buffer = req->respond(servers);	
+	// }
+	
 
 	_done_send = 0;
 	send_offset = 0;
@@ -159,10 +185,16 @@ int Client::receive(void)
 		{
 			req = new Request(*get_rec_buff(), &data_buff);
 			
-			if (req->g_type() == "POST")
+			if (req->g_type() == "POST" && req->headers["Content-Type"].find("multipart/form-data") != string::npos )
 				_done_recv = 0;
 			else
 				_done_recv = 1;
+			for (std::map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
+			{
+				DEBUG("PAIR IS: "<< a->first << "|" << a->second);
+			}
+
+			DEBUG("DONE IS " << _done_recv);
 		}
 		else
 		{

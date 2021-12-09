@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/07 22:41:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/09 18:44:15 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,12 @@ Request::Request(const string &buffer, string *ptr)
 	size_t t_pos = buffer.find("Content-Type: ");
 	if (t_pos != string::npos)
 	{
-		content_type = buffer.substr(t_pos, buffer.find(t_pos, '\n'));
-		content_type = content_type.substr(content_type.find(' ') + 1);
+		content_type = buffer.substr(t_pos, buffer.find('\n', t_pos));
+		DEBUG("TYPE IS " << content_type);
+		t_pos = content_type.find_first_of(": ") + 2;
+		content_type = content_type.substr(t_pos, (content_type.find("Accept", 0) - t_pos));
 		// if (!content_type.empty())
-			DEBUG("CONTENT TYPE IS" << content_type << "/////////////");		
+		DEBUG("CONTENT TYPE IS" << content_type << "/////////////");		
 	}
 
 
@@ -126,7 +128,7 @@ Request::Request(const string &buffer, string *ptr)
 	}
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
-	// DEBUG("****** REQUEST PARSED *******");
+	DEBUG("****** REQUEST PARSED *******");
 	// DEBUG("Done")
 }
 
@@ -278,6 +280,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 			//To change according to content typefor
 			envp[8] = ft_strdup("CONTENT_TYPE=" + content_type);
 			envp[9] = ft_strdup("CONTENT_LENGTH="+ to_string(data_buff->length()) );
+		// envp[10] = ft_strdup(content_type.substr(content_type.find(z)))
 		
 
 			int n_pip[2];
@@ -286,7 +289,8 @@ void	Request::launch_cgi(string &body, string extention_name)
 			DEBUG("DATA PASS--------------------------------");
 			DEBUG("|"<< *data_buff << "|");
 			DEBUG("DATA OK-----------------------------------");
-		
+			DEBUG("SIZE IS " << data_buff->length());
+			write(2, data_buff->c_str(), data_buff->length());
 			write(n_pip[1], data_buff->c_str(), data_buff->length());
 
 			dup2(n_pip[0], STDIN_FILENO);
