@@ -6,10 +6,10 @@
 </head>
 <body>
   <br>
-<!-- Hi <?php echo $_POST['name'];?>. -->
+Hi <?php echo $_POST['name'];?>.
 
 
-<!-- You are <?php echo (int)$_POST['age']; ?> years old. -->
+You are <?php echo (int)$_POST['age']; ?> years old.
 <br>
 
 <?php

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 22:26:41 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/09 17:46:03 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Request
 		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
 		string				target;			// The URL requested
-		map<string, string>	headers;
+		
 		// string		body;			// Only for POST
 
 		// * FOR INTERNAL USE *
@@ -67,6 +67,7 @@ class Request
 		*/
 
 	public :
+		map<string, string>	headers;
 		Request(const string &buffer, string *ptr = 0);
 		~Request();
 		string	respond(const list<Server*> &servers, string* data = 0);
