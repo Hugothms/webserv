@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/09 17:46:03 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 00:30:01 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class Request
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
-		string				*data_buff;
+		// string				*data_buff;
 		unsigned int		code;
 		bool 				passed_cgi;
 		// bool 				_data;
@@ -68,9 +68,9 @@ class Request
 
 	public :
 		map<string, string>	headers;
-		Request(const string &buffer, string *ptr = 0);
+		Request(const string &buffer);
 		~Request();
-		string	respond(const list<Server*> &servers, string* data = 0);
+		string	respond(const list<Server*> &servers);
 		bool	select_server(const list<Server*> &servers);
 		bool	select_location(void);
 		string 	g_type(void) const;
