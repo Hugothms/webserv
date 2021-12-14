@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/09 19:02:36 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 00:35:36 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ string Request::g_type(void) const
 	return type;
 }
 
-Request::Request(const string &buffer, string *ptr)
-:  code(0), passed_cgi(false), data_buff(ptr)
+Request::Request(const string &buffer)
+:  code(0), passed_cgi(false)
 {
 	size_t pos = 0;
 
@@ -286,10 +286,14 @@ void	Request::launch_cgi(string &body, string extention_name)
 			int n_pip[2];
 			pipe(n_pip);
 			// data_buff->resize(data_buff->size() - 1);
+			for (std::map<string, string>::iterator a = headers.begin(); a != headers.end(); a++)
+			{
+				DEBUG("PAIR IS: "<< a->first << "|" << a->second);
+			}
 			DEBUG("DATA PASS--------------------------------");
 			DEBUG("|"<< headers["Body"] << "|");
 			DEBUG("DATA OK-----------------------------------");
-			DEBUG("SIZE IS " << data_buff->length());
+			DEBUG("SIZE IS " << headers["Body"].length());
 			
 			// write(2, data_buff->c_str(), data_buff->length());
 			dup2(n_pip[0], STDIN_FILENO);
@@ -583,7 +587,7 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-string	Request::respond(const list<Server*> &servers, string* data)
+string	Request::respond(const list<Server*> &servers)
 {
 	// if(data != 0)
 	// {

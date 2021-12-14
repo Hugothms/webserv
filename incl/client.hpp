@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/07 17:40:46 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 00:37:24 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class Client
 
 
 		string				rec_buffer;
-		string 				data_buff;
+		// string 				data_buff;
 		string				send_buffer;
 
 	public :
