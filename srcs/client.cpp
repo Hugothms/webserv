@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 00:35:12 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 00:40:15 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,6 +239,8 @@ void Client::send(void)
 	{
 		DEBUG("Done sending the whole thing")
 		_done_send = 1;
+		delete req; 
+		req = 0;
 		// if (req != 0)
 		// 	delete req;
 		req = 0;
