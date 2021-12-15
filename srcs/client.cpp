@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 00:40:15 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 07:52:18 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ Client::~Client()
 {
 	if (_fd > 0)
 		close(_fd);
-
+	if (req !=0 )
+		delete req;
 	DEBUG("CLIENT KILLED\n");
 }
 
@@ -83,12 +84,8 @@ bool Client::is_send_rdy() const
 
 void Client::set_response(void)
 {
-	// Request req(*get_rec_buff());
-
-	// send_buffer = req.respond(servers);
 	if (req->g_type() == "GET")
 	{
-		DEBUG("GET RQ");
 		send_rdy = 1;
 		send_buffer = req->respond(servers);
 	}
@@ -96,21 +93,17 @@ void Client::set_response(void)
 	{
 		if (req->headers["Content-Type"].find("multipart/form-data") != string::npos)
 		{
-			// if ()
-			DEBUG("Need to gather data");
 			if (req->headers["Body"].empty())
 			{
-				// if (req->headers["Body"].empty() == true)
-				// {
-				// 	DEBUG("BODY IS empty");
-				// }
 				send_rdy = 0;
+				
+				send_buffer = req->continue();
+				send_rdy = 1;
 			}
 			else
 			{
-				//Prep 100 CONTINUE
 				send_rdy = 1;
-				// req->headers["Body"] 
+				DEBUG("Data gathered, responding");
 				send_buffer = req->respond(servers);
 			}
 		}
@@ -124,20 +117,6 @@ void Client::set_response(void)
 	{
 		DEBUG("OHNO");
 	}
-	// else if (req->g_type() == "POST" && data_buff.empty() && req->headers["Content-Type"].find("multipart/form-data") != string::npos)
-	// {
-	// 	DEBUG("POST BUT NO DATA");
-	// 	send_rdy = 0;
-	// }
-	// else if (data_buff.empty() == false || req->headers["Content-Type"].find("multipart/form-data") == string::npos) //Post case we need data
-	// {
-		
-	// 	DEBUG("DATA READY");
-	// 	// DEBUG(data_buff);
-	// 	send_rdy = 1;
-	// 	send_buffer = req->respond(servers);	
-	// }
-	
 
 	_done_send = 0;
 	send_offset = 0;
@@ -188,21 +167,17 @@ int Client::receive(void)
 	
 	if (len < BUFF_S)
 	{
+		_done_recv = 1;
+
 		if (req == 0)
 		{
-			req = new Request(*get_rec_buff());
-			
-			if (req->g_type() == "POST" && req->headers["Content-Type"].find("multipart/form-data") != string::npos )
+			req = new Request(rec_buffer);
+
+			if (req->g_type() == "POST" && req->headers["Content-Type"].find("multipart/form-data") != string::npos)
+			{
+				DEBUG("WE NEED THE REST OF THE DATA");
 				_done_recv = 0;
-			else
-				_done_recv = 1;
-
-
-			DEBUG("DONE IS " << _done_recv);
-		}
-		else
-		{
-			_done_recv = 1;
+			}
 		}
 	}
 	else
@@ -210,7 +185,6 @@ int Client::receive(void)
 		DEBUG("Data did not fit in the buffer, read more plz");
 		_done_recv = 0;
 	}
-	// DEBUG("DONE RECV IS " << _done_recv);
 	return (_done_recv);
 	// }
 	// else
