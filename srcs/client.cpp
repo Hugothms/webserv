@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 07:52:18 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 08:00:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,8 @@ void Client::set_response(void)
 			{
 				send_rdy = 0;
 				
-				send_buffer = req->continue();
-				send_rdy = 1;
+				// send_buffer = req->continue();
+				// send_rdy = 1;
 			}
 			else
 			{
