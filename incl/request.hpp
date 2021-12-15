@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/25 12:42:50 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/15 00:30:01 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,19 @@ class Request
 		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
 		string				target;			// The URL requested
-		map<string, string>	headers;
+		
 		// string		body;			// Only for POST
 
 		// * FOR INTERNAL USE *
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
+		// string				*data_buff;
 		unsigned int		code;
 		bool 				passed_cgi;
+		// bool 				_data;
+
+		string 				content_type;
 
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;
@@ -63,11 +67,13 @@ class Request
 		*/
 
 	public :
+		map<string, string>	headers;
 		Request(const string &buffer);
 		~Request();
 		string	respond(const list<Server*> &servers);
 		bool	select_server(const list<Server*> &servers);
 		bool	select_location(void);
+		string 	g_type(void) const;
 		string 	get_response(void);
 		void 	get_body(string &body);
 		string	get_header(const size_t length);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/17 16:13:54 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/15 08:23:06 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,20 @@ class Client
 		bool 				_done_send;
 
 
+		// bool				_receive_ready;
+		// bool				_send_ready;
+
+
+		// bool				_data_complete;
+		
+
+
+
+
+
 
 		string				rec_buffer;
+		// string 				data_buff;
 		string				send_buffer;
 
 	public :
@@ -43,7 +55,7 @@ class Client
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
 
-
+		Request 			*req;
 
 
 		list<Server*>		servers;
@@ -64,6 +76,8 @@ class Client
 
 		void set_fd(const int nfd);
 		int get_fd(void) const;
+
+		bool is_send_rdy() const;
 
 		int receive(void);
 

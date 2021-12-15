@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 15:43:40 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 13:43:00 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/07 21:19:41 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ string	get_time_stamp(void)
 
 string	get_type(const string &str, const bool& pass)
 {
-	DEBUG("STR IS " << str);
+	// DEBUG("STR IS " << str);
 	string ret;
 	if (pass)
 		ret = "text/html";

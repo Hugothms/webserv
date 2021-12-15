@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 12:44:30 by user42           ###   ########.fr       */
+/*   Updated: 2021/12/15 09:11:48 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Webserv::~Webserv()
 
 void	Webserv::push_back_server(Server *server)
 {
-	DEBUG("PUSHING");
+	// DEBUG("PUSHING");
 	_servers.push_back(server);
 }
 
@@ -77,7 +77,7 @@ void	Webserv::parse_config(const string config_file)
 			{
 				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
 			}
-			DEBUG("PUSHING SERV");
+			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
 	}
@@ -94,12 +94,12 @@ void Webserv::build(void)
 	//Setup the set for listening on different ports/IP
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		DEBUG("Run for " << (*server)->get_ip_address() << ":" << (*server)->get_port());
+		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port() << "\n");
 		fd = (*server)->setup();
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
-		DEBUG("Port added to the FD_SET !");
+		// DEBUG("Port added to the FD_SET !");
 	}
 }
 
@@ -152,6 +152,7 @@ void Webserv::clear_fd(Client *client)
 void	Webserv::listen(void)
 {
 	// build();
+	int t = 1;
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");
@@ -159,7 +160,11 @@ void	Webserv::listen(void)
 
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
-		// DEBUG("AMT CLIENT " << _clients.size());
+		if (t)
+		{
+			DEBUG("AMT CLIENT " << _clients.size());
+			++t;
+		}
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
@@ -171,21 +176,27 @@ void	Webserv::listen(void)
 					DEBUG("client seems to have left, clearing his marks");
 					clear_fd(*client);
 				}
+				// else
+				// 	DEBUG("DID RECV");
 			}
 			else if ((*client)->is_done_recv())
 			{
-				if ((*client)->send_rdy == 0)
+				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
 				{
-					DEBUG("Building response");
+					DEBUG("****** BUILDING RESPONSE *******");
 					(*client)->set_response();
 				}
-				else if ((*client)->is_done_send() == 0)
+				else if ((*client)->is_done_send() == 0) //Transmit response
 				{
-					DEBUG("Sending response");
 					(*client)->send();
 				}
 			}
+			// else
+			// {
+			// 	DEBUG("Oh no");
+			// }
 		}
+		t = 0;
 	}
 }
 

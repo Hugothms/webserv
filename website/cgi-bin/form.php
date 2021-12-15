@@ -1,22 +1,39 @@
-Hi <?php echo $_POST['name']; 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test</title>
+</head>
+<body>
+  <br>
 
-// if (!isset($_SERVER["HTTP_HOST"])) 
-// {
-//   parse_str($argv[1], $_GET);
-//   parse_str($argv[1], $_POST);
-// }
-?>.
+Hi <?php echo $_GET['name'];?>.
+
+
+You are <?php echo (int)$_GET['age']; ?> years old.
+<br>
 
 <?php
-foreach ($_POST as $key => $value) {
-        echo "<tr>";
-        echo "<td>";
+echo "POST :" ;
+  foreach ($_POST as $key => $value) 
+  {
         echo $key;
-        echo "</td>";
-        echo "<td>";
+        echo " :";
         echo $value;
-        echo "</td>";
-        echo "</tr>";
-    }
+        echo "<br>";
+  }
 ?>
-You are <?php echo (int)$_POST['age']; ?> years old.
+
+<br>
+<?php
+  echo "GET : \n";
+  foreach ($_GET as $key => $value) 
+  {
+        echo $key;
+        echo " :";
+        echo $value;
+        echo "<br>";
+  }
+?>
+</body>
+</html>
