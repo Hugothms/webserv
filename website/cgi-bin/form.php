@@ -6,35 +6,34 @@
 </head>
 <body>
   <br>
-Hi <?php echo $_POST['name'];?>.
+
+Hi <?php echo $_GET['name'];?>.
 
 
-You are <?php echo (int)$_POST['age']; ?> years old.
+You are <?php echo (int)$_GET['age']; ?> years old.
 <br>
 
 <?php
-echo "POST :";
-  foreach ($_POST as $key => $value) {
-        echo "<tr>";
-        echo "<td>";
+echo "POST :" ;
+  foreach ($_POST as $key => $value) 
+  {
         echo $key;
-        echo "</td>";
-        echo "<td>";
+        echo " :";
         echo $value;
-        echo "</td>";
-        echo "</tr>";
-    }
-  echo "GET :";
-  foreach ($_GET as $key => $value) {
-        echo "<tr>";
-        echo "<td>";
+        echo "<br>";
+  }
+?>
+
+<br>
+<?php
+  echo "GET : \n";
+  foreach ($_GET as $key => $value) 
+  {
         echo $key;
-        echo "</td>";
-        echo "<td>";
+        echo " :";
         echo $value;
-        echo "</td>";
-        echo "</tr>";
-    }
+        echo "<br>";
+  }
 ?>
 </body>
 </html>
