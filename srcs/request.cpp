@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 12:09:18 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 12:20:31 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,17 +446,14 @@ void 	Request::get_body(string &body)
 		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
 		{
 			size_t pos;
-			if ((pos = filepath.find(cgi->first) )!= string::npos)
+			if ((pos = filepath.find(cgi->first) ) != string::npos)
 			{
-				// DEBUG("CGI extention found !");
 				passed_cgi = true;
 				file.close();
-				// DEBUG("BODY B4 CGI " << body)
 				launch_cgi(body, filepath.substr(pos));
 				return ;
 			}
 		}
-		// DEBUG("CGI NOT FOUND");
 	}
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
