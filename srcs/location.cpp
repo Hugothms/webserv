@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/23 08:18:07 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/15 11:58:23 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ Location::Location()
 	// map_pointer_function.insert(make_pair("upload_directory", &(Location::set_upload_directory)));
 }
 
-Location::~Location() {}
+Location::~Location() 
+{
+	return ;
+}
 
 bool	Location::is_valid(string &error) const
 {

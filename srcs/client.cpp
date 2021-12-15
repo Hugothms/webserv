@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 10:35:09 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 11:56:52 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ void Client:: send(void)
 	{
 		DEBUG("****** RESPONSE SENT *******");
 		
-		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
+		if (req != 0 && send_buffer != "HTTP/1.1 100 continue")
 		{
 			delete req;
 			req = 0;
