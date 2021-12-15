@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 12:20:31 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 14:16:52 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,10 +321,16 @@ void	Request::launch_cgi(string &body, string extention_name)
 		char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
 
 		for (size_t j = 0; j < av.size(); j++)
+		{
 			_av[j] = ft_strdup(av[j]);
+			DEBUG("a"<<j << ":" << av[j]);
+		}
 		
 		for (size_t j = 0; j < ev.size(); j++)
+		{
 			_ev[j] = ft_strdup(ev[j]);
+			DEBUG("e"<<j << ":" << ev[j]);
+		}
 		
 		_av[av.size()] = 0;
 		_ev[ev.size()] = 0;
