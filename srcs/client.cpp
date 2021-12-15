@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 08:53:59 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 09:13:30 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void Client::set_response(void)
 	if (req->headers["Content-Type"].find("multipart/form-data") != string::npos && req->headers["Body"].empty())
 	{
 		send_buffer = "HTTP/1.1 100 Continue";
-		return ;
+		// return ;
 	}
 	else
 	{
@@ -221,7 +221,11 @@ int Client::receive(void)
 	// {
 	
 	if (req != 0) //If we are in post mode
+	{
 		req->headers["Body"] += string(buff, len);
+		DEBUG("PUT THAT IN THE BODY");
+		
+	}
 	else
 		rec_buffer += string(buff, len);
 	
@@ -285,8 +289,10 @@ void Client:: send(void)
 		// DEBUG(send_buffer);
 		_done_send = 1;
 		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
+		{
 			delete req;
-		req = 0;
+			req = 0;
+		}
 		send_rdy = 0;
 		_done_recv = 0;
 		send_buffer.clear();

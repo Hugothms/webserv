@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 08:54:58 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 09:14:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,13 +293,18 @@ void	Request::launch_cgi(string &body, string extention_name)
 			DEBUG("DATA PASS--------------------------------");
 			DEBUG("|"<< headers["Body"] << "|");
 			DEBUG("DATA OK-----------------------------------");
-			DEBUG("SIZE IS " << headers["Body"].length());
+			// DEBUG("SIZE IS " << headers["Body"].length());
 			
 			// write(2, data_buff->c_str(), data_buff->length());
 			dup2(n_pip[0], STDIN_FILENO);
 			write(n_pip[1], headers["Body"].c_str(), headers["Body"].size());
 			
-
+			char test;
+		
+			// while(read(n_pip[0], &test, 1) > 0)
+			// {
+			// 	DEBUG("D:" <<  test);
+			// }
 			// write(n_pip[1], data_buff->c_str(), data_buff->length());
 
 			
