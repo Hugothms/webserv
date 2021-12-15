@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 00:37:24 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 08:23:06 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,17 @@ class Client
 		int					_fd;
 		bool 				_done_recv;
 		bool 				_done_send;
+
+
+		// bool				_receive_ready;
+		// bool				_send_ready;
+
+
+		// bool				_data_complete;
+		
+
+
+
 
 
 

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 00:35:36 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 08:29:15 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ Request::Request(const string &buffer)
 
 	DEBUG(endl << endl << "******* NEW REQUEST: ********\n");
 	DEBUG(buffer);
-	DEBUG("******* END: ********\n\n");
+	DEBUG("******* END: ********\n");
 	
 
 	size_t t_pos = buffer.find("Content-Type: ");

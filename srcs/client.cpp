@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 08:00:43 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 08:44:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,9 @@ bool Client::is_send_rdy() const
 
 void Client::set_response(void)
 {
+	send_rdy = 1;
 	if (req->g_type() == "GET")
 	{
-		send_rdy = 1;
 		send_buffer = req->respond(servers);
 	}
 	else if (req->g_type() == "POST")
@@ -95,29 +95,26 @@ void Client::set_response(void)
 		{
 			if (req->headers["Body"].empty())
 			{
-				send_rdy = 0;
-				
-				// send_buffer = req->continue();
-				// send_rdy = 1;
+				DEBUG("Sending 100 Continue");
+				send_buffer = "HTTP/1.1 100 Continue";
 			}
 			else
 			{
-				send_rdy = 1;
-				DEBUG("Data gathered, responding");
+				DEBUG("Got all data from post");
 				send_buffer = req->respond(servers);
 			}
 		}
 		else
-		{
-			send_rdy = 1;
 			send_buffer = req->respond(servers);
-		}
 	}
 	else
 	{
 		DEBUG("OHNO");
 	}
-
+	for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
+	{
+		DEBUG(a->first << ":|" << a->second << "|");
+	}
 	_done_send = 0;
 	send_offset = 0;
 	rec_buffer.clear();
@@ -127,6 +124,7 @@ void Client::clear_recv(void)
 {
 	rec_buffer.clear();
 }
+
 
 bool Client::is_done_send(void) const
 {
@@ -176,7 +174,8 @@ int Client::receive(void)
 			if (req->g_type() == "POST" && req->headers["Content-Type"].find("multipart/form-data") != string::npos)
 			{
 				DEBUG("WE NEED THE REST OF THE DATA");
-				_done_recv = 0;
+				_done_recv = 1;
+				// _done_recv = 0;
 			}
 		}
 	}
@@ -195,7 +194,7 @@ int Client::receive(void)
 	// }
 }
 
-void Client::send(void)
+void Client:: send(void)
 {
 	int actual = BUFF_S;
 
@@ -204,19 +203,27 @@ void Client::send(void)
 		actual = send_buffer.size() - send_offset;
 
 	// DEBUG("actual = " << actual);
-	// DEBUG("Sending response");
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
 	// DEBUG("Sent from byte :" << send_offset << " to :" << send_offset + actual);
 	send_offset += actual;
 
+	// if (send_buffer == "HTTP/1.1 100 Continue")
+	// {
+	// 	DEBUG("We sent 100 Continue");
+	// 	send_buffer.clear();
+	// 	_done_send = 1;
+	// 	send_rdy = 0;
+	// 	_done_recv = 0;
+	// }
 	if (send_offset == send_buffer.size())
 	{
-		DEBUG("Done sending the whole thing")
+		DEBUG("****** RESPONSE SENT *******");
+		// DEBUG(req->headers["Content-Type"]);
+		// if (req->headers["Content-Type"].find("image") == string::npos)
+		DEBUG(send_buffer);
 		_done_send = 1;
-		delete req; 
-		req = 0;
-		// if (req != 0)
-		// 	delete req;
+		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
+			delete req;
 		req = 0;
 		send_rdy = 0;
 		_done_recv = 0;
