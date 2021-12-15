@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 09:14:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 10:15:29 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,106 +245,94 @@ void	Request::launch_cgi(string &body, string extention_name)
 		// envp[4] = ft_strdup(("PATH=" + server_root + "/"));
 		// envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath));
 		// envp[6] = 0;
+		std::vector<string> ev;
+		std::vector<string> av;
+
+		// int avl = 4;
+		// int envl = 11;
+
+		// char **argv = (char**) malloc(sizeof(char*) * avl--);
+		// char **envp = (char**) malloc(sizeof(char*) * envl--);
+
+		ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
+		ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
+		ev.push_back("REDIRECT_STATUS=200");
 
 
-		int avl = 4;
-		int envl = 11;
-
-		char **argv = (char**) malloc(sizeof(char*) * avl--);
-		char **envp = (char**) malloc(sizeof(char*) * envl--);
-
-		envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
-		envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
-		envp[2] = ft_strdup("REDIRECT_STATUS=200");
-		//Error right here
-		
-		envp[3] = ft_strdup("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
-		envp[4] = ft_strdup("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
-		
-
-		envp[5] = ft_strdup("REQUEST_METHOD=" + type);
-		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
-		envp[6] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
-		envp[7] = ft_strdup("SCRIPT_NAME=" + newfilepath);
+		// envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
+		// envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
+		// envp[2] = ft_strdup("REDIRECT_STATUS=200");
+		// envp[3] = ft_strdup("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
+		// envp[4] = ft_strdup("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
+		// envp[5] = ft_strdup("REQUEST_METHOD=" + type);
+		// envp[6] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
+		// envp[7] = ft_strdup("SCRIPT_NAME=" + newfilepath);
 		// envp[7] = 0;
 
-		envp[10] = 0;
+		//Error right here
+		
+		ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
+		ev.push_back("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
+		
+
+		ev.push_back("REQUEST_METHOD=" + type);
+		
+
+		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
+
+		ev.push_back("SCRIPT_FILENAME=" + server_root + newfilepath);
+		ev.push_back("SCRIPT_NAME=" + newfilepath);
+		
+
+		// envp[10] = 0;
 		if (type == "GET")
 		{
-			envp[8] = ft_strdup("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-			envp[9] = ft_strdup("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
+			ev.push_back("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
+			ev.push_back("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
 			extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
 		}
 		else if (type == "POST")
 		{
 			//To change according to content typefor
-			envp[8] = ft_strdup("CONTENT_TYPE=" + content_type);
-			envp[9] = ft_strdup("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
-		// envp[10] = ft_strdup(content_type.substr(content_type.find(z)))
+			
+			ev.push_back("CONTENT_TYPE=" + content_type);
+			ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
 		
 
 			int n_pip[2];
 			pipe(n_pip);
-			// data_buff->resize(data_buff->size() - 1);
-			for (std::map<string, string>::iterator a = headers.begin(); a != headers.end(); a++)
-			{
-				DEBUG("PAIR IS: "<< a->first << "|" << a->second);
-			}
+			// for (std::map<string, string>::iterator a = headers.begin(); a != headers.end(); a++)
+			// 	DEBUG("PAIR IS: "<< a->first << "|" << a->second);
+			
 			DEBUG("DATA PASS--------------------------------");
 			DEBUG("|"<< headers["Body"] << "|");
 			DEBUG("DATA OK-----------------------------------");
-			// DEBUG("SIZE IS " << headers["Body"].length());
-			
-			// write(2, data_buff->c_str(), data_buff->length());
+
 			dup2(n_pip[0], STDIN_FILENO);
 			write(n_pip[1], headers["Body"].c_str(), headers["Body"].size());
-			
-			char test;
-		
-			// while(read(n_pip[0], &test, 1) > 0)
-			// {
-			// 	DEBUG("D:" <<  test);
-			// }
-			// write(n_pip[1], data_buff->c_str(), data_buff->length());
-
-			
-
-			// close(n_pip[1]);
-
-
-
-
 		}
-		// else
-		// {
-		// 	DEBUG(type);
-		// }
-		
-		
-
+	
 		string bin_path = server->get_cgis()[extention_name];
-		// string bin_path = "./website/cgi-bin/php-cgi";
-		// DEBUG("EXAME PATH " << extention_name);
-		argv[0] = ft_strdup(bin_path);
-		// argv[1] = ft_strdup(server_root + "/" + filepath);
-		argv[1] = ft_strdup(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
-		argv[2] = 0;//ft_strdup(headers["Body"]);
-		argv[3] = 0;
-		// argv[4] = 0;
+	
+		av.push_back(bin_path);
+		av.push_back(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
+
+		char **_av = static_cast<char**>(malloc(sizeof(char *) * (av.size() + 1)));
+		char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
+
+		for (size_t j = 0; j < av.size(); j++)
+			_av[j] = ft_strdup(av[j]);
 		
-
-
-		// for (int i =0; i < avl; i++)
-		// 	DEBUG(i << "A!:" << argv[i]);
-		// for (int i =0; i < envl; i++)
-		// 	DEBUG(i << "E!:" << envp[i]);
-
-
+		for (size_t j = 0; j < ev.size(); j++)
+			_ev[j] = ft_strdup(ev[j]);
+		
+		_av[av.size()] = 0;
+		_ev[ev.size()] = 0;
 
 		dup2(fdpipe[1], STDOUT_FILENO);
 
 		// TODO: must execve php-cgi
-		if (execve(bin_path.c_str(), argv, envp) < 0)
+		if (execve(bin_path.c_str(), _av, _ev) < 0)
 			code = 404;
 		//Need to free
 		DEBUG("EXECVE DONE");
@@ -352,19 +340,6 @@ void	Request::launch_cgi(string &body, string extention_name)
 	else
 	{
 		wait(0);
-		// waitpid(0, NULL, 0);
-		// size_t i = 0;
-		// while (argv[i])
-		// {
-		// 	DEBUG(i);
-		// 	DEBUG(argv[i]);
-		// 	free(argv[i++]);
-		// }
-		// i = 0;
-		// while (envp[i])
-		// 	free(envp[i++]);
-		// free(argv);
-		// free(envp);
 		close(fdpipe[1]); // parent doesn't write
 		char reading_buf;
 		while(read(fdpipe[0], &reading_buf, 1) > 0)
