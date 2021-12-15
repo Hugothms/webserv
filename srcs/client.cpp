@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 11:56:52 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 12:10:52 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,10 @@ Client::~Client()
 	if (_fd > 0)
 		close(_fd);
 	if (req !=0 )
+	{
 		delete req;
+		req = 0;
+	}
 	DEBUG("CLIENT KILLED\n");
 }
 
@@ -90,12 +93,12 @@ void Client::set_response(void)
 	send_offset = 0;
 	rec_buffer.clear();
 	
-	if (req->headers["Content-Type"].find("multipart/form-data") != string::npos && req->headers["Body"].empty())
+	if (req != 0 && req->headers["Content-Type"].find("multipart/form-data") != string::npos && req->headers["Body"].empty())
 	{
 		send_buffer = "HTTP/1.1 100 Continue";
 		// return ;
 	}
-	else if (req->g_type() == "GET" || req->g_type() == "POST")
+	else if (req != 0 && (req->g_type() == "GET" || req->g_type() == "POST"))
 	{
 		send_buffer = req->respond(servers);
 	}
@@ -104,10 +107,11 @@ void Client::set_response(void)
 		DEBUG("OH NO");
 	}
 	DEBUG("********************* HEADERS ***************************");
-	for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
-	{
-		DEBUG(a->first << ":|" << a->second << "|");
-	}
+	if (req)
+		for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
+		{
+			DEBUG(a->first << ":|" << a->second << "|");
+		}
 	DEBUG("********************* RESPONSE ***************************");
 	DEBUG(send_buffer);
 	DEBUG("***********************END**********************************");
@@ -228,9 +232,11 @@ void Client:: send(void)
 	{
 		DEBUG("****** RESPONSE SENT *******");
 		
-		if (req != 0 && send_buffer != "HTTP/1.1 100 continue")
+		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
 		{
+			// DEBUG("B4 CRASH");
 			delete req;
+			// DEBUG("AF");
 			req = 0;
 		}
 		_done_send = 1;
