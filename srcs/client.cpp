@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 08:44:20 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 08:53:59 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,40 +85,102 @@ bool Client::is_send_rdy() const
 void Client::set_response(void)
 {
 	send_rdy = 1;
-	if (req->g_type() == "GET")
+
+	_done_send = 0;
+	send_offset = 0;
+	rec_buffer.clear();
+	
+	if (req->headers["Content-Type"].find("multipart/form-data") != string::npos && req->headers["Body"].empty())
 	{
-		send_buffer = req->respond(servers);
-	}
-	else if (req->g_type() == "POST")
-	{
-		if (req->headers["Content-Type"].find("multipart/form-data") != string::npos)
-		{
-			if (req->headers["Body"].empty())
-			{
-				DEBUG("Sending 100 Continue");
-				send_buffer = "HTTP/1.1 100 Continue";
-			}
-			else
-			{
-				DEBUG("Got all data from post");
-				send_buffer = req->respond(servers);
-			}
-		}
-		else
-			send_buffer = req->respond(servers);
+		send_buffer = "HTTP/1.1 100 Continue";
+		return ;
 	}
 	else
 	{
-		DEBUG("OHNO");
+		send_buffer = req->respond(servers);
 	}
+	DEBUG("********************* HEADERS ***************************");
 	for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
 	{
 		DEBUG(a->first << ":|" << a->second << "|");
 	}
-	_done_send = 0;
-	send_offset = 0;
-	rec_buffer.clear();
+	DEBUG("********************* RESPONSE ***************************");
+	DEBUG(send_buffer);
+	DEBUG("***********************END**********************************");
+	// send_buffer = 
+
+	// if (req->g_type() == "GET")
+	// {
+	// 	send_buffer = req->respond(servers);
+	// }
+	// else if (req->g_type() == "POST")
+	// {
+	// 	if (req->headers["Content-Type"].find("multipart/form-data") != string::npos)
+	// 	{
+	// 		if (req->headers["Body"].empty())
+	// 		{
+	// 			DEBUG("Sending 100 Continue");
+	// 			send_buffer = "HTTP/1.1 100 Continue";
+	// 		}
+	// 		else
+	// 		{
+	// 			DEBUG("Got all data from post");
+	// 			send_buffer = req->respond(servers);
+	// 		}
+	// 	}
+	// 	else
+	// 		send_buffer = req->respond(servers);
+	// }
+	// else
+	// {
+	// 	DEBUG("OHNO");
+	// }
+	// for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
+	// {
+	// 	DEBUG(a->first << ":|" << a->second << "|");
+	// }
+	// _done_send = 0;
+	// send_offset = 0;
+	
 }
+
+// void Client::set_response(void)
+// {
+// 	send_rdy = 1;
+// 	if (req->g_type() == "GET")
+// 	{
+// 		send_buffer = req->respond(servers);
+// 	}
+// 	else if (req->g_type() == "POST")
+// 	{
+// 		if (req->headers["Content-Type"].find("multipart/form-data") != string::npos)
+// 		{
+// 			if (req->headers["Body"].empty())
+// 			{
+// 				DEBUG("Sending 100 Continue");
+// 				send_buffer = "HTTP/1.1 100 Continue";
+// 			}
+// 			else
+// 			{
+// 				DEBUG("Got all data from post");
+// 				send_buffer = req->respond(servers);
+// 			}
+// 		}
+// 		else
+// 			send_buffer = req->respond(servers);
+// 	}
+// 	else
+// 	{
+// 		DEBUG("OHNO");
+// 	}
+// 	for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
+// 	{
+// 		DEBUG(a->first << ":|" << a->second << "|");
+// 	}
+// 	_done_send = 0;
+// 	send_offset = 0;
+// 	rec_buffer.clear();
+// }
 
 void Client::clear_recv(void)
 {
@@ -220,7 +282,7 @@ void Client:: send(void)
 		DEBUG("****** RESPONSE SENT *******");
 		// DEBUG(req->headers["Content-Type"]);
 		// if (req->headers["Content-Type"].find("image") == string::npos)
-		DEBUG(send_buffer);
+		// DEBUG(send_buffer);
 		_done_send = 1;
 		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
 			delete req;

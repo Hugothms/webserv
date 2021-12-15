@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 08:29:15 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 08:54:58 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -603,6 +603,7 @@ string	Request::respond(const list<Server*> &servers)
 	}
 	if (location->get_HTTP_redirection_type() > 0)
 	{
+		DEBUG("REDIR TYPE");
 		code = location->get_HTTP_redirection_type();
 		return (get_header(0));
 	}
