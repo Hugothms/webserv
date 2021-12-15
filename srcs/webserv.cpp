@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/09 17:59:28 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/15 08:35:58 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void Webserv::build(void)
 	//Setup the set for listening on different ports/IP
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		DEBUG("Run for " << (*server)->get_ip_address() << ":" << (*server)->get_port());
+		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port() << "\n");
 		fd = (*server)->setup();
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
@@ -171,19 +171,18 @@ void	Webserv::listen(void)
 					DEBUG("client seems to have left, clearing his marks");
 					clear_fd(*client);
 				}
-				else
-					DEBUG("DID RECV");
+				// else
+				// 	DEBUG("DID RECV");
 			}
 			else if ((*client)->is_done_recv())
 			{
 				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
 				{
-					DEBUG("Building response");
+					DEBUG("****** BUILDING RESPONSE *******");
 					(*client)->set_response();
 				}
 				else if ((*client)->is_done_send() == 0) //Transmit response
 				{
-					DEBUG("Sending response");
 					(*client)->send();
 				}
 			}

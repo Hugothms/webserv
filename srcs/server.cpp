@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/22 10:52:08 by user42           ###   ########.fr       */
+/*   Updated: 2021/12/15 08:27:28 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,10 @@ int Server::setup(void)
 	}
 
 	hint.sin_family = AF_INET;
-	DEBUG("PORT IS " << port);
+	// DEBUG("PORT IS " << port);
 	hint.sin_port = htons(port);
 
-	DEBUG("TRYING TO BIND TO " << ip_address);
+	// DEBUG("TRYING TO BIND TO " << ip_address);
 
 	//TODEL
 	if (ip_address.empty())
