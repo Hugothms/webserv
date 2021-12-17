@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/17 18:31:58 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 18:53:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -302,72 +302,30 @@ void	Request::launch_cgi(string &body, string extention_name)
 		std::vector<string> av;
 
 
-		// ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
-		// ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
-		// ev.push_back("REDIRECT_STATUS=200");
-
 		
-		// ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
-		// ev.push_back("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
-		
-
-		// ev.push_back("REQUEST_METHOD=" + type);
 		
 
 		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
-		// ev.push_back("SCRIPT_FILENAME=" + server_root + newfilepath);
-		// ev.push_back("SCRIPT_NAME=" + newfilepath);
 		
-
-		// envp[10] = 0;
-		// if (type == "GET")
-		// {
-		// 	// ev.push_back("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-		// 	// ev.push_back("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
-		// 	extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
-		// }
 		if (type == "POST")
 		{
-			//To change according to content typefor
 			
-			// ev.push_back("CONTENT_TYPE=" + content_type);
-			// ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
-		
 
-
-			// for (std::map<string, string>::iterator a = headers.begin(); a != headers.end(); a++)
-			// 	DEBUG("PAIR IS: "<< a->first << "|" << a->second);
-			
 			DEBUG("DATA PASS--------------------------------");
 			DEBUG("|"<< headers["Body"] << "|");
 			DEBUG("DATA OK-----------------------------------");
 
 			dup2(n_pip[0], STDIN_FILENO);
-			// write(n_pip[1], headers["Body"].c_str(), headers["Body"].size());
 		}
 	
 	
 	
 		
-		char **_ev = build_cgi_env(extention_name);//static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
-		char **_av = build_cgi_av(extention_name);// static_cast<char**>(malloc(sizeof(char *) * (av.size() + 1)));
+		char **_ev = build_cgi_env(extention_name);
+		char **_av = build_cgi_av(extention_name);
 		
 
-		// for (size_t j = 0; j < av.size(); j++)
-		// {
-		// 	_av[j] = ft_strdup(av[j]);
-		// 	DEBUG("a"<<j << ":" << av[j]);
-		// }
-		
-		// for (size_t j = 0; j < ev.size(); j++)
-		// {
-		// 	_ev[j] = ft_strdup(ev[j]);
-		// 	DEBUG("e"<<j << ":" << ev[j]);
-		// }
-		
-		// _av[av.size()] = 0;
-		// _ev[ev.size()] = 0;
 
 		dup2(fdpipe[1], STDOUT_FILENO);
 
