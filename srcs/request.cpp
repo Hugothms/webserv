@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/17 19:50:24 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 20:03:44 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,20 +293,26 @@ void	Request::launch_cgi(string &body, string extention_name)
 	}
 
 	code = 200;
-	
+		
+	if (type == "POST")
+	{
+		headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
+	}
+
 	if (pid == 0)
 	{		
 		if (type == "POST")
 		{
-			DEBUG("DATA PASS--------------------------------");
-			DEBUG("|"<< headers["Body"] << "|");
-			DEBUG("DATA OK-----------------------------------");
+			// DEBUG("DATA PASS--------------------------------");
+			// DEBUG("|"<< headers["Body"] << "|");
+			// DEBUG("DATA OK-----------------------------------");
 
 
-			string dbg = headers["Body"].substr(0, headers["Body"].size() - 1);
-			DEBUG("DATA PASS--------------------------------");
-			DEBUG("|"<< dbg << "|OK");
-			DEBUG("DATA OK-----------------------------------");
+			// headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
+			// DEBUG("DATA PASS--------------------------------");
+			// DEBUG("|"<< dbg);
+
+			// DEBUG("DATA OK-----------------------------------");
 			
 				// headers["Body"].
 			
@@ -334,8 +340,8 @@ void	Request::launch_cgi(string &body, string extention_name)
 		if (type == "POST")
 		{
 			DEBUG("POST TREATMENT");
-
-			write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
+			// write(2, headers["Body"].c_str(), headers["Body"].size());
+			write(in_pipe[1], headers["Body"].c_str(), headers["Body"].length());
 			close(in_pipe[1]);
 			DEBUG("WRITE DONE");
 		}
