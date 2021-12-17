@@ -24,3 +24,39 @@ Content-Disposition: form-data; name="age"
 
 12
 --------------------------51b54edcb631b748--
+
+
+
+e:0:GATEWAY_INTERFACE=CGI/1.1
+e:1:SERVER_PROTOCOL=HTTP/1.1
+e:2:REDIRECT_STATUS=200
+e:3:HTTP_HOST=cgi-bin/form.php
+e:4:REQUEST_METHOD=POST
+e:5:SCRIPT_FILENAME=/Users/edal--ce/Desktop/webserv/website/cgi-bin/form.php
+e:6:SCRIPT_NAME=/website/cgi-bin/form.php
+e:7:CONTENT_TYPE=multipart/form-data; boundary=------------------------51b54edcb631b748
+e:8:CONTENT_LENGTH=227
+DOING STUFF
+X-Powered-By: PHP/7.4.26
+Content-type: text/html; charset=UTF-8
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test</title>
+</head>
+<body>
+  <br>
+
+Hi test.
+
+
+You are 12 years old.
+<br>
+
+POST :name :test<br>age :12<br>
+<br>
+GET :
+</body>
+</html>

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/17 19:24:56 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 19:50:24 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ char **Request::build_cgi_env(string &extention_name)
 	ev.push_back("REDIRECT_STATUS=200");
 
 		
-	ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
+	// ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
 	ev.push_back("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
 		
 
@@ -257,7 +257,7 @@ char **Request::build_cgi_env(string &extention_name)
 	else if (type == "POST")
 	{
 		ev.push_back("CONTENT_TYPE=" + content_type);
-		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size() - 10));//(data_buff->length()) );
+		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
@@ -265,7 +265,7 @@ char **Request::build_cgi_env(string &extention_name)
 	for (size_t j = 0; j < ev.size(); j++)
 	{
 		_ev[j] = ft_strdup(ev[j]);
-		// DEBUG("e"<<j << ":" << ev[j]);
+		DEBUG("e"<<j << ":" << ev[j]);
 	}
 	_ev[ev.size()] = 0;
 	return _ev;
@@ -298,9 +298,18 @@ void	Request::launch_cgi(string &body, string extention_name)
 	{		
 		if (type == "POST")
 		{
-			// DEBUG("DATA PASS--------------------------------");
-			// DEBUG("|"<< headers["Body"] << "|");
-			// DEBUG("DATA OK-----------------------------------");
+			DEBUG("DATA PASS--------------------------------");
+			DEBUG("|"<< headers["Body"] << "|");
+			DEBUG("DATA OK-----------------------------------");
+
+
+			string dbg = headers["Body"].substr(0, headers["Body"].size() - 1);
+			DEBUG("DATA PASS--------------------------------");
+			DEBUG("|"<< dbg << "|OK");
+			DEBUG("DATA OK-----------------------------------");
+			
+				// headers["Body"].
+			
 			dup2(in_pipe[0], STDIN_FILENO);
 		}
 	
