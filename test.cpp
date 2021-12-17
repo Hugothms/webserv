@@ -71,10 +71,15 @@ int main(int argc, char const *argv[])
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
 
 	for (size_t j = 0; j < av.size(); j++)
+	{
 		_av[j] = ft_strdup(av[j]);
+	}
 	_av[av.size()] = 0;
 	for (size_t j = 0; j < ev.size(); j++)
+	{
+		std::cout << "e"<<j<<":"<<ev[j]<< std::endl;
 		_ev[j] = ft_strdup(ev[j]);
+	}
 	_ev[ev.size()] = 0;
 
 
@@ -90,6 +95,9 @@ int main(int argc, char const *argv[])
 	}
 	else
 	{
+		write(1,"WR |", 4);
+		write(1, data.c_str(), data.size());
+		write(1,"|\n", 2);
 		write(fdin[1], data.c_str(), data.size());
 		close(fdin[1]);
 		wait(0);

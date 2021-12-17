@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/17 19:15:40 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 19:46:44 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,10 +108,20 @@ void Client::set_response(void)
 	}
 	DEBUG("********************* HEADERS ***************************");
 	if (req)
+	{
 		for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
 		{
 			DEBUG(a->first << ":|" << a->second << "|");
 		}
+		// if (req->headers["Body"].find("Content-Disposition") != string::npos)
+		// {
+		// 	DEBUG("FROM |"<< req->headers["Body"]<< "|");
+		// 	// req->headers["Body"] = 	req->headers["Body"].substr(0, req->headers["Body"].size() - 1);
+		// 	DEBUG("TO |" << req->headers["Body"] << "|\n\n\n");
+			
+			
+		// }
+	}
 	DEBUG("********************* RESPONSE ***************************");
 	DEBUG(send_buffer);
 	DEBUG("***********************END**********************************");
