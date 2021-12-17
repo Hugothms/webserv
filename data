@@ -1,0 +1,26 @@
+a0:./website/cgi-bin/php-cgi
+a1:/Users/edal--ce/Desktop/webserv/website/cgi-bin/form.php
+
+
+e0:GATEWAY_INTERFACE=CGI/1.1
+e1:SERVER_PROTOCOL=HTTP/1.1
+e2:REDIRECT_STATUS=200
+e3:HTTP_HOST=
+e4:HTTP_HOST=cgi-bin/form.php
+e5:REQUEST_METHOD=POST
+e6:SCRIPT_FILENAME=/Users/edal--ce/Desktop/webserv/website/cgi-bin/form.php
+e7:SCRIPT_NAME=/website/cgi-bin/form.php
+e8:CONTENT_TYPE=multipart/form-data; boundary=------------------------51b54edcb631b748
+
+
+
+
+--------------------------51b54edcb631b748
+Content-Disposition: form-data; name="name"
+
+test
+--------------------------51b54edcb631b748
+Content-Disposition: form-data; name="age"
+
+12
+--------------------------51b54edcb631b748--
