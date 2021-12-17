@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/17 18:55:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 19:24:56 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,7 +257,7 @@ char **Request::build_cgi_env(string &extention_name)
 	else if (type == "POST")
 	{
 		ev.push_back("CONTENT_TYPE=" + content_type);
-		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
+		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size() - 10));//(data_buff->length()) );
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
@@ -276,15 +276,16 @@ void	Request::launch_cgi(string &body, string extention_name)
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
 	// DEBUG("BODY IS " << body);
-	int fdpipe[2];
-	if (pipe(fdpipe) == -1)
+	int out_pipe[2];
+	int in_pipe[2];
+	if (pipe(out_pipe) == -1 || pipe(in_pipe) == -1)
 	{
 		cerr << "cgi: pipe failed" << endl;
 		exit(EXIT_FAILURE);
 	}
-	int n_pip[2];
-	pipe(n_pip);
+
 	pid_t pid = fork();
+	
 	if (pid < 0)
 	{
 		cerr << "cgi: fork failed" << endl;
@@ -292,17 +293,15 @@ void	Request::launch_cgi(string &body, string extention_name)
 	}
 
 	code = 200;
-	//https://stackoverflow.com/questions/33052169/call-php-cgi-from-c-with-request-method-post
 	
 	if (pid == 0)
 	{		
 		if (type == "POST")
 		{
-		
-			DEBUG("DATA PASS--------------------------------");
-			DEBUG("|"<< headers["Body"] << "|");
-			DEBUG("DATA OK-----------------------------------");
-			dup2(n_pip[0], STDIN_FILENO);
+			// DEBUG("DATA PASS--------------------------------");
+			// DEBUG("|"<< headers["Body"] << "|");
+			// DEBUG("DATA OK-----------------------------------");
+			dup2(in_pipe[0], STDIN_FILENO);
 		}
 	
 		
@@ -311,7 +310,8 @@ void	Request::launch_cgi(string &body, string extention_name)
 		
 
 
-		dup2(fdpipe[1], STDOUT_FILENO);
+		dup2(out_pipe[1], STDOUT_FILENO);
+		// dup2(in_pipe[0], STDIN_FILENO);
 
 		// string bin_path = server->get_cgis()[extention_name];
 		// TODO: must execve php-cgi
@@ -324,16 +324,19 @@ void	Request::launch_cgi(string &body, string extention_name)
 	{
 		if (type == "POST")
 		{
-			write(n_pip[1], headers["Body"].c_str(), headers["Body"].size());
-			close(n_pip[1]);
+			DEBUG("POST TREATMENT");
+
+			write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
+			close(in_pipe[1]);
+			DEBUG("WRITE DONE");
 		}
 		wait(0);
-		close(fdpipe[1]); // parent doesn't write
+		close(out_pipe[1]); // parent doesn't write
 		char reading_buf;
-		while(read(fdpipe[0], &reading_buf, 1) > 0)
+		while(read(out_pipe[0], &reading_buf, 1) > 0)
 		   body += reading_buf;
 		DEBUG("qwerty:" << body);
-		close(fdpipe[0]);
+		close(out_pipe[0]);
 	}
 }
 
