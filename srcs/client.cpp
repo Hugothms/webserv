@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 12:15:28 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 19:15:40 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,7 @@ void Client:: send(void)
 		// ::send(_fd, "\0", 1, 0);		
 		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
 		{
-			::send(_fd, "\0", 1, 0);
+			// ::send(_fd, "\0", 1, 0);
 			// DEBUG("B4 CRASH");
 			delete req;
 			// DEBUG("AF");
