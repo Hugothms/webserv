@@ -2,6 +2,23 @@
 #include <string>
 #include <unistd.h>
 #include <iostream>
+
+
+
+std::string data = "--------------------------51b54edcb631b748\n\
+Content-Disposition: form-data; name=\"name\"\n\
+\n\
+test\n\
+--------------------------51b54edcb631b748\n\
+Content-Disposition: form-data; name=\"age\"\n\
+\n\
+12\n\
+--------------------------51b54edcb631b748--";
+
+
+
+
+
 char *ft_strdup(std::string s)
 {
 	char *ret = static_cast<char*>(malloc(sizeof(char) * (s.size() + 1)));
@@ -27,8 +44,8 @@ int main(int argc, char const *argv[])
 	pipe(fdout);
 	pipe(fdin);
 
-	std::string body = "--------------------------51b54edcb631b748
-	Content-Disposition: form-data; name=\"name\"";
+// 	std::string body = "--------------------------51b54edcb631b748
+// Content-Disposition: form-data; name="name""
 
 	ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
@@ -43,7 +60,7 @@ int main(int argc, char const *argv[])
 	ev.push_back("CONTENT_TYPE=multipart/form-data; boundary=------------------------51b54edcb631b748");
 
 	// ev.push_back("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-	ev.push_back("CONTENT_LENGTH=237");//+ to_string(headers["Body"].length()) );
+	ev.push_back("CONTENT_LENGTH=" + std::to_string(data.size()));//+ to_string(headers["Body"].length()) );
 
 
 	av.push_back("./website/cgi-bin/php-cgi");
@@ -60,10 +77,12 @@ int main(int argc, char const *argv[])
 		_ev[j] = ft_strdup(ev[j]);
 	_ev[ev.size()] = 0;
 
+
+
 	pid_t pid = fork();
 	if (pid == 0)
 	{
-
+		dup2(fdin[0], STDIN_FILENO);
 		std::cerr << "DOING STUFF\n";
 		std::cerr << execve("./website/cgi-bin/php-cgi", _av, _ev) << std::endl;
 		std::cerr << "DONE STUFF\n";		
@@ -71,6 +90,8 @@ int main(int argc, char const *argv[])
 	}
 	else
 	{
+		write(fdin[1], data.c_str(), data.size());
+		close(fdin[1]);
 		wait(0);
 	}
 
