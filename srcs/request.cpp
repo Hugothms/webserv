@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/17 18:53:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 18:55:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,31 +295,15 @@ void	Request::launch_cgi(string &body, string extention_name)
 	//https://stackoverflow.com/questions/33052169/call-php-cgi-from-c-with-request-method-post
 	
 	if (pid == 0)
-	{
-		string server_root = string(getcwd(NULL, 0));
-
-		// std::vector<string> ev;
-		std::vector<string> av;
-
-
-		
-		
-
-		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
-
-		
+	{		
 		if (type == "POST")
 		{
-			
-
+		
 			DEBUG("DATA PASS--------------------------------");
 			DEBUG("|"<< headers["Body"] << "|");
 			DEBUG("DATA OK-----------------------------------");
-
 			dup2(n_pip[0], STDIN_FILENO);
 		}
-	
-	
 	
 		
 		char **_ev = build_cgi_env(extention_name);
@@ -329,9 +313,9 @@ void	Request::launch_cgi(string &body, string extention_name)
 
 		dup2(fdpipe[1], STDOUT_FILENO);
 
-		string bin_path = server->get_cgis()[extention_name];
+		// string bin_path = server->get_cgis()[extention_name];
 		// TODO: must execve php-cgi
-		if (execve(bin_path.c_str(), _av, _ev) < 0)
+		if (execve(server->get_cgis()[extention_name].c_str(), _av, _ev) < 0)
 			code = 404;
 		//Need to free
 		DEBUG("EXECVE DONE");
