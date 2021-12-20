@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/17 20:03:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/20 20:35:57 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ char **Request::build_cgi_av(string &extention_name)
 	for (size_t j = 0; j < av.size(); j++)
 	{
 		_av[j] = ft_strdup(av[j]);
-		// DEBUG("e"<<j << ":" << av[j]);
+		DEBUG("a"<<j << ":" << av[j]);
 	}
 	_av[av.size()] = 0;
 	return _av;
@@ -239,7 +239,10 @@ char **Request::build_cgi_env(string &extention_name)
 
 		
 	// ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
-	ev.push_back("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
+	// DEBUG("SERVER ROOT IS " << server_root);
+	// DEBUG("TARGET IS " << newfilepath);
+
+	ev.push_back("HTTP_HOST=" + server_root + newfilepath);// target.substr(target.find_first_of('/', 0) + 1));
 		
 
 	ev.push_back("REQUEST_METHOD=" + type);
@@ -271,6 +274,24 @@ char **Request::build_cgi_env(string &extention_name)
 	return _ev;
 }
 
+string trim_tr(string to_trim)
+{
+	string todo;
+	for (std::string::iterator it = to_trim.begin(); it != to_trim.end(); it++)
+	{
+		if (*it == 13)
+		{
+			// DEBUG("DO TRIM");
+			it = to_trim.erase(it);
+			--it;
+			continue;
+		}
+	}	
+return to_trim;
+}
+
+
+
 void	Request::launch_cgi(string &body, string extention_name)
 {
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
@@ -284,23 +305,27 @@ void	Request::launch_cgi(string &body, string extention_name)
 		exit(EXIT_FAILURE);
 	}
 
-	pid_t pid = fork();
+
 	
-	if (pid < 0)
-	{
-		cerr << "cgi: fork failed" << endl;
-		exit(EXIT_FAILURE);
-	}
+
 
 	code = 200;
 		
 	if (type == "POST")
 	{
+		headers["Body"] = trim_tr(headers["Body"]);
 		headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
 	}
 
+	pid_t pid = fork();
+	if (pid < 0)
+	{
+		cerr << "cgi: fork failed" << endl;
+		exit(EXIT_FAILURE);
+	}
 	if (pid == 0)
-	{		
+	{	
+		
 		if (type == "POST")
 		{
 			// DEBUG("DATA PASS--------------------------------");
@@ -315,8 +340,18 @@ void	Request::launch_cgi(string &body, string extention_name)
 			// DEBUG("DATA OK-----------------------------------");
 			
 				// headers["Body"].
-			
+			write(in_pipe[1], headers["Body"].c_str(),headers["Body"].	size());
+			close(in_pipe[1]);
 			dup2(in_pipe[0], STDIN_FILENO);
+			// dup2(in_pipe[0], STDIN_FILENO);
+			DEBUG("POST TREATMENT");
+			DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
+
+			// write(2, headers["Body"].c_str(), headers["Body"].size());
+			// write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
+			// close(in_pipe[1]);
+			DEBUG("WRITE DONE");
+			
 		}
 	
 		
@@ -330,7 +365,9 @@ void	Request::launch_cgi(string &body, string extention_name)
 
 		// string bin_path = server->get_cgis()[extention_name];
 		// TODO: must execve php-cgi
-		if (execve(server->get_cgis()[extention_name].c_str(), _av, _ev) < 0)
+	
+		//if (execve(server->get_cgis()[extention_name].c_str(), _av, _ev) < 0)
+		if (execve(_av[0], _av, _ev) < 0)
 			code = 404;
 		//Need to free
 		DEBUG("EXECVE DONE");
@@ -339,11 +376,13 @@ void	Request::launch_cgi(string &body, string extention_name)
 	{
 		if (type == "POST")
 		{
-			DEBUG("POST TREATMENT");
-			// write(2, headers["Body"].c_str(), headers["Body"].size());
-			write(in_pipe[1], headers["Body"].c_str(), headers["Body"].length());
-			close(in_pipe[1]);
-			DEBUG("WRITE DONE");
+			// DEBUG("POST TREATMENT");
+			// DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
+
+			// // write(2, headers["Body"].c_str(), headers["Body"].size());
+			// // write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
+			// // close(in_pipe[1]);
+			// DEBUG("WRITE DONE");
 		}
 		wait(0);
 		close(out_pipe[1]); // parent doesn't write
