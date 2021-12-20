@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/17 19:46:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/20 19:22:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Client::Client()
 	_done_recv = 0;
 	_done_send = 0;
 	send_rdy = 0;
+	rcv_len = 0;
 	req = 0;
 	client_len = sizeof(client_addr);
 }
@@ -28,6 +29,7 @@ Client::Client(int new_listen_fd)
 	_done_send = 0;
 	send_rdy = 0;
 	req = 0;
+	rcv_len = 0;
 	client_len = sizeof(client_addr);
 
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -187,6 +189,7 @@ int Client::receive(void)
 	char buff[BUFF_S];
 	int len;
 
+
 	len = recv(_fd, buff, BUFF_S, 0);
 	if (len <= 0)
 	{
@@ -202,11 +205,13 @@ int Client::receive(void)
 	}
 	else
 		rec_buffer += string(buff, len);
+	rcv_len += len;
 	
 	if (len < BUFF_S)
 	{
 		_done_recv = 1;
-
+		DEBUG("WE GOT " << rcv_len);
+		rcv_len = 0;
 		if (req == 0)
 		{
 			req = new Request(rec_buffer);
