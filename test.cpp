@@ -50,7 +50,7 @@ int main(int argc, char const *argv[])
 	ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	ev.push_back("REDIRECT_STATUS=200");
-	ev.push_back("HTTP_HOST=cgi-bin/form.php");
+	ev.push_back("HTTP_HOST=/Users/edal--ce/Desktop/webserv/website/cgi-bin/form.php");
 	// ev.push_back("HTTP_HOST=cgi-bin/form.php");
 	
 
@@ -71,10 +71,9 @@ int main(int argc, char const *argv[])
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
 
 	for (size_t j = 0; j < av.size(); j++)
-	{
 		_av[j] = ft_strdup(av[j]);
-	}
 	_av[av.size()] = 0;
+	
 	for (size_t j = 0; j < ev.size(); j++)
 	{
 		std::cout << "e"<<j<<":"<<ev[j]<< std::endl;
