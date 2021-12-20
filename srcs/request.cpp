@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/20 20:35:57 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/20 22:35:50 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,7 +299,12 @@ void	Request::launch_cgi(string &body, string extention_name)
 	// DEBUG("BODY IS " << body);
 	int out_pipe[2];
 	int in_pipe[2];
-	if (pipe(out_pipe) == -1 || pipe(in_pipe) == -1)
+	if (pipe(out_pipe) == -1)// || pipe(in_pipe) == -1)
+	{
+		cerr << "cgi: pipe failed" << endl;
+		exit(EXIT_FAILURE);
+	}
+	if (pipe(in_pipe) == -1)
 	{
 		cerr << "cgi: pipe failed" << endl;
 		exit(EXIT_FAILURE);
@@ -316,8 +321,10 @@ void	Request::launch_cgi(string &body, string extention_name)
 		headers["Body"] = trim_tr(headers["Body"]);
 		headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
 	}
-
+	char **_ev = build_cgi_env(extention_name);
+	char **_av = build_cgi_av(extention_name);
 	pid_t pid = fork();
+	
 	if (pid < 0)
 	{
 		cerr << "cgi: fork failed" << endl;
@@ -325,47 +332,23 @@ void	Request::launch_cgi(string &body, string extention_name)
 	}
 	if (pid == 0)
 	{	
-		
 		if (type == "POST")
 		{
-			// DEBUG("DATA PASS--------------------------------");
-			// DEBUG("|"<< headers["Body"] << "|");
-			// DEBUG("DATA OK-----------------------------------");
-
-
-			// headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
-			// DEBUG("DATA PASS--------------------------------");
-			// DEBUG("|"<< dbg);
-
-			// DEBUG("DATA OK-----------------------------------");
-			
-				// headers["Body"].
-			write(in_pipe[1], headers["Body"].c_str(),headers["Body"].	size());
-			close(in_pipe[1]);
-			dup2(in_pipe[0], STDIN_FILENO);
-			// dup2(in_pipe[0], STDIN_FILENO);
-			DEBUG("POST TREATMENT");
-			DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
-
-			// write(2, headers["Body"].c_str(), headers["Body"].size());
-			// write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
-			// close(in_pipe[1]);
-			DEBUG("WRITE DONE");
-			
+			DEBUG("DUPPING OUT");
+			if (dup2(in_pipe[0], STDIN_FILENO) == -1)
+			{
+				DEBUG("DUP2 ERR");
+				exit(0);
+			}
 		}
-	
-		
-		char **_ev = build_cgi_env(extention_name);
-		char **_av = build_cgi_av(extention_name);
-		
+		if (dup2(out_pipe[1], STDOUT_FILENO) == -1)
+		{
+			DEBUG("DUP2 ERR");
+			exit(0);
+		}
+		close(in_pipe[1]);
+		close(out_pipe[0]);
 
-
-		dup2(out_pipe[1], STDOUT_FILENO);
-		// dup2(in_pipe[0], STDIN_FILENO);
-
-		// string bin_path = server->get_cgis()[extention_name];
-		// TODO: must execve php-cgi
-	
 		//if (execve(server->get_cgis()[extention_name].c_str(), _av, _ev) < 0)
 		if (execve(_av[0], _av, _ev) < 0)
 			code = 404;
@@ -376,13 +359,14 @@ void	Request::launch_cgi(string &body, string extention_name)
 	{
 		if (type == "POST")
 		{
-			// DEBUG("POST TREATMENT");
-			// DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
+			DEBUG("POST TREATMENT");
+			DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
 
-			// // write(2, headers["Body"].c_str(), headers["Body"].size());
-			// // write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
-			// // close(in_pipe[1]);
-			// DEBUG("WRITE DONE");
+			// write(2, headers["Body"].c_str(), headers["Body"].size());
+			write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
+			close(in_pipe[1]);
+			close(in_pipe[0]);
+			DEBUG("WRITE DONE");
 		}
 		wait(0);
 		close(out_pipe[1]); // parent doesn't write
