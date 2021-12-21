@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 12:20:31 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 14:24:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,14 @@ string Request::g_type(void) const
 }
 
 Request::Request(const string &buffer)
-:  code(0), passed_cgi(false)
+: code(0), passed_cgi(false)
 {
 	size_t pos = 0;
 
 	DEBUG(endl << endl << "******* NEW REQUEST: ********\n");
 	DEBUG(buffer);
 	DEBUG("******* END: ********\n");
-	
+
 
 	size_t t_pos = buffer.find("Content-Type: ");
 	if (t_pos != string::npos)
@@ -86,7 +86,7 @@ Request::Request(const string &buffer)
 		t_pos = content_type.find_first_of(": ") + 2;
 		content_type = content_type.substr(t_pos, (content_type.find("\n", 0) - t_pos));
 		// if (!content_type.empty())
-		// DEBUG("CONTENT TYPE IS" << content_type << "/////////////");		
+		// DEBUG("CONTENT TYPE IS" << content_type << "/////////////");
 	}
 
 
@@ -270,19 +270,19 @@ void	Request::launch_cgi(string &body, string extention_name)
 		// envp[7] = 0;
 
 		//Error right here
-		
+
 		ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
 		ev.push_back("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
-		
+
 
 		ev.push_back("REQUEST_METHOD=" + type);
-		
+
 
 		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
 		ev.push_back("SCRIPT_FILENAME=" + server_root + newfilepath);
 		ev.push_back("SCRIPT_NAME=" + newfilepath);
-		
+
 
 		// envp[10] = 0;
 		if (type == "GET")
@@ -294,16 +294,16 @@ void	Request::launch_cgi(string &body, string extention_name)
 		else if (type == "POST")
 		{
 			//To change according to content typefor
-			
+
 			ev.push_back("CONTENT_TYPE=" + content_type);
 			ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
-		
+
 
 			int n_pip[2];
 			pipe(n_pip);
 			// for (std::map<string, string>::iterator a = headers.begin(); a != headers.end(); a++)
 			// 	DEBUG("PAIR IS: "<< a->first << "|" << a->second);
-			
+
 			DEBUG("DATA PASS--------------------------------");
 			DEBUG("|"<< headers["Body"] << "|");
 			DEBUG("DATA OK-----------------------------------");
@@ -311,9 +311,9 @@ void	Request::launch_cgi(string &body, string extention_name)
 			dup2(n_pip[0], STDIN_FILENO);
 			write(n_pip[1], headers["Body"].c_str(), headers["Body"].size());
 		}
-	
+
 		string bin_path = server->get_cgis()[extention_name];
-	
+
 		av.push_back(bin_path);
 		av.push_back(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
@@ -322,10 +322,10 @@ void	Request::launch_cgi(string &body, string extention_name)
 
 		for (size_t j = 0; j < av.size(); j++)
 			_av[j] = ft_strdup(av[j]);
-		
+
 		for (size_t j = 0; j < ev.size(); j++)
 			_ev[j] = ft_strdup(ev[j]);
-		
+
 		_av[av.size()] = 0;
 		_ev[ev.size()] = 0;
 
@@ -434,6 +434,7 @@ void 	Request::get_body(string &body)
 		else
 		{
 			code = 403;
+			passed_cgi = true;
 			file.close();
 			file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
 		}
@@ -455,9 +456,11 @@ void 	Request::get_body(string &body)
 			}
 		}
 	}
+	DEBUG("type-----------" << get_type(filepath, false));
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
 		code = 404;
+		passed_cgi = true;
 		file.close();
 		file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
 	}
