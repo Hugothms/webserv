@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/21 19:33:10 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 19:50:01 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ char **Request::build_cgi_av(string &extention_name)
 	for (size_t j = 0; j < av.size(); j++)
 	{
 		_av[j] = ft_strdup(av[j]);
-		DEBUG("a"<<j << ":" << av[j]);
+		DEBUG("a"<<j << ":" << av[j]<<"|");
 	}
 	_av[av.size()] = 0;
 	return _av;
@@ -255,9 +255,25 @@ char **Request::build_cgi_env(string &extention_name)
 	else if (type == "POST")
 	{
 
-		DEBUG("TYPE IS:");
-		DEBUG(content_type);
-		ev.push_back("CONTENT_TYPE=" + content_type + ";charset=utf-8");
+		// DEBUG("TYPE IS:" << content_type);
+
+
+
+		// content_type = content_type.substr(0, content_type.find_first_of('\n'));
+		// content_type.append(";charset=utf-8");
+		
+		
+		// DEBUG("TYPE IS:" << content_type << '|');
+
+		// write(2, content_type.c_str(), content_type.size());
+
+		// DEBUG(content_type);
+
+		//Are you fucking with me ?
+		ev.push_back("CONTENT_TYPE=" + content_type);
+		
+
+
 		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
 	}
 
@@ -266,7 +282,7 @@ char **Request::build_cgi_env(string &extention_name)
 	for (size_t j = 0; j < ev.size(); j++)
 	{
 		_ev[j] = ft_strdup(ev[j]);
-		DEBUG("e"<<j << ":" << ev[j]);
+		DEBUG("e"<<j << ":" << ev[j]<<"|");
 	}
 	_ev[ev.size()] = 0;
 	return _ev;
@@ -355,7 +371,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 
 		if (type == "POST")
 		{
-			DEBUG("DUPPING OUT");
+			// DEBUG("DUPPING OUT");
 			close(in_pipe[1]);
 			if (dup2(in_pipe[0], 0) == -1)
 			{
@@ -384,8 +400,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 		{
 			close(in_pipe[0]);
 			DEBUG("POST TREATMENT");
-
-			DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
+			// DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
 
 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
 				DEBUG("WRITE ERROR");
