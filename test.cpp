@@ -2,6 +2,10 @@
 #include <string>
 #include <unistd.h>
 #include <iostream>
+#include <fcntl.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 
 
@@ -50,12 +54,12 @@ int main(int argc, char const *argv[])
 	ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	ev.push_back("REDIRECT_STATUS=200");
-	ev.push_back("HTTP_HOST=/Users/edal--ce/Desktop/webserv/website/cgi-bin/form.php");
+	ev.push_back("HTTP_HOST=/mnt/nfs/homes/edal--ce/Desktop/webserv/website/cgi-bin/form.php");
 	// ev.push_back("HTTP_HOST=cgi-bin/form.php");
 	
 
 	ev.push_back("REQUEST_METHOD=POST");
-	ev.push_back("SCRIPT_FILENAME=/Users/edal--ce/Desktop/webserv/website/cgi-bin/form.php");
+	ev.push_back("SCRIPT_FILENAME=/mnt/nfs/homes/edal--ce/Desktop/webserv/website/cgi-bin/form.php");
 	ev.push_back("SCRIPT_NAME=/website/cgi-bin/form.php");
 	ev.push_back("CONTENT_TYPE=multipart/form-data; boundary=------------------------51b54edcb631b748");
 
@@ -64,7 +68,7 @@ int main(int argc, char const *argv[])
 
 
 	av.push_back("./website/cgi-bin/php-cgi");
-	av.push_back("/Users/edal--ce/Desktop/webserv/website/cgi-bin/form.php");
+	av.push_back("/mnt/nfs/homes/edal--ce/Desktop/webserv/website/cgi-bin/form.php");
 
 
 	char **_av = static_cast<char**>(malloc(sizeof(char *) * (av.size() + 1)));
