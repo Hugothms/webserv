@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/15 09:11:48 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 05:36:04 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ void Webserv::clear_fd(Client *client)
 void	Webserv::listen(void)
 {
 	// build();
-	int t = 1;
+	// int t = 1;
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");
@@ -160,11 +160,11 @@ void	Webserv::listen(void)
 
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
-		if (t)
-		{
-			DEBUG("AMT CLIENT " << _clients.size());
-			++t;
-		}
+		// if (t)
+		// {
+		// 	// DEBUG("AMT CLIENT " << _clients.size());
+		// 	++t;
+		// }
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
@@ -196,7 +196,7 @@ void	Webserv::listen(void)
 			// 	DEBUG("Oh no");
 			// }
 		}
-		t = 0;
+		// t = 0;
 	}
 }
 

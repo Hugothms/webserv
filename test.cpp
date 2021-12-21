@@ -71,7 +71,10 @@ int main(int argc, char const *argv[])
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
 
 	for (size_t j = 0; j < av.size(); j++)
+	{
+		std::cout << "a"<<j<<":"<<av[j]<< std::endl;
 		_av[j] = ft_strdup(av[j]);
+	}
 	_av[av.size()] = 0;
 	
 	for (size_t j = 0; j < ev.size(); j++)
@@ -88,7 +91,7 @@ int main(int argc, char const *argv[])
 	{
 		dup2(fdin[0], STDIN_FILENO);
 		std::cerr << "DOING STUFF\n";
-		std::cerr << execve("./website/cgi-bin/php-cgi", _av, _ev) << std::endl;
+		std::cerr << execve(_av[0], _av, _ev) << std::endl;
 		std::cerr << "DONE STUFF\n";		
 		exit (0);
 	}

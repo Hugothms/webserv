@@ -6,12 +6,12 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/20 22:35:50 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 18:14:01 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
-
+#include <fcntl.h>
 map<unsigned int, string> create_map_return_codes(void)
 {
 	map<unsigned int, string> codes;
@@ -73,9 +73,9 @@ Request::Request(const string &buffer)
 {
 	size_t pos = 0;
 
-	DEBUG(endl << endl << "******* NEW REQUEST: ********\n");
+	DEBUG(endl << endl << "******* NEW REQUEST BUFF: ********\n");
 	DEBUG(buffer);
-	DEBUG("******* END: ********\n");
+	DEBUG("******* END OF REQUEST BUFF ********\n");
 	
 
 	size_t t_pos = buffer.find("Content-Type: ");
@@ -236,17 +236,8 @@ char **Request::build_cgi_env(string &extention_name)
 	ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	ev.push_back("REDIRECT_STATUS=200");
-
-		
-	// ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
-	// DEBUG("SERVER ROOT IS " << server_root);
-	// DEBUG("TARGET IS " << newfilepath);
-
-	ev.push_back("HTTP_HOST=" + server_root + newfilepath);// target.substr(target.find_first_of('/', 0) + 1));
-		
-
+	ev.push_back("HTTP_HOST=" + server_root + newfilepath);
 	ev.push_back("REQUEST_METHOD=" + type);
-
 	ev.push_back("SCRIPT_FILENAME=" + server_root + newfilepath);
 	ev.push_back("SCRIPT_NAME=" + newfilepath);
 
@@ -297,32 +288,49 @@ void	Request::launch_cgi(string &body, string extention_name)
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
 	// DEBUG("BODY IS " << body);
-	int out_pipe[2];
-	int in_pipe[2];
-	if (pipe(out_pipe) == -1)// || pipe(in_pipe) == -1)
-	{
-		cerr << "cgi: pipe failed" << endl;
-		exit(EXIT_FAILURE);
-	}
-	if (pipe(in_pipe) == -1)
-	{
-		cerr << "cgi: pipe failed" << endl;
-		exit(EXIT_FAILURE);
-	}
-
-
 	
 
+	int out_pipe[2];
+	int in_pipe[2];
 
-	code = 200;
-		
-	if (type == "POST")
+
+	//Create pipes for input and output
+	if (pipe(out_pipe) == -1)
 	{
+		cerr << "cgi: pipe failed" << endl;
+		exit(EXIT_FAILURE);
+	}
+
+	//We probably shouldn't assume that
+	code = 200;
+	
+	//We need to trim and write the body to stdin
+	if (type == "POST")
+	{	
+
+		// open("/tmp/webserv_cgi", O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)
+		
+
 		headers["Body"] = trim_tr(headers["Body"]);
 		headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
+
+
+		int fd = open("testfile", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		if (fd == -1)
+		{
+			DEBUG("FILE CREATION ERRROR ");
+			exit(0);
+		}
+		write(fd, headers["Body"].c_str(), headers["Body"].size());
+		close(fd);
+		// pipe(in_pipe);
+		
 	}
+	
+	//Get values for execve
 	char **_ev = build_cgi_env(extention_name);
 	char **_av = build_cgi_av(extention_name);
+	
 	pid_t pid = fork();
 	
 	if (pid < 0)
@@ -330,51 +338,90 @@ void	Request::launch_cgi(string &body, string extention_name)
 		cerr << "cgi: fork failed" << endl;
 		exit(EXIT_FAILURE);
 	}
-	if (pid == 0)
+	else if (pid == 0)
 	{	
 		if (type == "POST")
 		{
+			int fd = open("testfile", O_RDONLY);
+			if (fd == -1)
+				DEBUG("FILE OPEN FAILED");
 			DEBUG("DUPPING OUT");
-			if (dup2(in_pipe[0], STDIN_FILENO) == -1)
+
+
+			if (dup2(fd, 0) == -1)
 			{
 				DEBUG("DUP2 ERR");
 				exit(0);
 			}
+			//Redirecting STANDARD INPUT TO in_pipe -> to pass data
+			// close(in_pipe[1]);
+			// if (dup2(in_pipe[0], 0) == -1)
+			// {
+			// 	DEBUG("DUP2 ERR");
+			// 	exit(0);
+			// }
 		}
-		if (dup2(out_pipe[1], STDOUT_FILENO) == -1)
+		//Redirecting STANDARD OUTPUT TO out_pipe -> to get data 
+		close(out_pipe[0]);
+		if (dup2(out_pipe[1], 1) == -1)
 		{
 			DEBUG("DUP2 ERR");
 			exit(0);
 		}
-		close(in_pipe[1]);
-		close(out_pipe[0]);
 
-		//if (execve(server->get_cgis()[extention_name].c_str(), _av, _ev) < 0)
+		//We close what we don't use ?
+		// close(in_pipe[0]);
+		// close(in_pipe[1]);
+		// close(out_pipe[1]);
+		// close(out_pipe[0]);
+
+
+
+
 		if (execve(_av[0], _av, _ev) < 0)
 			code = 404;
 		//Need to free
-		DEBUG("EXECVE DONE");
 	}
 	else
 	{
+		
+		close(out_pipe[1]);
 		if (type == "POST")
 		{
-			DEBUG("POST TREATMENT");
-			DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
+		// 	close(in_pipe[0]);
+		// 	DEBUG("POST TREATMENT");
 
-			// write(2, headers["Body"].c_str(), headers["Body"].size());
-			write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size());
-			close(in_pipe[1]);
-			close(in_pipe[0]);
-			DEBUG("WRITE DONE");
+		// 	DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
+
+		// 	// if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
+		// 	// 	DEBUG("WRITE ERROR");
+		// 	// close(in_pipe[1]);
+		// 	DEBUG("WRITE DONE");
 		}
+		// else
+		// {
+
+		// 	DEBUG("TST" << ":"<<"sample=text" << '|');
+		// 	close(in_pipe[0]);
+
+		// 	if (write(in_pipe[1], "sample=text", 11) < 0)
+		// 		DEBUG("WRITE ERROR");
+		// 	close(in_pipe[1]);		
+		// 	DEBUG("WRITE DONE");
+		// }
 		wait(0);
-		close(out_pipe[1]); // parent doesn't write
+		// close(in_pipe[1]);		
+		// parent doesn't write 
+		
 		char reading_buf;
 		while(read(out_pipe[0], &reading_buf, 1) > 0)
 		   body += reading_buf;
-		DEBUG("qwerty:" << body);
+		
 		close(out_pipe[0]);
+
+
+		DEBUG("CGI OUTPUT:\n" << body);
+		
 	}
 }
 

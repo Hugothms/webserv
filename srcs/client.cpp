@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/20 19:22:22 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 05:43:48 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,6 @@ int Client::receive(void)
 	if (len < BUFF_S)
 	{
 		_done_recv = 1;
-		DEBUG("WE GOT " << rcv_len);
 		rcv_len = 0;
 		if (req == 0)
 		{
@@ -218,21 +217,21 @@ int Client::receive(void)
 
 			if (req->g_type() == "POST" && req->headers["Content-Type"].find("multipart/form-data") != string::npos)
 			{
-				DEBUG("WE NEED THE REST OF THE DATA");
-				_done_recv = 1;
+				DEBUG("WE NEED THE REST OF THE DATA, SENDING 100");
+				// _done_recv = 1;
 			}
 		}
 	}
 	else
 	{
-		DEBUG("Data did not fit in the buffer, read more plz");
+		// DEBUG("Data did not fit in the buffer, read more plz");
 		_done_recv = 0;
 	}
 	return (_done_recv);
 
 }
 
-void Client:: send(void)
+void Client::send(void)
 {
 	int actual = BUFF_S;
 
