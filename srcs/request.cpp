@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/21 19:50:01 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 19:55:35 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,21 @@ char *ft_strdup(string msg)
 	ret[i] = 0;
 	return ret;
 }
+string trim_tr(string to_trim)
+{
+	string todo;
+	for (std::string::iterator it = to_trim.begin(); it != to_trim.end(); it++)
+	{
+		if (*it == 13)
+		{
+			// DEBUG("DO TRIM");
+			it = to_trim.erase(it);
+			--it;
+			continue;
+		}
+	}	
+	return to_trim;
+}
 
 char **Request::build_cgi_av(string &extention_name)
 {
@@ -270,9 +285,13 @@ char **Request::build_cgi_env(string &extention_name)
 		// DEBUG(content_type);
 
 		//Are you fucking with me ?
+		content_type = trim_tr(content_type);
 		ev.push_back("CONTENT_TYPE=" + content_type);
 		
-
+		// for (int i = 0; i < content_type.size(); i++)
+		// {
+		// 	DEBUG(i<<"|"<< static_cast<int>(content_type[i])<<":"<<content_type[i]<<"|");
+		// }
 
 		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
 	}
@@ -282,27 +301,13 @@ char **Request::build_cgi_env(string &extention_name)
 	for (size_t j = 0; j < ev.size(); j++)
 	{
 		_ev[j] = ft_strdup(ev[j]);
-		DEBUG("e"<<j << ":" << ev[j]<<"|");
+		DEBUG("e"<<j << ":|" << ev[j]<<"|");
 	}
 	_ev[ev.size()] = 0;
 	return _ev;
 }
 
-string trim_tr(string to_trim)
-{
-	string todo;
-	for (std::string::iterator it = to_trim.begin(); it != to_trim.end(); it++)
-	{
-		if (*it == 13)
-		{
-			// DEBUG("DO TRIM");
-			it = to_trim.erase(it);
-			--it;
-			continue;
-		}
-	}	
-return to_trim;
-}
+
 
 
 
