@@ -7,11 +7,6 @@
 <body>
   <br>
 
-Hi <?php echo $_POST['name'];?>.
-
-
-You are <?php echo (int)$_POST['age']; ?> years old.
-<br>
 
 <?php
 echo "POST :" ;
