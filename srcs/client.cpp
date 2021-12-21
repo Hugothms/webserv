@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/21 05:43:48 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 19:33:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,19 @@ Client::~Client()
 {
 	if (_fd > 0)
 		close(_fd);
-	if (req !=0 )
+	if (req != 0 )
 	{
 		delete req;
 		req = 0;
 	}
+	// for (list<Server*>::iterator t = servers.begin(); t != servers.end(); t++)
+	// {
+	// 	if (*t != 0)
+	// 	{
+	// 		delete(*t);
+	// 		*t = 0;
+	// 	}
+	// }
 	DEBUG("CLIENT KILLED\n");
 }
 

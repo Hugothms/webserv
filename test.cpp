@@ -95,17 +95,18 @@ int main(int argc, char const *argv[])
 	{
 		dup2(fdin[0], STDIN_FILENO);
 		std::cerr << "DOING STUFF\n";
-		std::cerr << execve(_av[0], _av, _ev) << std::endl;
+		write(fdin[1], data.c_str(), data.size());
+		close(fdin[1]);
+		execve(_av[0], _av, _ev);
 		std::cerr << "DONE STUFF\n";		
 		exit (0);
 	}
 	else
 	{
-		write(1,"WR |", 4);
-		write(1, data.c_str(), data.size());
-		write(1,"|\n", 2);
-		write(fdin[1], data.c_str(), data.size());
-		close(fdin[1]);
+		// write(1,"WR |", 4);
+		// write(1, data.c_str(), data.size());
+		// write(1,"|\n", 2);
+		
 		wait(0);
 	}
 

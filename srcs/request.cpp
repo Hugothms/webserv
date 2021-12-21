@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/21 18:14:01 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 19:33:10 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ map<unsigned int, string> codes = create_map_return_codes();
 
 Request::~Request()
 {
-	// if (this->location)
-	// 	delete(this->location);
+	if (this->location != 0)
+		delete(this->location);
 	// free(static_cast<void *>(this->location));
 }
 
@@ -69,14 +69,13 @@ string Request::g_type(void) const
 }
 
 Request::Request(const string &buffer)
-:  code(0), passed_cgi(false)
+:  code(0), passed_cgi(false), location(0)
 {
 	size_t pos = 0;
 
 	DEBUG(endl << endl << "******* NEW REQUEST BUFF: ********\n");
 	DEBUG(buffer);
 	DEBUG("******* END OF REQUEST BUFF ********\n");
-	
 
 	size_t t_pos = buffer.find("Content-Type: ");
 	if (t_pos != string::npos)
@@ -209,7 +208,9 @@ char *ft_strdup(string msg)
 char **Request::build_cgi_av(string &extention_name)
 {
 	std::vector<string> av;
-	string server_root = string(getcwd(NULL, 0));
+	char *cwd = getcwd(NULL, 0);
+	string server_root = string(cwd);
+	free(cwd);
 	string bin_path = server->get_cgis()[extention_name];
 
 	av.push_back(bin_path);
@@ -229,7 +230,10 @@ char **Request::build_cgi_av(string &extention_name)
 char **Request::build_cgi_env(string &extention_name)
 {
 	std::vector<string> ev;
-	string server_root = string(getcwd(NULL, 0));
+
+	char *cwd = getcwd(NULL, 0);
+	string server_root = string(cwd);
+	free(cwd);
 	string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
 
@@ -250,8 +254,11 @@ char **Request::build_cgi_env(string &extention_name)
 	}
 	else if (type == "POST")
 	{
-		ev.push_back("CONTENT_TYPE=" + content_type);
-		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
+
+		DEBUG("TYPE IS:");
+		DEBUG(content_type);
+		ev.push_back("CONTENT_TYPE=" + content_type + ";charset=utf-8");
+		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
@@ -315,21 +322,21 @@ void	Request::launch_cgi(string &body, string extention_name)
 		headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
 
 
-		int fd = open("testfile", O_WRONLY | O_CREAT | O_TRUNC, 0777);
-		if (fd == -1)
-		{
-			DEBUG("FILE CREATION ERRROR ");
-			exit(0);
-		}
-		write(fd, headers["Body"].c_str(), headers["Body"].size());
-		close(fd);
-		// pipe(in_pipe);
+		// int fd = open("testfile", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		// if (fd == -1)
+		// {
+		// 	DEBUG("FILE CREATION ERRROR ");
+		// 	exit(0);
+		// }
+		// write(fd, headers["Body"].c_str(), headers["Body"].size());
+		// close(fd);
+		if (pipe(in_pipe) == -1)
+			DEBUG("PIPE ERROR");
 		
 	}
 	
 	//Get values for execve
-	char **_ev = build_cgi_env(extention_name);
-	char **_av = build_cgi_av(extention_name);
+
 	
 	pid_t pid = fork();
 	
@@ -340,28 +347,22 @@ void	Request::launch_cgi(string &body, string extention_name)
 	}
 	else if (pid == 0)
 	{	
+
+
+		char **_ev = build_cgi_env(extention_name);
+		char **_av = build_cgi_av(extention_name);
+	
+
 		if (type == "POST")
 		{
-			int fd = open("testfile", O_RDONLY);
-			if (fd == -1)
-				DEBUG("FILE OPEN FAILED");
 			DEBUG("DUPPING OUT");
-
-
-			if (dup2(fd, 0) == -1)
+			close(in_pipe[1]);
+			if (dup2(in_pipe[0], 0) == -1)
 			{
 				DEBUG("DUP2 ERR");
 				exit(0);
 			}
-			//Redirecting STANDARD INPUT TO in_pipe -> to pass data
-			// close(in_pipe[1]);
-			// if (dup2(in_pipe[0], 0) == -1)
-			// {
-			// 	DEBUG("DUP2 ERR");
-			// 	exit(0);
-			// }
 		}
-		//Redirecting STANDARD OUTPUT TO out_pipe -> to get data 
 		close(out_pipe[0]);
 		if (dup2(out_pipe[1], 1) == -1)
 		{
@@ -369,34 +370,27 @@ void	Request::launch_cgi(string &body, string extention_name)
 			exit(0);
 		}
 
-		//We close what we don't use ?
-		// close(in_pipe[0]);
-		// close(in_pipe[1]);
-		// close(out_pipe[1]);
-		// close(out_pipe[0]);
-
-
-
-
 		if (execve(_av[0], _av, _ev) < 0)
 			code = 404;
 		//Need to free
 	}
 	else
 	{
-		
+		// for (int i = 0)
+
+
 		close(out_pipe[1]);
 		if (type == "POST")
 		{
-		// 	close(in_pipe[0]);
-		// 	DEBUG("POST TREATMENT");
+			close(in_pipe[0]);
+			DEBUG("POST TREATMENT");
 
-		// 	DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
+			DEBUG(headers["Body"].size() << ":"<< headers["Body"] << '|');
 
-		// 	// if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
-		// 	// 	DEBUG("WRITE ERROR");
-		// 	// close(in_pipe[1]);
-		// 	DEBUG("WRITE DONE");
+			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
+				DEBUG("WRITE ERROR");
+			close(in_pipe[1]);
+			DEBUG("WRITE DONE");
 		}
 		// else
 		// {
@@ -575,14 +569,14 @@ bool	Request::select_location(void)
 		{
 			if (searched_path == it_location->get_path())
 			{
-				// if (this->location != NULL)
-				// {
-				// 	DEBUG("ERASING POINTER");
-				// }
-				// else
-				// {
-				// 	DEBUG("PROPER ASSING");
-				// }
+				if (this->location != NULL)
+				{
+					DEBUG("ERASING POINTER");
+				}
+				else
+				{
+					DEBUG("PROPER ASSING");
+				}
 				this->location = new Location(*it_location);
 				return true;
 			}
@@ -597,14 +591,14 @@ bool	Request::select_location(void)
 	{
 		if (searched_path == it_location->get_path())
 		{
-			// if (this->location != NULL)
-			// {
-			// 	DEBUG("ERASING POINTER");
-			// }
-			// else
-			// {
-			// 	DEBUG("PROPER ASSING");
-			// }
+			if (this->location != NULL)
+			{
+				DEBUG("ERASING POINTER");
+			}
+			else
+			{
+				DEBUG("PROPER ASSING");
+			}
 			this->location = new Location(*it_location);
 			return true;
 		}
