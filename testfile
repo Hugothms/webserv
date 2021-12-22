@@ -1,9 +1,0 @@
---------------------------a0fc84b1177161f0
-Content-Disposition: form-data; name="name"
-
-test
---------------------------a0fc84b1177161f0
-Content-Disposition: form-data; name="age"
-
-12
---------------------------a0fc84b1177161f0--
