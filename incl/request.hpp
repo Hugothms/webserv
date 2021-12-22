@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 00:30:01 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/17 18:31:36 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ class Request
 
 		string 				content_type;
 
+		char **build_cgi_env(string &extention_name);
+		char **build_cgi_av(string &extention_name);
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;
 		string		upgrade_insecure_requests;

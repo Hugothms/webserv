@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 12:15:28 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/21 19:33:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Client::Client()
 	_done_recv = 0;
 	_done_send = 0;
 	send_rdy = 0;
+	rcv_len = 0;
 	req = 0;
 	client_len = sizeof(client_addr);
 }
@@ -28,6 +29,7 @@ Client::Client(int new_listen_fd)
 	_done_send = 0;
 	send_rdy = 0;
 	req = 0;
+	rcv_len = 0;
 	client_len = sizeof(client_addr);
 
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -44,11 +46,19 @@ Client::~Client()
 {
 	if (_fd > 0)
 		close(_fd);
-	if (req !=0 )
+	if (req != 0 )
 	{
 		delete req;
 		req = 0;
 	}
+	// for (list<Server*>::iterator t = servers.begin(); t != servers.end(); t++)
+	// {
+	// 	if (*t != 0)
+	// 	{
+	// 		delete(*t);
+	// 		*t = 0;
+	// 	}
+	// }
 	DEBUG("CLIENT KILLED\n");
 }
 
@@ -108,10 +118,20 @@ void Client::set_response(void)
 	}
 	DEBUG("********************* HEADERS ***************************");
 	if (req)
+	{
 		for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
 		{
 			DEBUG(a->first << ":|" << a->second << "|");
 		}
+		// if (req->headers["Body"].find("Content-Disposition") != string::npos)
+		// {
+		// 	DEBUG("FROM |"<< req->headers["Body"]<< "|");
+		// 	// req->headers["Body"] = 	req->headers["Body"].substr(0, req->headers["Body"].size() - 1);
+		// 	DEBUG("TO |" << req->headers["Body"] << "|\n\n\n");
+			
+			
+		// }
+	}
 	DEBUG("********************* RESPONSE ***************************");
 	DEBUG(send_buffer);
 	DEBUG("***********************END**********************************");
@@ -177,6 +197,7 @@ int Client::receive(void)
 	char buff[BUFF_S];
 	int len;
 
+
 	len = recv(_fd, buff, BUFF_S, 0);
 	if (len <= 0)
 	{
@@ -192,32 +213,33 @@ int Client::receive(void)
 	}
 	else
 		rec_buffer += string(buff, len);
+	rcv_len += len;
 	
 	if (len < BUFF_S)
 	{
 		_done_recv = 1;
-
+		rcv_len = 0;
 		if (req == 0)
 		{
 			req = new Request(rec_buffer);
 
 			if (req->g_type() == "POST" && req->headers["Content-Type"].find("multipart/form-data") != string::npos)
 			{
-				DEBUG("WE NEED THE REST OF THE DATA");
-				_done_recv = 1;
+				DEBUG("WE NEED THE REST OF THE DATA, SENDING 100");
+				// _done_recv = 1;
 			}
 		}
 	}
 	else
 	{
-		DEBUG("Data did not fit in the buffer, read more plz");
+		// DEBUG("Data did not fit in the buffer, read more plz");
 		_done_recv = 0;
 	}
 	return (_done_recv);
 
 }
 
-void Client:: send(void)
+void Client::send(void)
 {
 	int actual = BUFF_S;
 
@@ -234,7 +256,7 @@ void Client:: send(void)
 		// ::send(_fd, "\0", 1, 0);		
 		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
 		{
-			::send(_fd, "\0", 1, 0);
+			// ::send(_fd, "\0", 1, 0);
 			// DEBUG("B4 CRASH");
 			delete req;
 			// DEBUG("AF");

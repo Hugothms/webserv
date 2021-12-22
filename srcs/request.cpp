@@ -6,12 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/21 14:24:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/22 23:50:42 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
-
+#include <fcntl.h>
 map<unsigned int, string> create_map_return_codes(void)
 {
 	map<unsigned int, string> codes;
@@ -58,9 +58,8 @@ map<unsigned int, string> codes = create_map_return_codes();
 
 Request::~Request()
 {
-	// if (this->location)
-	// 	delete(this->location);
-	// free(static_cast<void *>(this->location));
+	if (this->location != 0)
+		delete(this->location);
 }
 
 string Request::g_type(void) const
@@ -69,24 +68,21 @@ string Request::g_type(void) const
 }
 
 Request::Request(const string &buffer)
-: code(0), passed_cgi(false)
+:  location(0), code(0), passed_cgi(false)
 {
 	size_t pos = 0;
 
-	DEBUG(endl << endl << "******* NEW REQUEST: ********\n");
+	DEBUG(endl << endl << "******* NEW REQUEST BUFF: ********\n");
 	DEBUG(buffer);
-	DEBUG("******* END: ********\n");
+	DEBUG("******* END OF REQUEST BUFF ********\n");
 
 
 	size_t t_pos = buffer.find("Content-Type: ");
 	if (t_pos != string::npos)
 	{
 		content_type = buffer.substr(t_pos, buffer.find('\n', t_pos));
-		// DEBUG("TYPE IS " << content_type);
 		t_pos = content_type.find_first_of(": ") + 2;
 		content_type = content_type.substr(t_pos, (content_type.find("\n", 0) - t_pos));
-		// if (!content_type.empty())
-		// DEBUG("CONTENT TYPE IS" << content_type << "/////////////");
 	}
 
 
@@ -180,18 +176,6 @@ bool	Request::select_server(const list<Server*> &servers)
 	return true;
 }
 
-// string get_bin(char *path)
-// {
-// 	string ex(path);
-
-
-// 	if (ex.find(".php") != string::npos)
-// 		return ("./website/cgi-bin/php");
-// 	else if (ex.find(".py") != string::npos)
-// 		return ("/usr/bin/python");
-// 	return "NULL";
-// }
-
 char *ft_strdup(string msg)
 {
 	char *ret = static_cast<char*>(malloc(sizeof(char) * (msg.size() + 1)));
@@ -205,147 +189,174 @@ char *ft_strdup(string msg)
 	ret[i] = 0;
 	return ret;
 }
+string trim_tr(string to_trim)
+{
+	string todo;
+	for (std::string::iterator it = to_trim.begin(); it != to_trim.end(); it++)
+	{
+		if (*it == 13)
+		{
+			// DEBUG("DO TRIM");
+			it = to_trim.erase(it);
+			--it;
+			continue;
+		}
+	}	
+	return to_trim;
+}
+
+char **Request::build_cgi_av(string &extention_name)
+{
+	std::vector<string> av;
+	char *cwd = getcwd(NULL, 0);
+	string server_root = string(cwd);
+	free(cwd);
+	string bin_path = server->get_cgis()[extention_name];
+
+	av.push_back(bin_path);
+	av.push_back(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
+
+	char **_av = static_cast<char**>(malloc(sizeof(char *) * (av.size() + 1)));
+		
+	for (size_t j = 0; j < av.size(); j++)
+	{
+		_av[j] = ft_strdup(av[j]);
+		DEBUG("a"<<j << ":" << av[j]<<"|");
+	}
+	_av[av.size()] = 0;
+	return _av;
+}
+
+char **Request::build_cgi_env(string &extention_name)
+{
+	std::vector<string> ev;
+
+	char *cwd = getcwd(NULL, 0);
+	string server_root = string(cwd);
+	free(cwd);
+	string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
+
+
+	ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
+	ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
+	ev.push_back("REDIRECT_STATUS=200");
+	ev.push_back("HTTP_HOST=" + server_root + newfilepath);
+	ev.push_back("REQUEST_METHOD=" + type);
+	ev.push_back("SCRIPT_FILENAME=" + server_root + newfilepath);
+	ev.push_back("SCRIPT_NAME=" + newfilepath);
+
+
+	if (type == "GET")
+	{
+		ev.push_back("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
+		ev.push_back("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
+		extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
+	}
+	else if (type == "POST")
+	{
+
+		//Are you fucking with me ?
+		content_type = trim_tr(content_type);
+
+		ev.push_back("CONTENT_TYPE=" + content_type);
+		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
+	}
+
+	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
+		
+	for (size_t j = 0; j < ev.size(); j++)
+	{
+		_ev[j] = ft_strdup(ev[j]);
+		DEBUG("e"<<j << ":|" << ev[j]<<"|");
+	}
+	_ev[ev.size()] = 0;
+	return _ev;
+}
+
+
+
+
 
 void	Request::launch_cgi(string &body, string extention_name)
 {
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
-	// DEBUG("BODY IS " << body);
-	int fdpipe[2];
-	if (pipe(fdpipe) == -1)
+
+	int out_pipe[2];
+	int in_pipe[2];
+
+
+	//Create pipes for input and output
+	if (pipe(out_pipe) == -1)
 	{
 		cerr << "cgi: pipe failed" << endl;
 		exit(EXIT_FAILURE);
 	}
+
+	//We probably shouldn't assume that
+	code = 200;
+	
+	//We need to trim and write the body to stdin
+	if (type == "POST")
+	{	
+		if (pipe(in_pipe) == -1)
+			DEBUG("PIPE ERROR");
+	}
+	
+	//Get values for execve
+
+	
 	pid_t pid = fork();
+	
 	if (pid < 0)
 	{
 		cerr << "cgi: fork failed" << endl;
 		exit(EXIT_FAILURE);
 	}
+	else if (pid == 0)
+	{	
+		char **_ev = build_cgi_env(extention_name);
+		char **_av = build_cgi_av(extention_name);
+	
 
-	code = 200;
-	//https://stackoverflow.com/questions/33052169/call-php-cgi-from-c-with-request-method-post
-	if (pid == 0)
-	{
-		string server_root = string(getcwd(NULL, 0));
-		// envp[0] = 0;
-		// DEBUG("BODYIS " << headers["Body"]);
-		// DEBUG("OR " << body);
-
-		// envp[1] = ft_strdup("CONTENT_LENGHT=" + to_string(headers["Body"].length()));
-
-		// //This is wrong it seems
-
-
-		// envp[0] = ft_strdup(("DOCUMENT_ROOT=" + server_root));
-		// envp[1] = ft_strdup(("HTTP_HOST=" + (server->get_server_names().front())));
-		// envp[2] = ft_strdup(("SCRIPT_FILENAME=" + server_root + "/" + filepath));
-		// envp[3] = ft_strdup(("SCRIPT_NAME=" + filepath.substr(filepath.find_last_of('/')+ 1)));
-		// envp[4] = ft_strdup(("PATH=" + server_root + "/"));
-		// envp[5] = ft_strdup(("PATH_INFO=" + server_root + "/" + filepath));
-		// envp[6] = 0;
-		std::vector<string> ev;
-		std::vector<string> av;
-
-		// int avl = 4;
-		// int envl = 11;
-
-		// char **argv = (char**) malloc(sizeof(char*) * avl--);
-		// char **envp = (char**) malloc(sizeof(char*) * envl--);
-
-		ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
-		ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
-		ev.push_back("REDIRECT_STATUS=200");
-
-
-		// envp[0] = ft_strdup("GATEWAY_INTERFACE=CGI/1.1");
-		// envp[1] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
-		// envp[2] = ft_strdup("REDIRECT_STATUS=200");
-		// envp[3] = ft_strdup("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
-		// envp[4] = ft_strdup("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
-		// envp[5] = ft_strdup("REQUEST_METHOD=" + type);
-		// envp[6] = ft_strdup("SCRIPT_FILENAME=" + server_root + newfilepath);
-		// envp[7] = ft_strdup("SCRIPT_NAME=" + newfilepath);
-		// envp[7] = 0;
-
-		//Error right here
-
-		ev.push_back("HTTP_HOST=" + target.substr(0, target.find_first_of('/', 0)));
-		ev.push_back("HTTP_HOST=" + target.substr(target.find_first_of('/', 0) + 1));
-
-
-		ev.push_back("REQUEST_METHOD=" + type);
-
-
-		string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
-
-		ev.push_back("SCRIPT_FILENAME=" + server_root + newfilepath);
-		ev.push_back("SCRIPT_NAME=" + newfilepath);
-
-
-		// envp[10] = 0;
-		if (type == "GET")
+		if (type == "POST")
 		{
-			ev.push_back("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-			ev.push_back("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
-			extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
+			close(in_pipe[1]);
+			if (dup2(in_pipe[0], 0) == -1)
+			{
+				DEBUG("DUP2 ERR");
+				exit(0);
+			}
 		}
-		else if (type == "POST")
+		close(out_pipe[0]);
+		if (dup2(out_pipe[1], 1) == -1)
 		{
-			//To change according to content typefor
-
-			ev.push_back("CONTENT_TYPE=" + content_type);
-			ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].size()));//(data_buff->length()) );
-
-
-			int n_pip[2];
-			pipe(n_pip);
-			// for (std::map<string, string>::iterator a = headers.begin(); a != headers.end(); a++)
-			// 	DEBUG("PAIR IS: "<< a->first << "|" << a->second);
-
-			DEBUG("DATA PASS--------------------------------");
-			DEBUG("|"<< headers["Body"] << "|");
-			DEBUG("DATA OK-----------------------------------");
-
-			dup2(n_pip[0], STDIN_FILENO);
-			write(n_pip[1], headers["Body"].c_str(), headers["Body"].size());
+			DEBUG("DUP2 ERR");
+			exit(0);
 		}
 
-		string bin_path = server->get_cgis()[extention_name];
-
-		av.push_back(bin_path);
-		av.push_back(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
-
-		char **_av = static_cast<char**>(malloc(sizeof(char *) * (av.size() + 1)));
-		char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
-
-		for (size_t j = 0; j < av.size(); j++)
-			_av[j] = ft_strdup(av[j]);
-
-		for (size_t j = 0; j < ev.size(); j++)
-			_ev[j] = ft_strdup(ev[j]);
-
-		_av[av.size()] = 0;
-		_ev[ev.size()] = 0;
-
-		dup2(fdpipe[1], STDOUT_FILENO);
-
-		// TODO: must execve php-cgi
-		if (execve(bin_path.c_str(), _av, _ev) < 0)
+		if (execve(_av[0], _av, _ev) < 0)
 			code = 404;
 		//Need to free
-		DEBUG("EXECVE DONE");
 	}
 	else
 	{
+		close(out_pipe[1]);
+		if (type == "POST")
+		{
+			close(in_pipe[0]);
+	
+			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
+				DEBUG("WRITE ERROR");
+			close(in_pipe[1]);
+		}
 		wait(0);
-		close(fdpipe[1]); // parent doesn't write
 		char reading_buf;
-		while(read(fdpipe[0], &reading_buf, 1) > 0)
+		while(read(out_pipe[0], &reading_buf, 1) > 0)
 		   body += reading_buf;
-		DEBUG("qwerty:" << body);
-		close(fdpipe[0]);
+		close(out_pipe[0]);
+
+		DEBUG("CGI OUTPUT:\n" << body);
 	}
 }
 
@@ -502,14 +513,14 @@ bool	Request::select_location(void)
 		{
 			if (searched_path == it_location->get_path())
 			{
-				// if (this->location != NULL)
-				// {
-				// 	DEBUG("ERASING POINTER");
-				// }
-				// else
-				// {
-				// 	DEBUG("PROPER ASSING");
-				// }
+				if (this->location != NULL)
+				{
+					DEBUG("ERASING POINTER");
+				}
+				else
+				{
+					DEBUG("PROPER ASSING");
+				}
 				this->location = new Location(*it_location);
 				return true;
 			}
@@ -524,14 +535,14 @@ bool	Request::select_location(void)
 	{
 		if (searched_path == it_location->get_path())
 		{
-			// if (this->location != NULL)
-			// {
-			// 	DEBUG("ERASING POINTER");
-			// }
-			// else
-			// {
-			// 	DEBUG("PROPER ASSING");
-			// }
+			if (this->location != NULL)
+			{
+				DEBUG("ERASING POINTER");
+			}
+			else
+			{
+				DEBUG("PROPER ASSING");
+			}
 			this->location = new Location(*it_location);
 			return true;
 		}
@@ -569,11 +580,6 @@ bool	Request::method_allow(void)
 
 string	Request::respond(const list<Server*> &servers)
 {
-	// if(data != 0)
-	// {
-	// 	data_buff = data;
-	// 	//Do stuff
-	// }
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
