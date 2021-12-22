@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/21 19:55:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/22 23:37:26 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,8 +339,8 @@ void	Request::launch_cgi(string &body, string extention_name)
 		// open("/tmp/webserv_cgi", O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)
 		
 
-		headers["Body"] = trim_tr(headers["Body"]);
-		headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
+		// headers["Body"] = trim_tr(headers["Body"]);
+		// headers["Body"] = headers["Body"].substr(0, headers["Body"].find_last_of('\n'));
 
 
 		// int fd = open("testfile", O_WRONLY | O_CREAT | O_TRUNC, 0777);

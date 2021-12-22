@@ -18,8 +18,6 @@ echo "POST :" ;
         echo "<br>";
   }
 ?>
-
-<br>
 <?php
   echo "GET : \n";
   foreach ($_GET as $key => $value) 
