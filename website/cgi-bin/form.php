@@ -7,11 +7,6 @@
 <body>
   <br>
 
-Hi <?php echo $_GET['name'];?>.
-
-
-You are <?php echo (int)$_GET['age']; ?> years old.
-<br>
 
 <?php
 echo "POST :" ;
@@ -23,8 +18,6 @@ echo "POST :" ;
         echo "<br>";
   }
 ?>
-
-<br>
 <?php
   echo "GET : \n";
   foreach ($_GET as $key => $value) 
