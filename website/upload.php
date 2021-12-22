@@ -4,7 +4,7 @@
 </head>
 <body>
 
-<form action="fileupload.php" enctype="multipart/form-data" method="post">
+<form action="upload.php" enctype="multipart/form-data" method="post">
 Select image :
 <input type="file" name="file"><br/>
 <input type="submit" value="Upload" name="Submit1"> <br/>
@@ -14,11 +14,12 @@ Select image :
 <?php
 if(isset($_POST['Submit1']))
 { 
-$filepath = "images/" . $_FILES["file"]["name"];
+  $filepath = "/tmp/" . $_FILES["file"]["name"];
+  echo "filepaht is :".$filepath;
 
-if(move_uploaded_file($_FILES["file"]["tmp_name"], $filepath)) 
+if(move_uploaded_file($_FILES["file"]["name"], $filepath)) 
 {
-echo "<img src=".$filepath." height=200 width=300 />";
+  echo "<img src=".$filepath." height=200 width=300 />";
 } 
 else 
 {
