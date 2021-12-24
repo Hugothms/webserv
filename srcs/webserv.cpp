@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/22 23:49:59 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 14:17:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ void 	Webserv::loop_prep(void) //This can be optimized
 		else if (tmpfd == -1)
 		{
 			delete (*client);
+			*client = 0;
 			client = _clients.erase(client);
 			if (client == _clients.end())
 				break;
@@ -143,16 +144,15 @@ void 	Webserv::loop_prep(void) //This can be optimized
 
 void Webserv::clear_fd(Client *client)
 {
-	close(client->get_fd());
 	FD_CLR(client->get_fd(), &listen_set);
 	FD_CLR(client->get_fd(), &write_set);
+
+	close(client->get_fd());
 	client->set_fd(-1);
 }
 
 void	Webserv::listen(void)
 {
-	// build();
-	// int t = 1;
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");
@@ -172,8 +172,6 @@ void	Webserv::listen(void)
 					DEBUG("client seems to have left, clearing his marks");
 					clear_fd(*client);
 				}
-				// else
-				// 	DEBUG("DID RECV");
 			}
 			else if ((*client)->is_done_recv())
 			{
@@ -187,10 +185,7 @@ void	Webserv::listen(void)
 					(*client)->send();
 				}
 			}
-			// else
-			// {
-			// 	DEBUG("Oh no");
-			// }
+		
 		}
 		// t = 0;
 	}
