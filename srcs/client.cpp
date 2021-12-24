@@ -6,18 +6,18 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/24 17:16:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 17:55:31 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 
-Client::Client() : _done_recv(0), _done_send(0), send_rdy(0), req(0), _fd(0)
+Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0)
 {
 	client_len = sizeof(client_addr);
 }
 
-Client::Client(int new_listen_fd) : _done_recv(0), _done_send(0), send_rdy(0), req(0), _fd(0)
+Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0)
 {
 	client_len = sizeof(client_addr);
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -72,11 +72,11 @@ void Client::set_response(void)
 	send_offset = 0;
 	rec_buffer.clear();
 	
-	if (req->g_type().compare("POST") == 0 && req->get_s_header("Body").empty())
+	if (req && (req->g_type().compare("POST") == 0 && req->get_s_header("Body").empty()))
 	{
 		send_buffer = "HTTP/1.1 100 Continue";
 	}
-	else if (req->g_type() == "GET" || req->g_type() == "POST")
+	else if (req && (req->g_type() == "GET" || req->g_type() == "POST"))
 	{
 		send_buffer = req->respond(servers);
 	}

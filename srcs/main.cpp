@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/24 14:28:17 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 17:31:17 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	ptr = &webserv;
 	signal(SIGPIPE, SIG_IGN);
 	// signal(SIGSTOP, &stop);
-	// signal(SIGINT, &stop);
+	signal(SIGINT, &stop);
 	signal(SIGKILL, &stop);
 
 	webserv.listen();
