@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/24 17:55:31 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 18:02:15 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rd
 
 Client::~Client()
 {
+	DEBUG("Killing _fd = " << _fd);
 	if (_fd > 0)
 		close(_fd);
 	if (req != 0)
