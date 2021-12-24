@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/15 08:27:28 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 16:18:39 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,6 @@ Server::~Server()
 	DEBUG("KILLED");
 }
 
-// Client* Server::handle_new_conn(void)
-// {
-// 	DEBUG("New conn incomming, need to accept it !");
-
-// 	Client *new_client = new Client();
-
-// 	new_client->set_fd(accept(listen_fd, new_client->get_sockaddr(), new_client->get_addr_len()));
-
-// 	inet_ntop(AF_INET, &(new_client->client_addr.sin_addr), new_client->client_ipv4_str, INET_ADDRSTRLEN);
-
-// 	printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
-// 	DEBUG("Client created !");
-// 	return (new_client);
-// }
-
 int Server::setup(void)
 {
 	listen_fd = socket(AF_INET, SOCK_STREAM , 0);
@@ -49,16 +34,14 @@ int Server::setup(void)
 	}
 
 	hint.sin_family = AF_INET;
-	// DEBUG("PORT IS " << port);
 	hint.sin_port = htons(port);
 
-	// DEBUG("TRYING TO BIND TO " << ip_address);
 
 	//TODEL
-	if (ip_address.empty())
-		inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
-	else //TODEL
-		inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
+	// if (ip_address.empty())
+	// 	inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
+	// else //TODEL
+	// 	inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	//Need to check conn alive and stuff
