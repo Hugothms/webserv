@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/24 16:18:39 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 16:23:33 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int Server::setup(void)
 	// if (ip_address.empty())
 	// 	inet_pton(AF_INET, "0.0.0.0", &(hint.sin_addr));
 	// else //TODEL
-	// 	inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
+	inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
 	//Need to check conn alive and stuff
@@ -50,7 +50,6 @@ int Server::setup(void)
 	if (bind(listen_fd, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
 	{
 		perror("bind");
-		//Leak when we exit here
 		exit(1);
 	}
 	//Chanege max number of clients
