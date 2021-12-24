@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/20 19:20:32 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 15:54:12 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,42 +31,25 @@ class Client
 		bool 				_done_send;
 
 
-		// bool				_receive_ready;
-		// bool				_send_ready;
-
-
-		// bool				_data_complete;
-		
-
-
-		int 				rcv_len;
-
+		unsigned int 		send_offset;
+		bool 				send_rdy;
 
 
 		string				rec_buffer;
-		// string 				data_buff;
 		string				send_buffer;
-
-	public :
-
-		unsigned int 		send_offset;
-		bool 				send_rdy;
-		struct sockaddr_in	client_addr;
-		char				client_ipv4_str[INET_ADDRSTRLEN];
-		socklen_t			client_len;
 
 		Request 			*req;
 
 
 		list<Server*>		servers;
 
+	public :
 
-
-
-		int 				write_pos;
-		bool 				read_done;
-
-
+		
+		struct sockaddr_in	client_addr;
+		char				client_ipv4_str[INET_ADDRSTRLEN];
+		socklen_t			client_len;
+	
 
 		Client();
 		Client(int new_listen_fd);
@@ -103,10 +86,6 @@ class Client
 		{
 			return client_ipv4_str;
 		}
-		// void identify(void)
-		// {
-		// 	cout << client_ipv4_str <<":" <<client_addr.sin_port << endl << endl;
-		// }
 };
 
 #endif

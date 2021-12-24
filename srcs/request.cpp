@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/24 13:25:55 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 16:02:09 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -477,7 +477,7 @@ void 	Request::get_body(string &body)
 			}
 		}
 	}
-	DEBUG("type-----------" << get_type(filepath, false));
+	// DEBUG("type-----------" << get_type(filepath, false));
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
 		code = 404;
@@ -523,14 +523,6 @@ bool	Request::select_location(void)
 		{
 			if (searched_path == it_location->get_path())
 			{
-				if (this->location != NULL)
-				{
-					DEBUG("ERASING POINTER");
-				}
-				else
-				{
-					DEBUG("PROPER ASSING");
-				}
 				this->location = new Location(*it_location);
 				return true;
 			}
@@ -545,20 +537,22 @@ bool	Request::select_location(void)
 	{
 		if (searched_path == it_location->get_path())
 		{
-			if (this->location != NULL)
-			{
-				DEBUG("ERASING POINTER");
-			}
-			else
-			{
-				DEBUG("PROPER ASSING");
-			}
 			this->location = new Location(*it_location);
 			return true;
 		}
 	}
 	this->location = NULL;
 	return false;
+}
+
+string& Request::get_s_header(string name)
+{
+	return headers[name];
+}
+
+void Request::add_to_body(string data)
+{
+	headers["Body"] += data;
 }
 
 string	Request::get_header(const size_t length)
