@@ -6,59 +6,34 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/24 16:09:50 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 16:16:55 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 
-Client::Client()
+Client::Client() : _done_recv(0), _done_send(0), send_rdy(0), req(0)
+{}
+
+Client::Client(int new_listen_fd) : _done_recv(0), _done_send(0), send_rdy(0), req(0)
 {
-	_fd = 0;
-	_done_recv = 0;
-	_done_send = 0;
-	send_rdy = 0;
-	
-	req = 0;
-	client_len = sizeof(client_addr);
-}
-
-Client::Client(int new_listen_fd)
-{
-	_done_recv = 0;
-	_done_send = 0;
-	send_rdy = 0;
-	req = 0;
-
-	client_len = sizeof(client_addr);
-
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
 
-	DEBUG("Client created !");
+	DEBUG("Client created with fd " << _fd);
+
 	// inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
-
 	// printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
-
 }
-
 
 Client::~Client()
 {
 	if (_fd > 0)
 		close(_fd);
-	if (req != 0 )
+	if (req != 0)
 	{
 		delete req;
 		req = 0;
 	}
-	// for (list<Server*>::iterator t = servers.begin(); t != servers.end(); t++)
-	// {
-	// 	if (*t != 0)
-	// 	{
-	// 		delete(*t);
-	// 		*t = 0;
-	// 	}
-	// }
 	DEBUG("CLIENT KILLED\n");
 }
 
@@ -83,16 +58,6 @@ string* Client::get_send_buff(void)
 bool Client::is_send_rdy() const
 {
 	return send_rdy;
-	// if (req->g_type() == "GET" && send_rdy)
-	// {
-	// 	return true;
-	// }
-	// else if (req->g_type() == "POST" && data_buff.empty() == false)
-	// {
-	// 	//
-	// 	return true;
-	// }
-	// return false; 
 }
 
 void Client::set_response(void)
@@ -103,22 +68,21 @@ void Client::set_response(void)
 	send_offset = 0;
 	rec_buffer.clear();
 	
-	if (req != 0 && req->get_s_header("Content-Type").find("multipart/form-data") != string::npos && req->get_s_header("Body").empty())
+	if (req->g_type().compare("POST") == 0 && req->get_s_header("Body").empty())
 	{
 		send_buffer = "HTTP/1.1 100 Continue";
-		return ;
 	}
-	else if (req != 0 && (req->g_type() == "GET" || req->g_type() == "POST"))
+	else if (req->g_type() == "GET" || req->g_type() == "POST")
 	{
 		send_buffer = req->respond(servers);
 	}
 	else
 	{
-		DEBUG("OH NO");
+		DEBUG("OH NO UNSPPORTED TYPE");
 	}
-	DEBUG("********************* RESPONSE ***************************");
+	DEBUG("********************* RESPONSE *******************************");
 	DEBUG(send_buffer);
-	DEBUG("***********************END**********************************");
+	DEBUG("*********************** END **********************************");
 }
 
 void Client::clear_recv(void)
@@ -155,11 +119,9 @@ int Client::receive(void)
 		_done_recv = 1;
 		return (-1);
 	}
+
 	if (req != 0) //If we are in post mode
-	{
 		req->get_s_header("Body") += string(buff, len);
-		DEBUG("PUT THAT IN THE BODY");	
-	}
 	else
 		rec_buffer += string(buff, len);
 	

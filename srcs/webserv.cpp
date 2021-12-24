@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/24 14:19:38 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 16:19:08 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ void Webserv::build(void)
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
-		// DEBUG("Port added to the FD_SET !");
 	}
 }
 
@@ -187,7 +186,6 @@ void	Webserv::listen(void)
 			}
 		
 		}
-		// t = 0;
 	}
 }
 
