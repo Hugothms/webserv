@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/17 18:31:36 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 16:02:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,16 @@ class Request
 		string				type;			// GET or POST or DELETE
 		string				target;			// The URL requested
 		
-		// string		body;			// Only for POST
 
 		// * FOR INTERNAL USE *
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
-		// string				*data_buff;
 		unsigned int		code;
 		bool 				passed_cgi;
-		// bool 				_data;
 
+
+		map<string, string>	headers;
 		string 				content_type;
 
 		char **build_cgi_env(string &extention_name);
@@ -69,7 +68,8 @@ class Request
 		*/
 
 	public :
-		map<string, string>	headers;
+		string &get_s_header(string name);
+		void add_to_body(string toadd);
 		Request(const string &buffer);
 		~Request();
 		string	respond(const list<Server*> &servers);

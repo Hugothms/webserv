@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/21 19:33:20 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/24 16:09:50 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Client::Client()
 	_done_recv = 0;
 	_done_send = 0;
 	send_rdy = 0;
-	rcv_len = 0;
+	
 	req = 0;
 	client_len = sizeof(client_addr);
 }
@@ -29,7 +29,7 @@ Client::Client(int new_listen_fd)
 	_done_send = 0;
 	send_rdy = 0;
 	req = 0;
-	rcv_len = 0;
+
 	client_len = sizeof(client_addr);
 
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -103,10 +103,10 @@ void Client::set_response(void)
 	send_offset = 0;
 	rec_buffer.clear();
 	
-	if (req != 0 && req->headers["Content-Type"].find("multipart/form-data") != string::npos && req->headers["Body"].empty())
+	if (req != 0 && req->get_s_header("Content-Type").find("multipart/form-data") != string::npos && req->get_s_header("Body").empty())
 	{
 		send_buffer = "HTTP/1.1 100 Continue";
-		// return ;
+		return ;
 	}
 	else if (req != 0 && (req->g_type() == "GET" || req->g_type() == "POST"))
 	{
@@ -116,60 +116,9 @@ void Client::set_response(void)
 	{
 		DEBUG("OH NO");
 	}
-	DEBUG("********************* HEADERS ***************************");
-	if (req)
-	{
-		for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
-		{
-			DEBUG(a->first << ":|" << a->second << "|");
-		}
-		// if (req->headers["Body"].find("Content-Disposition") != string::npos)
-		// {
-		// 	DEBUG("FROM |"<< req->headers["Body"]<< "|");
-		// 	// req->headers["Body"] = 	req->headers["Body"].substr(0, req->headers["Body"].size() - 1);
-		// 	DEBUG("TO |" << req->headers["Body"] << "|\n\n\n");
-			
-			
-		// }
-	}
 	DEBUG("********************* RESPONSE ***************************");
 	DEBUG(send_buffer);
 	DEBUG("***********************END**********************************");
-	// send_buffer = 
-
-	// if (req->g_type() == "GET")
-	// {
-	// 	send_buffer = req->respond(servers);
-	// }
-	// else if (req->g_type() == "POST")
-	// {
-	// 	if (req->headers["Content-Type"].find("multipart/form-data") != string::npos)
-	// 	{
-	// 		if (req->headers["Body"].empty())
-	// 		{
-	// 			DEBUG("Sending 100 Continue");
-	// 			send_buffer = "HTTP/1.1 100 Continue";
-	// 		}
-	// 		else
-	// 		{
-	// 			DEBUG("Got all data from post");
-	// 			send_buffer = req->respond(servers);
-	// 		}
-	// 	}
-	// 	else
-	// 		send_buffer = req->respond(servers);
-	// }
-	// else
-	// {
-	// 	DEBUG("OHNO");
-	// }
-	// for (map<string, string>::iterator a = req->headers.begin(); a != req->headers.end(); a++)
-	// {
-	// 	DEBUG(a->first << ":|" << a->second << "|");
-	// }
-	// _done_send = 0;
-	// send_offset = 0;
-	
 }
 
 void Client::clear_recv(void)
@@ -197,6 +146,7 @@ int Client::receive(void)
 	char buff[BUFF_S];
 	int len;
 
+	_done_recv = 0;
 
 	len = recv(_fd, buff, BUFF_S, 0);
 	if (len <= 0)
@@ -205,38 +155,21 @@ int Client::receive(void)
 		_done_recv = 1;
 		return (-1);
 	}
-	
 	if (req != 0) //If we are in post mode
 	{
-		req->headers["Body"] += string(buff, len);
+		req->get_s_header("Body") += string(buff, len);
 		DEBUG("PUT THAT IN THE BODY");	
 	}
 	else
 		rec_buffer += string(buff, len);
-	rcv_len += len;
 	
 	if (len < BUFF_S)
 	{
 		_done_recv = 1;
-		rcv_len = 0;
 		if (req == 0)
-		{
 			req = new Request(rec_buffer);
-
-			if (req->g_type() == "POST" && req->headers["Content-Type"].find("multipart/form-data") != string::npos)
-			{
-				DEBUG("WE NEED THE REST OF THE DATA, SENDING 100");
-				// _done_recv = 1;
-			}
-		}
-	}
-	else
-	{
-		// DEBUG("Data did not fit in the buffer, read more plz");
-		_done_recv = 0;
 	}
 	return (_done_recv);
-
 }
 
 void Client::send(void)
@@ -253,13 +186,9 @@ void Client::send(void)
 	if (send_offset == send_buffer.size())
 	{
 		DEBUG("****** RESPONSE SENT *******");
-		// ::send(_fd, "\0", 1, 0);		
-		if (req != 0 && send_buffer != "HTTP/1.1 100 Continue")
+		if (req != 0 && send_buffer.compare("HTTP/1.1 100 Continue") != 0)
 		{
-			// ::send(_fd, "\0", 1, 0);
-			// DEBUG("B4 CRASH");
 			delete req;
-			// DEBUG("AF");
 			req = 0;
 		}
 		_done_send = 1;
@@ -282,8 +211,7 @@ void Client::push_back_server(Server *s)
 {
 	servers.push_back(s);
 }
-
-
+\
 socklen_t* Client::get_addr_len(void)
 {
 	return (&client_len);
