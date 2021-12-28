@@ -23,7 +23,7 @@
          $path = "./cgi-bin/UPLOADS/".$file_name ;
 
          echo "Path is ".$path ;
-         move_uploaded_file($file_tmp,$path);
+         move_uploaded_file($file_tmp, $path);
          echo "Success <br/>";
          echo "<img src=".$path." height=200 width=300 />";
       }
@@ -41,7 +41,7 @@
    <body>
       
       <form action="img-up.php" method="POST" enctype="multipart/form-data">
-         <input type="file" name="image" />
+         <input type="file" name="image" multiple />
          <input type="submit"/>
       </form>
       

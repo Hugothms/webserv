@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/25 12:42:24 by hthomas          ###   ########.fr       */
+/*   Updated: 2021/12/28 18:57:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ using namespace std;
 //* OUR INCLUDES
 # include "location.hpp"
 # include "server.hpp"
-
+# include "log.hpp"
 
 # if DEBUG_ACTIVE == 1
 #  define DEBUG(x) cerr << x << endl;

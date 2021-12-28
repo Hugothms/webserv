@@ -22,7 +22,8 @@ INCLUDEF	=	$(INCLUDE)/includes.hpp		\
 				$(INCLUDE)/request.hpp		\
 				$(INCLUDE)/server.hpp		\
 				$(INCLUDE)/client.hpp		\
-				$(INCLUDE)/webserv.hpp
+				$(INCLUDE)/webserv.hpp		\
+				$(INCLUDE)/log.hpp
 
 SRC			=	main.cpp			\
 				location.cpp		\
@@ -32,7 +33,7 @@ SRC			=	main.cpp			\
 				utils_header.cpp	\
 				utils_parsing.cpp	\
 				client.cpp			\
-				webserv.cpp
+				webserv.cpp			
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
@@ -41,7 +42,7 @@ CFLAGS		=	-Wall -Wextra -std=c++98 -g3 -fsanitize=address #-Werror
 CC			=	clang++
 RM			=	rm -rf
 
-DEBUG		=	1
+DEBUG		=	0
 
 
 $(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
