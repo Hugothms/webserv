@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/24 16:02:09 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/29 04:19:44 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,27 @@ string Request::g_type(void) const
 Request::Request(const string &buffer)
 :  location(0), code(0), passed_cgi(false)
 {
-	size_t pos = 0;
+	size_t pos;
 
-	DEBUG(endl << endl << "******* NEW REQUEST BUFF: ********\n");
+
+	DEBUG("******* NEW REQUEST BUFF: ********\n");
 	DEBUG(buffer);
 	DEBUG("******* END OF REQUEST BUFF ********\n");
 
 
-	size_t t_pos = buffer.find("Content-Type: ");
-	if (t_pos != string::npos)
+	pos = buffer.find("Content-Type: ");
+	
+	//This is used to see if we have a post rq ?
+	if (pos != string::npos)
 	{
-		content_type = buffer.substr(t_pos, buffer.find('\n', t_pos));
-		t_pos = content_type.find_first_of(": ") + 2;
-		content_type = content_type.substr(t_pos, (content_type.find("\n", 0) - t_pos));
+		content_type = buffer.substr(pos, buffer.find('\n', pos));
+		pos = content_type.find_first_of(": ") + 2;
+		content_type = content_type.substr(pos, (content_type.find("\n", 0) - pos));
 	}
+
+
+
+	pos = 0;
 
 
 	type = get_str_before_char(buffer, " ", &pos);
@@ -116,12 +123,11 @@ Request::Request(const string &buffer)
 		// DEBUG("INSERTING");
 		headers.insert(pair<string, string>(header, get_str_before_char(buffer, "\r\n", &pos)));
 	}
-	// DEBUG("HEADERS BE LIKE " << headers.count("Content-Length"))
+	
+	// If there is content length, then we are in post mode, add Body header;
 	if (headers.count("Content-Length") > 0)
-	{
-		// DEBUG("WE ARE INSERTING");
 		headers.insert(pair<string, string>("Body", &buffer[pos]));
-	}
+	
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
 	DEBUG("****** REQUEST PARSED *******");
@@ -189,20 +195,17 @@ char *ft_strdup(string msg)
 	ret[i] = 0;
 	return ret;
 }
-string trim_tr(string to_trim)
+void trim_tr(string &to_trim)
 {
-	string todo;
 	for (std::string::iterator it = to_trim.begin(); it != to_trim.end(); it++)
 	{
 		if (*it == 13)
 		{
-			// DEBUG("DO TRIM");
 			it = to_trim.erase(it);
 			--it;
-			continue;
 		}
 	}	
-	return to_trim;
+	// return to_trim;
 }
 
 char **Request::build_cgi_av(string &extention_name)
@@ -256,7 +259,7 @@ char **Request::build_cgi_env(string &extention_name)
 	{
 
 		//Are you fucking with me ?
-		content_type = trim_tr(content_type);
+		trim_tr(content_type);
 
 		ev.push_back("CONTENT_TYPE=" + content_type);
 		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
@@ -447,7 +450,9 @@ void	Request::set_filepath(void)
 void 	Request::get_body(string &body)
 {
 	set_filepath();
+	DEBUG("CREATING FILE");
 	ifstream file(filepath.c_str(), ofstream::in);
+	DEBUG("DONE");
 	if (is_directory(filepath))
 	{
 		if (filepath[filepath.size() - 1] == '/' && location->get_autoindex())
@@ -487,7 +492,9 @@ void 	Request::get_body(string &body)
 	}
 	else if (code == 0)
 		code = 200;
+	DEBUG("PUT INTO BODY");
 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+	DEBUG("DONE");
 	file.close();
 }
 
@@ -582,8 +589,13 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-string	Request::respond(const list<Server*> &servers)
+string	Request::respond(const list<Server*> &servers, char fast_pipe)
 {
+	if (fast_pipe > 0)
+	{
+		//Do stuff		
+	}
+
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return (get_response());
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())

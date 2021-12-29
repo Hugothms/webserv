@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/24 15:54:12 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/29 04:09:14 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,12 @@ class Client
 		string				rec_buffer;
 		string				send_buffer;
 
+
+
+
 		Request 			*req;
 
+		char 				fast_pipe;
 
 		list<Server*>		servers;
 

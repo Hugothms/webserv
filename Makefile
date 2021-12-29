@@ -42,7 +42,7 @@ CFLAGS		=	-Wall -Wextra -std=c++98 -g3 -fsanitize=address #-Werror
 CC			=	clang++
 RM			=	rm -rf
 
-DEBUG		=	0
+DEBUG		=	1
 
 
 $(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
