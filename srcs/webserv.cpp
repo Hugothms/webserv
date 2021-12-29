@@ -6,12 +6,12 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/28 18:59:34 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/29 03:17:47 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-
+#include <fcntl.h>
 Webserv::Webserv(const string config_file)
 {
 	parse_config(config_file);
@@ -110,7 +110,9 @@ void Webserv::accept_new_conn(void)
 		if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
 		{
 			Client *client = new Client((*server)->get_listen_fd());
+			DEBUG("PID OF NEW IS " << client->get_fd());
 			Log("New client ");
+
 			client->push_back_server(*server);
 			_clients.push_back(client);
 			FD_SET(client->get_fd(), &listen_set);
@@ -184,6 +186,11 @@ void	Webserv::listen(void)
 				{
 					(*client)->send();
 				}
+			}
+			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
+			{
+				DEBUG("AH, FOUND ONE");
+    			// file descriptor is invalid or closed
 			}
 		
 		}

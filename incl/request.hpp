@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/24 16:02:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2021/12/29 04:16:57 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Request
 
 		map<string, string>	headers;
 		string 				content_type;
+		// int 				file_fd;
 
 		char **build_cgi_env(string &extention_name);
 		char **build_cgi_av(string &extention_name);
@@ -72,7 +73,7 @@ class Request
 		void add_to_body(string toadd);
 		Request(const string &buffer);
 		~Request();
-		string	respond(const list<Server*> &servers);
+		string	respond(const list<Server*> &servers, char fast_pipe = 0);
 		bool	select_server(const list<Server*> &servers);
 		bool	select_location(void);
 		string 	g_type(void) const;
