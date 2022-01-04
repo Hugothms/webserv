@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 15:32:16 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 16:30:55 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,10 +289,91 @@ void trim_headers(string &to_trim, string extention_name)
 }
 
 
-void	Request::launch_cgi(string &body, string extention_name)
+// int	Request::launch_cgi(string extention_name)
+// {
+// 	int out_pipe[2];
+// 	int in_pipe[2];
+
+// 	if (pipe(out_pipe) == -1)
+// 	{
+// 		cerr << "cgi: pipe failed" << endl;
+// 		exit(EXIT_FAILURE);
+// 	}
+
+// 	code = 200;
+	
+// 	//We need to trim and write the body to stdin
+// 	if (type == "POST")
+// 	{	
+// 		if (pipe(in_pipe) == -1)
+// 			DEBUG("PIPE ERROR");
+// 	}
+// 	pid_t pid = fork();
+	
+// 	if (pid < 0)
+// 	{
+// 		cerr << "cgi: fork failed" << endl;
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	else if (pid == 0)
+// 	{	
+// 		char **_ev = build_cgi_env(extention_name);
+// 		char **_av = build_cgi_av(extention_name);
+	
+
+// 		if (type == "POST")
+// 		{
+// 			close(in_pipe[1]);
+// 			if (dup2(in_pipe[0], 0) == -1)
+// 			{
+// 				DEBUG("DUP2 ERR");
+// 				exit(0);
+// 			}
+// 		}
+// 		close(out_pipe[0]);
+// 		if (dup2(out_pipe[1], 1) == -1)
+// 		{
+// 			DEBUG("DUP2 ERR");
+// 			exit(0);
+// 		}
+
+// 		if (execve(_av[0], _av, _ev) < 0)
+// 			code = 404;
+// 		//Need to free
+// 	}
+// 	else
+// 	{
+// 		close(out_pipe[1]);
+// 		if (type == "POST")
+// 		{
+// 			close(in_pipe[0]);
+	
+// 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
+// 				DEBUG("WRITE ERROR");
+// 			close(in_pipe[1]);
+// 		}
+// 		wait(0);
+
+// 		return (out_pipe[0]);
+// 		// char reading_buf;
+// 		// while(read(out_pipe[0], &reading_buf, 1) > 0)
+// 		   // body += reading_buf;
+// 		// close(out_pipe[0]);
+
+// 		// DEBUG("CGI OUTPUT:\n" << body);
+// 		trim_headers(body, extention_name);
+// 	}
+// }
+
+
+void	Request::launch_cgi(string &body, const int pos)
 {
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
+
+	string extention_name = filepath.substr(pos);
+
+	// string extention_name = file.substr()
 
 	int out_pipe[2];
 	int in_pipe[2];
@@ -489,6 +570,7 @@ int Request::get_file_status(int &nfd)
 	else
 	{
 		ifstream file(filepath.c_str(), ofstream::in);
+		
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 		{
 			code = 404;
@@ -505,7 +587,28 @@ int Request::get_file_status(int &nfd)
 			// return 0;
 		}
 		else
+		{
+			map<string, string> cgis = server->get_cgis();
+			for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+			{
+				size_t pos;
+				if ((pos = filepath.find(cgi->first)) != string::npos)
+				{
+					Log("Found the CGI for this file");
+					// passed_cgi = true;
+					file.close();
+
+					//THIS IS NOT AN FD, USED TO GET FILE EXTENTION
+					nfd = pos;
+					
+
+					// launch_cgi(filepath.substr(pos));
+					return 2;
+				}
+			}
+
 			code = 200;	
+		}
 		
 		// Log("File path is " + filepath);
 
@@ -557,7 +660,7 @@ void 	Request::get_body(string &body)
 			{
 				passed_cgi = true;
 				file.close();
-				launch_cgi(body, filepath.substr(pos));
+				// launch_cgi(body, filepath.substr(pos));
 				return ;
 			}
 		}
@@ -675,6 +778,23 @@ string Request::get_normal_header()
 	header << "Server: webserv/0.01" << endl;
 	header << "Content-Type: " << ::get_type(filepath, passed_cgi) << endl;
 	header << "Content-Length: " << fileSize << endl;
+	header << "Connection: Closed" << endl;
+	if (location && location->get_HTTP_redirection_type() > 0)
+		header << "Location: " << location->get_HTTP_redirection() << endl;
+	header << endl;
+	return (header.str());
+}
+
+string	Request::get_cgi_header(const size_t length)
+{
+
+
+	stringstream header;
+	header << "HTTP/1.1 " << codes[code] << endl;
+	header << "Date: " << get_time_stamp() << endl;
+	header << "Server: webserv/0.01" << endl;
+	header << "Content-Type: " << ::get_type(filepath, 1) << endl;
+	header << "Content-Length: " << length << endl;
 	header << "Connection: Closed" << endl;
 	if (location && location->get_HTTP_redirection_type() > 0)
 		header << "Location: " << location->get_HTTP_redirection() << endl;

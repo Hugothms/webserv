@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 15:32:59 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 16:33:40 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,15 +96,11 @@ void Client::set_response(void)
 
 	if (operation_status == 0)
 	{
-		Log("OPSTAT = 0, WE HAVE THE DATA TO SEND");
+		// Log("OPSTAT = 0, WE HAVE THE DATA TO SEND");
 		send_buffer = req->get_normal_header();
-		Log("Prepeed resp is : \n" + send_buffer);
+		// Log("Prepeed resp is : \n" + send_buffer);
 
 		status = 1;
-		//Meaning we have the header ready as well as the FD 
-
-
-		// response = req->get_header();
 		return ;
 	}
 	else if (operation_status == 1)
@@ -116,11 +112,18 @@ void Client::set_response(void)
 		send_buffer += tmp;
 
 		status = 1;
-		//This is a CGI
+		
 	}
-	else
+	else if (operation_status == 2)
 	{
-
+		string tmp;
+		req->launch_cgi(tmp, _file_fd);
+		send_buffer = req->get_cgi_header(tmp.size());
+		send_buffer += tmp;
+		status = 1;
+		
+		_file_fd = 0;
+		//This is a CGI
 	}
 
 	return ;
@@ -128,18 +131,18 @@ void Client::set_response(void)
 
 	
 
-	if (req && (req->g_type().compare("POST") == 0 && req->get_s_header("Body").empty()))
-	{
-		send_buffer = "HTTP/1.1 100 Continue";
-	}
-	else if (req && (req->g_type() == "GET" || (req->g_type() == "POST" || fast_pipe > 0)))
-	{
-		send_buffer = req->respond(servers);
-	}
-	else
-	{
-		DEBUG("OH NO UNSPPORTED TYPE");
-	}
+	// if (req && (req->g_type().compare("POST") == 0 && req->get_s_header("Body").empty()))
+	// {
+	// 	send_buffer = "HTTP/1.1 100 Continue";
+	// }
+	// else if (req && (req->g_type() == "GET" || (req->g_type() == "POST" || fast_pipe > 0)))
+	// {
+	// 	send_buffer = req->respond(servers);
+	// }
+	// else
+	// {
+	// 	DEBUG("OH NO UNSPPORTED TYPE");
+	// }
 	// DEBUG("********************* RESPONSE *******************************");
 	// DEBUG(send_buffer);
 	// DEBUG("*********************** END **********************************");
