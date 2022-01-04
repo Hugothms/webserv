@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 16:30:55 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 16:55:07 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -438,7 +438,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		if (type == "POST")
 		{
 			close(in_pipe[0]);
-	
+			
 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
 				DEBUG("WRITE ERROR");
 			close(in_pipe[1]);
