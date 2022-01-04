@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/29 03:17:47 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 11:06:37 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,10 @@ void	Webserv::listen(void)
 				{
 					DEBUG("client seems to have left, clearing his marks");
 					clear_fd(*client);
+				}
+				else if ((*client)->is_done_recv())
+				{
+					(*client)->req = new Request(*(*client)->get_rec_buff());
 				}
 			}
 			else if ((*client)->is_done_recv())
