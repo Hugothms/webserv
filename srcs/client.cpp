@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 14:38:12 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 15:32:59 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ bool Client::is_send_rdy() const
 	return send_rdy;
 }
 
+
+
 void Client::set_response(void)
 {
 	send_rdy = 1;
@@ -105,9 +107,20 @@ void Client::set_response(void)
 		// response = req->get_header();
 		return ;
 	}
+	else if (operation_status == 1)
+	{
+		string tmp;
+		req->get_auto_index(tmp);
+		
+		send_buffer = req->get_index_header(tmp);
+		send_buffer += tmp;
+
+		status = 1;
+		//This is a CGI
+	}
 	else
 	{
-		//This is a CGI
+
 	}
 
 	return ;
@@ -222,17 +235,35 @@ void Client::send_header(void)
 
 void Client::send_fd(void)
 {
+
+	if (_file_fd == 0)
+		return ;
+
 	char buff[BUFF_S];
 
+	// Log("Send FD");
+	int s_read = read(_file_fd, buff, BUFF_S);
+	DEBUG("Read is " << s_read);
+	if (s_read <= 0)
+	{
+		Log("s_read 0");
 
-	size_t s_read = read(_file_fd, buff, BUFF_S);
+		close(_file_fd);
 
+		_file_fd = 0;
+		status = 0;
+		return;
+	}
 
 	::send(_fd, buff, s_read, 0);
 
 	if (s_read < BUFF_S)
 	{
-		Log("send complete");
+		Log("send_fd complete");
+
+		close(_file_fd);
+
+		_file_fd = 0;
 		status = 0;
 		//All sent
 	}
@@ -251,7 +282,7 @@ void Client::smart_send(void)
 	else if (status == 2) //Send from the FD
 	{
 		this->send_fd();
-		Log("Now send the rest");
+		// Log("Now send the rest");
 	}	
 }
 

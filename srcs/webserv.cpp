@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 14:38:07 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 15:25:26 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ void	Webserv::listen(void)
 				{
 					if ((*client)->receive() == -1)
 					{
-						DEBUG("client seems to have left, clearing his marks");
+						// DEBUG("client seems to have left, clearing his marks");
 						clear_fd(*client);
 					}
 					else if ((*client)->is_done_recv())
@@ -189,7 +189,7 @@ void	Webserv::listen(void)
 			{
 				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
 				{
-					DEBUG("****** BUILDING RESPONSE *******");
+					// DEBUG("****** BUILDING RESPONSE *******");
 					(*client)->set_response();
 				}
 				if ((*client)->status == 1 || (*client)->status == 2 )
