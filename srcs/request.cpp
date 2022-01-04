@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 14:30:07 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 15:32:16 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -456,36 +456,72 @@ void	Request::set_filepath(void)
 int Request::get_file_status(int &nfd)
 {
 	
+
+
+
+
+
+
+
 	if (is_directory(filepath))
 	{
+		if (filepath[filepath.size() - 1] == '/' && location->get_autoindex())
+		{
+			// string tmp;
+			// get_auto_index(&tmp);
+			// status = 42;
+			code = 200;
+			return 1;
+		}
+		else
+		{
+			code = 403;
+			passed_cgi = true;
+			// file.close();
+			filepath = error_page(403);
+			// file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
+		}
+
+
+
 		//Don't do it yet
+	}
+	else
+	{
+		ifstream file(filepath.c_str(), ofstream::in);
+		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
+		{
+			code = 404;
+
+			passed_cgi = true;
+			// file.close();
+
+			// file.close();
+			// file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
+
+			filepath = error_page(404);
+			// nfd = open(static_cast<const char *>(error_page(404).c_str()), O_RDONLY);
+
+			// return 0;
+		}
+		else
+			code = 200;	
+		
+		// Log("File path is " + filepath);
+
+		file.close();	
 	}
 
 	Log("Opening file");
 
-	ifstream file(filepath.c_str(), ofstream::in);
-
-
-	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
-	{
-		code = 404;
-
-
-		passed_cgi = true;
-		
-
-		// file.close();
-		// file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
-
-		nfd = open(static_cast<const char *>(error_page(404).c_str()), O_RDONLY);
-
-		return 0;
-	}
-
+	
+	
 	Log("File verifs OK");
+	
 
+	
 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
-	code = 200;
+	
 	Log("Open is ok as well");
 	return 0;
 
@@ -608,6 +644,24 @@ void Request::add_to_body(string data)
 {
 	headers["Body"] += data;
 }
+
+string Request::get_index_header(string &body)
+{
+	size_t fileSize = body.size();
+
+	stringstream header;
+	header << "HTTP/1.1 " << codes[code] << endl;
+	header << "Date: " << get_time_stamp() << endl;
+	header << "Server: webserv/0.01" << endl;
+	header << "Content-Type: text/html" << endl;
+	header << "Content-Length: " << fileSize << endl;
+	header << "Connection: Closed" << endl;
+	if (location && location->get_HTTP_redirection_type() > 0)
+		header << "Location: " << location->get_HTTP_redirection() << endl;
+	header << endl;
+	return (header.str());
+}
+
 
 string Request::get_normal_header()
 {
