@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 11:06:37 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 14:38:07 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,9 @@ void Webserv::accept_new_conn(void)
 
 			client->push_back_server(*server);
 			_clients.push_back(client);
+			//TO MOVE
+			client->status = 0;
+
 			FD_SET(client->get_fd(), &listen_set);
 			FD_SET(client->get_fd(), &write_set);
 		}
@@ -159,24 +162,27 @@ void	Webserv::listen(void)
 	{
 		// DEBUG("Waiting for new connections...");
 		loop_prep();
-
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
 
+
+
+
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
+			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
 			{
-				DEBUG("client seems ready to transmit data");
-
-				if ((*client)->receive() == -1)
+				if ((*client)->status == 0) //Or if we need more data to feed CGI
 				{
-					DEBUG("client seems to have left, clearing his marks");
-					clear_fd(*client);
-				}
-				else if ((*client)->is_done_recv())
-				{
-					(*client)->req = new Request(*(*client)->get_rec_buff());
+					if ((*client)->receive() == -1)
+					{
+						DEBUG("client seems to have left, clearing his marks");
+						clear_fd(*client);
+					}
+					else if ((*client)->is_done_recv())
+					{
+						(*client)->req = new Request(*(*client)->get_rec_buff());
+					}	
 				}
 			}
 			else if ((*client)->is_done_recv())
@@ -186,10 +192,15 @@ void	Webserv::listen(void)
 					DEBUG("****** BUILDING RESPONSE *******");
 					(*client)->set_response();
 				}
-				else if ((*client)->is_done_send() == 0) //Transmit response
+				if ((*client)->status == 1 || (*client)->status == 2 )
 				{
-					(*client)->send();
+					(*client)->smart_send();
+					//Send 
 				}
+				// else if ((*client)->is_done_send() == 0) //Transmit response
+				// {
+				// 	(*client)->send();
+				// }
 			}
 			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
 			{
@@ -200,6 +211,53 @@ void	Webserv::listen(void)
 		}
 	}
 }
+// void	Webserv::listen(void)
+// {
+// 	while (true)
+// 	{
+// 		// DEBUG("Waiting for new connections...");
+// 		loop_prep();
+
+// 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
+// 		accept_new_conn();
+
+// 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
+// 		{
+// 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
+// 			{
+// 				DEBUG("client seems ready to transmit data");
+
+// 				if ((*client)->receive() == -1)
+// 				{
+// 					DEBUG("client seems to have left, clearing his marks");
+// 					clear_fd(*client);
+// 				}
+// 				else if ((*client)->is_done_recv())
+// 				{
+// 					(*client)->req = new Request(*(*client)->get_rec_buff());
+// 				}
+// 			}
+// 			else if ((*client)->is_done_recv())
+// 			{
+// 				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
+// 				{
+// 					DEBUG("****** BUILDING RESPONSE *******");
+// 					(*client)->set_response();
+// 				}
+// 				else if ((*client)->is_done_send() == 0) //Transmit response
+// 				{
+// 					(*client)->send();
+// 				}
+// 			}
+// 			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
+// 			{
+// 				DEBUG("AH, FOUND ONE");
+//     			// file descriptor is invalid or closed
+// 			}
+		
+// 		}
+// 	}
+// }
 
 void Webserv::stop(void)
 {
