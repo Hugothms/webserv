@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/29 04:19:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 11:43:03 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -447,9 +447,45 @@ void	Request::set_filepath(void)
 	// DEBUG("filepath: " << filepath << endl << endl);
 }
 
+// int Request::give_403(void)
+// {
+
+// }
+
+
+int Request::get_file_status(int &nfd)
+{
+	
+	if (is_directory(filepath))
+	{
+		//Don't do it yet
+	}
+
+	Log("Opening file");
+
+	ifstream file(filepath.c_str(), ofstream::in);
+
+
+	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
+	{
+		code = 404;
+		passed_cgi = true;
+		file.close();
+		file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
+	}
+
+	Log("File verifs OK");
+
+	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
+
+	Log("Open is ok as well");
+	return 0;
+
+}
+
 void 	Request::get_body(string &body)
 {
-	set_filepath();
+	// set_filepath();
 	DEBUG("CREATING FILE");
 	ifstream file(filepath.c_str(), ofstream::in);
 	DEBUG("DONE");
@@ -502,6 +538,9 @@ string 	Request::get_response(void)
 {
 	string response;
 	string body;
+
+	// size_
+
 	get_body(body);
 	response = get_header(body.length());
 	response += body;
@@ -562,8 +601,31 @@ void Request::add_to_body(string data)
 	headers["Body"] += data;
 }
 
+string Request::get_normal_header()
+{
+	ifstream file(filepath.c_str(), ofstream::in);
+	file.seekg(0, ios::end);	
+	size_t fileSize = file.tellg();
+
+	stringstream header;
+	header << "HTTP/1.1 " << codes[code] << endl;
+	header << "Date: " << get_time_stamp() << endl;
+	header << "Server: webserv/0.01" << endl;
+	header << "Content-Type: " << ::get_type(filepath, passed_cgi) << endl;
+	header << "Content-Length: " << fileSize << endl;
+	header << "Connection: Closed" << endl;
+	if (location && location->get_HTTP_redirection_type() > 0)
+		header << "Location: " << location->get_HTTP_redirection() << endl;
+	header << endl;
+	return (header.str());
+}
+
+
+
 string	Request::get_header(const size_t length)
 {
+
+
 	stringstream header;
 	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
@@ -589,44 +651,100 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-string	Request::respond(const list<Server*> &servers, char fast_pipe)
+void Request::prep_response(const list<Server*> &servers)
 {
-	if (fast_pipe > 0)
-	{
-		//Do stuff		
-	}
-
 	if (!select_server(servers) || !select_location() || !method_allow())
-		return (get_response());
+	{
+		DEBUG("CASE 1");
+		// return (get_response());	
+	}
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
 	{
 		code = 413;
-		return (get_response());
+		DEBUG("CASE 2");
+		// return (get_response());
 	}
 	if (location->get_HTTP_redirection_type() > 0)
 	{
+		DEBUG("CASE 3");
 		DEBUG("REDIR TYPE");
 		code = location->get_HTTP_redirection_type();
-		return (get_header(0));
+		// return (get_header(0));
 	}
 	if (type == "GET")
-		return(get_response());
+	{
+		DEBUG("CASE 4");
+		// return(get_response());
+	}
 	else if (type == "HEAD")
 	{
+		DEBUG("CASE 5");
 		string body;
 		get_body(body);
-		return (get_header(body.length()));
+		// return (get_header(body.length()));
 	}
 	else if (type == "POST")
 	{
-		return (get_response());
+		DEBUG("CASE 6");
+		// return (get_response());
 	}
 	else if (type == "DELETE")
 	{
 		//todo
-		string delete_file = server->get_root() + location->get_upload_directory() + target;
-		remove(delete_file.c_str());
-		return (get_response());
+		DEBUG("CASE 7");
+		// string delete_file = server->get_root() + location->get_upload_directory() + target;
+		// remove(delete_file.c_str());
+		// return (get_response());
 	}
+	// return (get_response());
+}
+
+// int 	Request::get_file_fd(void)
+// {
+
+// }
+
+
+string	Request::respond(const list<Server*> &servers, char fast_pipe)
+{
+
+	// prep_response(servers);
+	// if (fast_pipe > 0)
+	// {
+	// 	//Do stuff		
+	// }
+
+	// if (!select_server(servers) || !select_location() || !method_allow())
+	// 	return (get_response());
+	// if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
+	// {
+	// 	code = 413;
+	// 	return (get_response());
+	// }
+	// if (location->get_HTTP_redirection_type() > 0)
+	// {
+	// 	DEBUG("REDIR TYPE");
+	// 	code = location->get_HTTP_redirection_type();
+	// 	return (get_header(0));
+	// }
+	// if (type == "GET")
+	// 	return(get_response());
+	// else if (type == "HEAD")
+	// {
+	// 	string body;
+	// 	get_body(body);
+	// 	return (get_header(body.length()));
+	// }
+	// else if (type == "POST")
+	// {
+	// 	return (get_response());
+	// }
+	// else if (type == "DELETE")
+	// {
+	// 	//todo
+	// 	string delete_file = server->get_root() + location->get_upload_directory() + target;
+	// 	remove(delete_file.c_str());
+	// 	return (get_response());
+	// }
 	return (get_response());
 }

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/29 04:19:06 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 11:45:53 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,37 @@ void Client::set_response(void)
 	// 	send_buffer = "HTTP/1.1 100 Continue";	
 	// }	
 
+
+	//Function that allows later calls to get the data
+	req->prep_response(servers);
+	Log("prep response OK");
+	req->set_filepath();
+	Log("set filepath OK");
+
+
+	
+	// int nfd = 0;
+	int operation_status = req->get_file_status(_file_fd);
+	Log("File status OK");
+
+	if (operation_status == 0)
+	{
+		Log("OPSTAT = 0, WE HAVE THE DATA TO SEND");
+		send_buffer = req->get_normal_header();
+		Log("Prepeed resp is : \n" + send_buffer);
+
+		status = 1;
+
+
+		// response = req->get_header();
+		return ;
+	}
+
+
+
+
+	
+
 	if (req && (req->g_type().compare("POST") == 0 && req->get_s_header("Body").empty()))
 	{
 		send_buffer = "HTTP/1.1 100 Continue";
@@ -138,25 +169,30 @@ int Client::receive(void)
 	// 	rec_buffer += string(buff, len);
 	// }
 	
-	if (req != 0) //If we are in post mode
+	if (req != 0) //If we are in post mode, putting in the header field
 		req->get_s_header("Body") += string(buff, len);
 	else
 		rec_buffer += string(buff, len);
 	
+	
+
 	if (len < BUFF_S)
 	{
 		_done_recv = 1;
-		if (req == 0)
-		{
-			req = new Request(rec_buffer);
-			if (req->g_type().compare("POST") == 0)
-			{
-				fast_pipe = 2;
-				//We are in post mode;
-			}
-		}
 	}
+
+
 	return (_done_recv);
+}
+
+void Client::smart_send(void)
+{
+	if (!send_buffer.empty())
+		this->send();
+	else
+	{
+		
+	}	
 }
 
 void Client::send(void)

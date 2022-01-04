@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/29 04:16:57 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 11:41:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ class Request
 		*/
 
 	public :
+		void prep_response(const list<Server*> &servers);
 		string &get_s_header(string name);
 		void add_to_body(string toadd);
 		Request(const string &buffer);
@@ -80,11 +81,14 @@ class Request
 		string 	get_response(void);
 		void 	get_body(string &body);
 		string	get_header(const size_t length);
+		string	get_normal_header();
 		void 	launch_cgi(string &body, const string extention_name);
 		void	get_auto_index(string &body);
 		void	set_filepath(void);
 		bool 	method_allow(void);
 		string	error_page(const int error_code);
+		int  	get_file_status(int &nfd);
+		// void prep_response(const list<Server*> &servers)
 };
 
 // * utils_header.cpp
