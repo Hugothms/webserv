@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 11:43:52 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 14:23:42 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,9 @@ class Client
 
 		void push_back_server(Server *s);
 
+		void send_header(void);
+		void smart_send(void);
+		void send_fd(void);
 
 		struct sockaddr* get_sockaddr(void);
 		socklen_t *get_addr_len(void);

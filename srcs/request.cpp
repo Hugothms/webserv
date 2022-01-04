@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 11:43:03 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 14:30:07 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -469,15 +469,23 @@ int Request::get_file_status(int &nfd)
 	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 	{
 		code = 404;
+
+
 		passed_cgi = true;
-		file.close();
-		file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
+		
+
+		// file.close();
+		// file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
+
+		nfd = open(static_cast<const char *>(error_page(404).c_str()), O_RDONLY);
+
+		return 0;
 	}
 
 	Log("File verifs OK");
 
 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
-
+	code = 200;
 	Log("Open is ok as well");
 	return 0;
 

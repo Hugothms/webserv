@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 14:05:19 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 14:27:56 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,13 +99,18 @@ void Client::set_response(void)
 		Log("Prepeed resp is : \n" + send_buffer);
 
 		status = 1;
+		//Meaning we have the header ready as well as the FD 
 
 
 		// response = req->get_header();
 		return ;
 	}
+	else
+	{
+		//This is a CGI
+	}
 
-
+	return ;
 
 
 	
@@ -185,13 +190,68 @@ int Client::receive(void)
 	return (_done_recv);
 }
 
+void Client::send_header(void)
+{
+	int actual = BUFF_S;
+
+	if (send_offset + actual > send_buffer.size())
+		actual = send_buffer.size() - send_offset;
+
+	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
+
+	send_offset += actual;
+
+	if (send_offset == send_buffer.size())
+	{
+		Log("Header sent");
+		
+
+
+		// if (req != 0 && send_buffer.compare("HTTP/1.1 100 Continue") != 0)
+		// {
+		// 	delete req;
+		// 	req = 0;
+		// }
+		// _done_send = 1;
+		// send_rdy = 0;
+		// _done_recv = 0;
+		send_buffer.clear();
+		status = 2;
+	}
+}
+
+void Client::send_fd(void)
+{
+	char buff[BUFF_S];
+
+
+	size_t s_read = read(_file_fd, buff, BUFF_S);
+
+
+	::send(_fd, buff, s_read, 0);
+
+	if (s_read < BUFF_S)
+	{
+		Log("send complete");
+		status = 0;
+		//All sent
+	}
+
+
+
+}
+
 void Client::smart_send(void)
 {
-	if (!send_buffer.empty())
-		this->send();
-	else
+	//1 Means we have the header ready and the FD in store
+	if (status == 1)
 	{
-		
+		this->send_header();
+	}
+	else if (status == 2) //Send from the FD
+	{
+		this->send_fd();
+		Log("Now send the rest");
 	}	
 }
 
