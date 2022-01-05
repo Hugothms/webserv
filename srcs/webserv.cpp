@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 15:25:26 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/05 01:15:25 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,13 @@ void Webserv::accept_new_conn(void)
 		if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
 		{
 			Client *client = new Client((*server)->get_listen_fd());
-			DEBUG("PID OF NEW IS " << client->get_fd());
-			Log("New client ");
+			// DEBUG("PID OF NEW IS " << client->get_fd());
+			// Log("New client connected", GREEN);
 
 			client->push_back_server(*server);
 			_clients.push_back(client);
 			//TO MOVE
+			
 			client->status = 0;
 
 			FD_SET(client->get_fd(), &listen_set);
@@ -158,6 +159,7 @@ void Webserv::clear_fd(Client *client)
 
 void	Webserv::listen(void)
 {
+	Log("Listen start..", GREEN);
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");
@@ -172,25 +174,34 @@ void	Webserv::listen(void)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
 			{
+				// Log("Client seems to have something to share", YELLOW);
 				if ((*client)->status == 0) //Or if we need more data to feed CGI
 				{
+
+					// Log("Client status is 0", YELLOW);
 					if ((*client)->receive() == -1)
 					{
+						Log("Client receive = -1, killing him", YELLOW);
 						// DEBUG("client seems to have left, clearing his marks");
 						clear_fd(*client);
 					}
 					else if ((*client)->is_done_recv())
 					{
-						(*client)->req = new Request(*(*client)->get_rec_buff());
-					}	
+						Log("Client did send what he had, creating rq from it", GREEN);
+						
+						Log("OK", GREEN);
+					}
+					DEBUG("DONE AFTER RECV" << (*client)->is_done_recv() )	;
 				}
 			}
 			else if ((*client)->is_done_recv())
 			{
-				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
+				Log("Client is already done sending, time to process", GREEN);
+				if ((*client)->status == 0) //We ready to send it, build resp
 				{
-					// DEBUG("****** BUILDING RESPONSE *******");
+					Log("Setting response", RED);
 					(*client)->set_response();
+					Log("OK", RED);
 				}
 				if ((*client)->status == 1 || (*client)->status == 2 )
 				{
@@ -202,11 +213,15 @@ void	Webserv::listen(void)
 				// 	(*client)->send();
 				// }
 			}
-			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
+			else
 			{
-				DEBUG("AH, FOUND ONE");
-    			// file descriptor is invalid or closed
+				Log("ono");
 			}
+			// else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
+			// {
+			// 	DEBUG("AH, FOUND ONE");
+   //  			// file descriptor is invalid or closed
+			// }
 		
 		}
 	}

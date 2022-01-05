@@ -6,24 +6,25 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 16:55:49 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/05 01:24:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 
-Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0), fast_pipe(0)
+Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0), status(0)
 {
 	client_len = sizeof(client_addr);
 }
 
-Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), fast_pipe(0)
+Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), status(0)
 {
 	client_len = sizeof(client_addr);
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
 
+	Log("New client", GREEN);
 	
-	DEBUG("Client created with fd " << _fd);
+	// DEBUG("Client created with fd " << _fd);
 
 	// inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
 	// printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
@@ -74,14 +75,14 @@ void Client::set_response(void)
 
 	_done_send = 0;
 	send_offset = 0;
+
+	if (req)
+		delete req;
+	req = new Request(rec_buffer);
+	
 	rec_buffer.clear();
 	
-	// if (fast_pipe = 2)
-	// {
-	// 	send_buffer = "HTTP/1.1 100 Continue";	
-	// }	
-
-
+	
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
 	Log("prep response OK");
@@ -199,6 +200,7 @@ int Client::receive(void)
 
 	if (len < BUFF_S)
 	{
+		DEBUG("_done_recv = 1");
 		_done_recv = 1;
 	}
 
@@ -208,10 +210,13 @@ int Client::receive(void)
 
 void Client::send_header(void)
 {
+	// static string test;
+
 	int actual = BUFF_S;
 
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
+
 
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
 
@@ -219,7 +224,10 @@ void Client::send_header(void)
 
 	if (send_offset == send_buffer.size())
 	{
-		Log("Header sent");
+		// µ%£M12345+°./§§%µ£
+		DEBUG("SEND HEADER DONE:|" << send_buffer << "|");
+
+		// DEBUG("send_buffer");
 		
 
 
@@ -238,6 +246,7 @@ void Client::send_header(void)
 
 void Client::send_fd(void)
 {
+	static string tmp;
 
 	if (_file_fd == 0)
 		return ;
@@ -246,11 +255,14 @@ void Client::send_fd(void)
 
 	// Log("Send FD");
 	int s_read = read(_file_fd, buff, BUFF_S);
-	DEBUG("Read is " << s_read);
+	
+
+	tmp += string(buff, 0, BUFF_S);
+	// DEBUG("Read is " << s_read);
 	if (s_read <= 0)
 	{
 		Log("s_read 0");
-
+		_done_recv = 0;
 		close(_file_fd);
 
 		_file_fd = 0;
@@ -259,15 +271,16 @@ void Client::send_fd(void)
 		req = 0;
 		return;
 	}
-
+	Log("Sending_fd..");
 	::send(_fd, buff, s_read, 0);
-
+	Log("Done");
 	if (s_read < BUFF_S)
 	{
 		Log("send_fd complete");
-
+		// DEBUG("FD_SEND DONE :|" << tmp << "|");
+		tmp.clear();
 		close(_file_fd);
-
+		_done_recv = 0;
 		_file_fd = 0;
 		status = 0;
 		delete req;
@@ -289,6 +302,7 @@ void Client::smart_send(void)
 	else if (status == 2) //Send from the FD
 	{
 		this->send_fd();
+		// _done_recv = 0;
 		// Log("Now send the rest");
 	}	
 }

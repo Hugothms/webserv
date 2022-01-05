@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 16:55:07 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 20:50:44 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ Request::Request(const string &buffer)
 	
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
-	DEBUG("****** REQUEST PARSED *******");
+	// DEBUG("****** REQUEST PARSED *******");
 	// DEBUG("Done")
 }
 

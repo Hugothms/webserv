@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 18:55:27 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 14:17:37 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/04 20:44:55 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "includes.hpp"
@@ -41,16 +41,17 @@ class Log
 	Log()
 	{}
 
-	Log(std::string msg)
+	Log(std::string msg, string color = RED)
 	{
 		std::time_t t = std::time(0);   // get time now
     	std::tm* now = std::localtime(&t);
    	 	
-   	 	std::cout << RED << "[";
+   	 	std::cout << color << "[";
 
    	 	std::cout << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'
          <<  now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":" 
          << now->tm_sec << "] : " << msg << RESET << std::endl;
 	}
+
 };
 #endif
