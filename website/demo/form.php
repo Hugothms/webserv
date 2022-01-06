@@ -19,28 +19,6 @@
 		echo "s2 is ".$_POST["s2"].".<br/>";
 	}
 ?>
-<?php
-echo "POST :" ;
-  foreach ($_POST as $key => $value) 
-  {
-        echo $key;
-        echo " :";
-        echo $value;
-        echo "<br>";
-  }
-?>
-<?php
-  echo "GET : \n";
-  foreach ($_GET as $key => $value) 
-  {
-        echo $key;
-        echo " :";
-        echo $value;
-        echo "<br>";
-  }
-?>
-
-
 
 	<h2>Post mode</h2>
 <form action="./form.php" method="post">
