@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/04 20:50:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 10:21:05 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -538,9 +538,10 @@ int Request::get_file_status(int &nfd)
 {
 	
 
+	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
 
 
-
+	DEBUG("filepath is" << t_filepath);
 
 
 
@@ -569,7 +570,7 @@ int Request::get_file_status(int &nfd)
 	}
 	else
 	{
-		ifstream file(filepath.c_str(), ofstream::in);
+		ifstream file(t_filepath.c_str(), ofstream::in);
 		
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 		{

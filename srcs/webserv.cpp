@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/05 01:42:57 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 09:56:37 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,14 +196,14 @@ void	Webserv::listen(void)
 			}
 			else if ((*client)->is_done_recv())
 			{
-				Log("Client is already done sending, time to process", GREEN);
+				
 				if ((*client)->status == 0) //We ready to send it, build resp
 				{
 					Log("Setting response", RED);
 					(*client)->set_response();
 					Log("OK", RED);
 				}
-				if ((*client)->status == 1 || (*client)->status == 2 )
+				else if ((*client)->status == 1 || (*client)->status == 2 )
 				{
 					(*client)->smart_send();
 					//Send 
