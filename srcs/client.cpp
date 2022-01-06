@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 13:52:50 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:05:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,10 +115,7 @@ void Client::set_response(void)
 
 	if (operation_status == 0)
 	{
-		// Log("OPSTAT = 0, WE HAVE THE DATA TO SEND");
 		send_buffer = req->get_normal_header();
-		// Log("Prepeed resp is : \n" + send_buffer);
-
 		status = 1;
 		return ;
 	}
@@ -145,27 +142,6 @@ void Client::set_response(void)
 		_file_fd = 0;
 		//This is a CGI
 	}
-
-	return ;
-
-
-	
-
-	// if (req && (req->g_type().compare("POST") == 0 && req->get_s_header("Body").empty()))
-	// {
-	// 	send_buffer = "HTTP/1.1 100 Continue";
-	// }
-	// else if (req && (req->g_type() == "GET" || (req->g_type() == "POST" || fast_pipe > 0)))
-	// {
-	// 	send_buffer = req->respond(servers);
-	// }
-	// else
-	// {
-	// 	DEBUG("OH NO UNSPPORTED TYPE");
-	// }
-	// DEBUG("********************* RESPONSE *******************************");
-	// DEBUG(send_buffer);
-	// DEBUG("*********************** END **********************************");
 }
 
 void Client::clear_recv(void)
@@ -212,6 +188,8 @@ int Client::receive(void)
 
 	if (len < BUFF_S)
 	{
+		DEBUG("RECEIVED OK");
+
 		_done_recv = 1;
 	}
 
@@ -319,33 +297,6 @@ void Client::smart_send(void)
 		// Log("Now send the rest");
 	}	
 }
-
-// void Client::send(void)
-// {
-// 	int actual = BUFF_S;
-
-// 	if (send_offset + actual > send_buffer.size())
-// 		actual = send_buffer.size() - send_offset;
-
-
-// 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
-
-// 	send_offset += actual;
-
-// 	if (send_offset == send_buffer.size())
-// 	{
-// 		DEBUG("****** RESPONSE SENT *******");
-// 		if (req != 0 && send_buffer.compare("HTTP/1.1 100 Continue") != 0)
-// 		{
-// 			delete req;
-// 			req = 0;
-// 		}
-// 		_done_send = 1;
-// 		send_rdy = 0;
-// 		_done_recv = 0;
-// 		send_buffer.clear();
-// 	}
-// }
 
 void Client::set_fd(const int fd)
 {
