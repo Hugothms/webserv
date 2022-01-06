@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/29 04:19:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 18:55:04 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,29 +72,24 @@ Request::Request(const string &buffer)
 {
 	size_t pos;
 
-
-	DEBUG("******* NEW REQUEST BUFF: ********\n");
+	DEBUG("REQUEST BUFF IS ");
 	DEBUG(buffer);
-	DEBUG("******* END OF REQUEST BUFF ********\n");
-
-
-	pos = buffer.find("Content-Type: ");
-	
+	DEBUG("END OF REQUEST ");
 	//This is used to see if we have a post rq ?
-	if (pos != string::npos)
+	if ((pos = buffer.find("Content-Type: ")) != string::npos)
 	{
 		content_type = buffer.substr(pos, buffer.find('\n', pos));
 		pos = content_type.find_first_of(": ") + 2;
 		content_type = content_type.substr(pos, (content_type.find("\n", 0) - pos));
 	}
 
-
-
 	pos = 0;
 
-
+	DEBUG("target is" << buffer.c_str() + pos);
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
+	DEBUG("target is" << target);
+
 	get_str_before_char(buffer, "\n", &pos);
 
 	size_t len = buffer.length();
@@ -120,18 +115,19 @@ Request::Request(const string &buffer)
 			headers.insert(pair<string, string>("Port", port));
 			continue;
 		}
-		// DEBUG("INSERTING");
 		headers.insert(pair<string, string>(header, get_str_before_char(buffer, "\r\n", &pos)));
 	}
 	
 	// If there is content length, then we are in post mode, add Body header;
 	if (headers.count("Content-Length") > 0)
-		headers.insert(pair<string, string>("Body", &buffer[pos]));
+	{
+		unsigned int t = ::atoi(headers["Content-Length"].c_str());
+		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
+	}
 	
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
 	DEBUG("****** REQUEST PARSED *******");
-	// DEBUG("Done")
 }
 
 string to_string_custom(const int &error_code)
@@ -280,25 +276,23 @@ char **Request::build_cgi_env(string &extention_name)
 
 void trim_headers(string &to_trim, string extention_name)
 {
-
-	DEBUG("EXT NAME " << extention_name);
 	if (extention_name == ".php")
 	{
-		to_trim.erase(0, 64);
+		// Log("Trimming " + to_trim.substr(0,64));
+		// to_trim.erase(0, 64);
 	}
 }
 
-
-void	Request::launch_cgi(string &body, string extention_name)
+void	Request::launch_cgi(string &body, const int pos)
 {
 	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
 
+	string extention_name = filepath.substr(pos);
+
 	int out_pipe[2];
 	int in_pipe[2];
 
-
-	//Create pipes for input and output
 	if (pipe(out_pipe) == -1)
 	{
 		cerr << "cgi: pipe failed" << endl;
@@ -314,10 +308,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 		if (pipe(in_pipe) == -1)
 			DEBUG("PIPE ERROR");
 	}
-	
-	//Get values for execve
-
-	
+		
 	pid_t pid = fork();
 	
 	if (pid < 0)
@@ -348,7 +339,10 @@ void	Request::launch_cgi(string &body, string extention_name)
 		}
 
 		if (execve(_av[0], _av, _ev) < 0)
+		{
+			Log("Execve fucked");
 			code = 404;
+		}
 		//Need to free
 	}
 	else
@@ -357,7 +351,7 @@ void	Request::launch_cgi(string &body, string extention_name)
 		if (type == "POST")
 		{
 			close(in_pipe[0]);
-	
+			DEBUG("WRITING |"<< headers["Body"] <<'|');
 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
 				DEBUG("WRITE ERROR");
 			close(in_pipe[1]);
@@ -368,8 +362,8 @@ void	Request::launch_cgi(string &body, string extention_name)
 		   body += reading_buf;
 		close(out_pipe[0]);
 
-		DEBUG("CGI OUTPUT:\n" << body);
-		trim_headers(body, extention_name);
+		// Log("CGI OUTPUT:\n" + body, WHITE);
+		// trim_headers(body, extention_name);
 	}
 }
 
@@ -447,9 +441,95 @@ void	Request::set_filepath(void)
 	// DEBUG("filepath: " << filepath << endl << endl);
 }
 
+// int Request::give_403(void)
+// {
+
+// }
+
+
+int Request::get_file_status(int &nfd)
+{
+	
+
+	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
+
+
+	DEBUG("t_filepath is" << t_filepath);
+	DEBUG("filepath is" << filepath);
+
+
+
+	if (is_directory(filepath))
+	{
+		if (filepath[filepath.size() - 1] == '/' && location->get_autoindex())
+		{
+			// string tmp;
+			// get_auto_index(&tmp);
+			// status = 42;
+			code = 200;
+			return 1;
+		}
+		else
+		{
+			code = 403;
+			passed_cgi = true;
+			// file.close();
+			filepath = error_page(403);
+			// file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
+		}
+
+
+
+		//Don't do it yet
+	}
+	else
+	{
+		ifstream file(t_filepath.c_str(), ofstream::in);
+		
+		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
+		{
+			code = 404;
+			passed_cgi = true;
+			filepath = error_page(404);
+		}
+		else
+		{
+			map<string, string> cgis = server->get_cgis();
+			for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+			{
+				size_t pos;
+				if ((pos = filepath.find(cgi->first)) != string::npos)
+				{
+					file.close();
+					nfd = pos;
+					return 2;
+				}
+			}
+
+			code = 200;	
+		}
+
+		file.close();	
+	}
+
+	// Log("Opening file");
+
+	
+	
+	// Log("File verifs OK");
+	
+
+	
+	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
+	
+	// Log("Open is ok as well");
+	return 0;
+
+}
+
 void 	Request::get_body(string &body)
 {
-	set_filepath();
+	// set_filepath();
 	DEBUG("CREATING FILE");
 	ifstream file(filepath.c_str(), ofstream::in);
 	DEBUG("DONE");
@@ -477,7 +557,7 @@ void 	Request::get_body(string &body)
 			{
 				passed_cgi = true;
 				file.close();
-				launch_cgi(body, filepath.substr(pos));
+				// launch_cgi(body, filepath.substr(pos));
 				return ;
 			}
 		}
@@ -496,22 +576,6 @@ void 	Request::get_body(string &body)
 	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 	DEBUG("DONE");
 	file.close();
-}
-
-string 	Request::get_response(void)
-{
-	string response;
-	string body;
-	get_body(body);
-	response = get_header(body.length());
-	response += body;
-	// if (type == "text/html")
-	// {
-	// 	DEBUG("********* RESPONSE *********");
-	// 	DEBUG(response);
-	// }
-	// DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
-	return response;
 }
 
 bool	Request::select_location(void)
@@ -562,8 +626,45 @@ void Request::add_to_body(string data)
 	headers["Body"] += data;
 }
 
+string Request::get_index_header(size_t length)
+{
+	stringstream header;
+	header << "HTTP/1.1 " << codes[code] << endl;
+	header << "Date: " << get_time_stamp() << endl;
+	header << "Server: webserv/0.01" << endl;
+	header << "Content-Type: " << ::get_type(filepath, 1) << endl;
+	header << "Content-Length: " << length << endl;
+	header << "Connection: Closed" << endl;
+	if (location && location->get_HTTP_redirection_type() > 0)
+		header << "Location: " << location->get_HTTP_redirection() << endl;
+	header << endl;
+	return (header.str());
+}
+
+
+string Request::get_normal_header()
+{
+	ifstream file(filepath.c_str(), ofstream::in);
+	file.seekg(0, ios::end);	
+	size_t fileSize = file.tellg();
+
+	stringstream header;
+	header << "HTTP/1.1 " << codes[code] << endl;
+	header << "Date: " << get_time_stamp() << endl;
+	header << "Server: webserv/0.01" << endl;
+	header << "Content-Type: " << ::get_type(filepath, passed_cgi) << endl;
+	header << "Content-Length: " << fileSize << endl;
+	header << "Connection: Closed" << endl;
+	if (location && location->get_HTTP_redirection_type() > 0)
+		header << "Location: " << location->get_HTTP_redirection() << endl;
+	header << endl;
+	return (header.str());
+}
+
 string	Request::get_header(const size_t length)
 {
+
+
 	stringstream header;
 	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
@@ -589,44 +690,41 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-string	Request::respond(const list<Server*> &servers, char fast_pipe)
+void Request::prep_response(const list<Server*> &servers)
 {
-	if (fast_pipe > 0)
-	{
-		//Do stuff		
-	}
-
 	if (!select_server(servers) || !select_location() || !method_allow())
-		return (get_response());
+	{
+		return ;
+		// DEBUG("CASE 1");
+		// return (get_response());	
+	}
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
 	{
 		code = 413;
-		return (get_response());
+		// DEBUG("CASE 2");
+		// // return (get_response());
 	}
 	if (location->get_HTTP_redirection_type() > 0)
 	{
-		DEBUG("REDIR TYPE");
+		// DEBUG("CASE 3");
+		// DEBUG("REDIR TYPE");
 		code = location->get_HTTP_redirection_type();
-		return (get_header(0));
+		// return (get_header(0));
 	}
-	if (type == "GET")
-		return(get_response());
 	else if (type == "HEAD")
 	{
+		// DEBUG("CASE 5");
 		string body;
 		get_body(body);
-		return (get_header(body.length()));
-	}
-	else if (type == "POST")
-	{
-		return (get_response());
+		// return (get_header(body.length()));
 	}
 	else if (type == "DELETE")
 	{
 		//todo
+		// DEBUG("CASE 7");
 		string delete_file = server->get_root() + location->get_upload_directory() + target;
-		remove(delete_file.c_str());
-		return (get_response());
+		// remove(delete_file.c_str());
+		// return (get_response());
 	}
-	return (get_response());
+	// return (get_response());
 }

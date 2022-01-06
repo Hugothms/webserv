@@ -6,35 +6,31 @@
 
 <?php 
 
-	if(isset($_GET["name"]))
+	if(isset($_GET["s1"]) || isset($_GET["s2"]))
 	{
 		echo "Using the GET method to pass data<br/>";
-		echo "Your name is ".$_GET["name"].".<br/>";
-		echo "You are ".$_GET["age"]." years old.<br/>";
+		echo "s1 is ".$_GET["s1"].".<br/>";
+		echo "s2 is ".$_GET["s2"].".<br/>";
 	}
-	else if(isset($_POST["name"]))
+	else if(isset($_GET["s1"]) || isset($_GET["s2"]))
 	{
 		echo "Using the POST method to pass data<br/>";
-		echo "Your name is ".$_POST["name"].".<br/>";
-		echo "You are ".$_POST["age"]." years old.<br/>";
-	}
-	else
-	{
-		echo "Requiered data hasn't been provided<br/>";
+		echo "s1 is ".$_POST["s1"].".<br/>";
+		echo "s2 is ".$_POST["s2"].".<br/>";
 	}
 ?>
 
 	<h2>Post mode</h2>
-<form action="/form.php" method="post">
- 	<p>Your name: <input type="text" name="name" /></p>
- 	<p>Your age: <input type="text" name="age" /></p>
+<form action="./form.php" method="post">
+ 	<p>s1: <input type="text" name="s1" /></p>
+ 	<p>s2: <input type="text" name="s2" /></p>
  	<p><input type="submit" /></p>
 </form>
 
  	<h2>Get mode</h2>
- <form action="/form.php" method="get">
- 	<p>Your name: <input type="text" name="name" /></p>
- 	<p>Your age: <input type="text" name="age" /></p>
+ <form action="./form.php" method="get">
+ 	<p>s1: <input type="text" name="s1" /></p>
+ 	<p>s2: <input type="text" name="s2" /></p>
  	<p><input type="submit" /></p>
  </form>
 

@@ -1,10 +1,13 @@
 <html lang="en">
-<body style="background-color: darkslateblue; color: lightgrey;">
+<head>
+   
+</head>
+<body style="background-color: lightgrey; color: red;">
+
+<h1>Uploading images using PHP-CGI</h1>
+
+
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-
-
-	<h1>Uploading images using PHP-CGI</h1>
-
 
 	<form action="img-up.php" method="POST" enctype="multipart/form-data">
          <input type="file" name="image" />
@@ -38,7 +41,7 @@
          // echo "Path is ".$path ;
          move_uploaded_file($file_tmp,$path);
          echo "Success <br/>";
-         echo "<img src=".$path." />";
+         echo "<img src=".$path." width=50% />";
       }
       else
       {

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/12/29 04:09:14 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 12:29:19 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ class Client
 		string				send_buffer;
 
 
+		int 				_file_fd;
 
-
-		Request 			*req;
+		
 
 		char 				fast_pipe;
 
@@ -49,7 +49,10 @@ class Client
 
 	public :
 
-		
+
+		int status;
+
+		Request 			*req;
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
@@ -63,7 +66,7 @@ class Client
 
 		void set_fd(const int nfd);
 		int get_fd(void) const;
-
+		void clean(void);
 		bool is_send_rdy() const;
 
 		int receive(void);
@@ -83,6 +86,9 @@ class Client
 
 		void push_back_server(Server *s);
 
+		void send_header(void);
+		void smart_send(void);
+		void send_fd(void);
 
 		struct sockaddr* get_sockaddr(void);
 		socklen_t *get_addr_len(void);

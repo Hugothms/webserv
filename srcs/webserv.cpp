@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2021/12/29 03:17:47 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:57:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,10 @@ void	Webserv::parse_config(const string config_file)
 {
 	if (config_file == "")
 	{
-		DEBUG("Please provide something");
+		Log("Please provide a config file");
 		exit (1);
-		//TODEL
-
-		Server *srv = new Server();
-		srv->set_port(80);
-		push_back_server(srv);
-		return ;
 	}
+	
 	const string config = get_content_file(config_file);
 	DEBUG("Provided config:" << endl << config);
 
@@ -74,14 +69,13 @@ void	Webserv::parse_config(const string config_file)
 		{
 			Server *server = parse_server(config, &pos);
 			if (server && conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
-			{
 				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
-			}
 			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
 	}
-	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
+	Log("Config file loaded", GREEN);
+	// DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
 }
 
 void Webserv::build(void)
@@ -110,11 +104,15 @@ void Webserv::accept_new_conn(void)
 		if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
 		{
 			Client *client = new Client((*server)->get_listen_fd());
-			DEBUG("PID OF NEW IS " << client->get_fd());
-			Log("New client ");
+			// DEBUG("PID OF NEW IS " << client->get_fd());
+			// Log("New client connected", GREEN);
 
 			client->push_back_server(*server);
 			_clients.push_back(client);
+			//TO MOVE
+			
+			client->status = 0;
+
 			FD_SET(client->get_fd(), &listen_set);
 			FD_SET(client->get_fd(), &write_set);
 		}
@@ -155,47 +153,43 @@ void Webserv::clear_fd(Client *client)
 
 void	Webserv::listen(void)
 {
+	Log("Listening started", GREEN);
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");
 		loop_prep();
-
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
 
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
-			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
+			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
 			{
-				DEBUG("client seems ready to transmit data");
-
-				if ((*client)->receive() == -1)
+				if (((*client)->status == 0 || (*client)->status == 4) && (*client)->receive() == -1) //Or if we need more data to feed CGI
 				{
-					DEBUG("client seems to have left, clearing his marks");
-					clear_fd(*client);
+						clear_fd(*client);
+						delete (*client);
+						client = _clients.erase(client);
+						--client;
 				}
 			}
 			else if ((*client)->is_done_recv())
 			{
-				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
+
+				if ((*client)->status == 0 ||(*client)->status == 4 )
 				{
-					DEBUG("****** BUILDING RESPONSE *******");
+					DEBUG("SET RESP")
 					(*client)->set_response();
 				}
-				else if ((*client)->is_done_send() == 0) //Transmit response
-				{
-					(*client)->send();
-				}
+				else if ((*client)->status > 0)
+					(*client)->smart_send();
 			}
-			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
-			{
-				DEBUG("AH, FOUND ONE");
-    			// file descriptor is invalid or closed
-			}
-		
+			else if (fcntl((*client)->get_fd(), F_GETFL) < 0) 
+					DEBUG("AH, FOUND ONE");	
 		}
 	}
 }
+
 
 void Webserv::stop(void)
 {
