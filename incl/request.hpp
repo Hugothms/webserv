@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 16:30:32 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:37:05 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ class Request
 		void 	get_body(string &body);
 		string	get_header(const size_t length);
 		string	get_cgi_header(const size_t length);
-		string	get_index_header(string &body);
+		string	get_index_header(size_t fileSize);
 		string	get_normal_header();
 		void 	launch_cgi(string &body, const int pos);
 		void	get_auto_index(string &body);

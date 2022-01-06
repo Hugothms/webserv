@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 14:01:28 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:41:27 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,10 @@ void	Webserv::parse_config(const string config_file)
 {
 	if (config_file == "")
 	{
-		DEBUG("Please provide something");
+		Log("Please provide a config file");
 		exit (1);
-		//TODEL
-
-		Server *srv = new Server();
-		srv->set_port(80);
-		push_back_server(srv);
-		return ;
 	}
+	
 	const string config = get_content_file(config_file);
 	DEBUG("Provided config:" << endl << config);
 
@@ -74,14 +69,13 @@ void	Webserv::parse_config(const string config_file)
 		{
 			Server *server = parse_server(config, &pos);
 			if (server && conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
-			{
 				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
-			}
 			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
 	}
-	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
+	Log("Config file loaded", GREEN);
+	// DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
 }
 
 void Webserv::build(void)
@@ -159,7 +153,7 @@ void Webserv::clear_fd(Client *client)
 
 void	Webserv::listen(void)
 {
-	Log("Listen start..", GREEN);
+	Log("Listening started", GREEN);
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");

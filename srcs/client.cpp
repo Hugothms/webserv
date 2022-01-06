@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 14:05:22 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:42:49 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void Client::set_response(void)
 
 	if (req && req->g_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
 	{
-		Log("We  are in the mode", GREEN);
+		// Log("We  are in the mode", GREEN);
 		if (req->get_s_header("Body").empty())
 		{
 			DEBUG("Going stqtus 4");
@@ -102,16 +102,16 @@ void Client::set_response(void)
 
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
-	Log("prep response OK");
+	// Log("prep response OK");
 	req->set_filepath();
-	Log("set filepath OK");
+	// Log("set filepath OK");
 
 
 
 	
 	// int nfd = 0;
 	int operation_status = req->get_file_status(_file_fd);
-	Log("File status OK");
+	// Log("File status OK");
 
 	if (operation_status == 0)
 	{
@@ -124,7 +124,7 @@ void Client::set_response(void)
 		string tmp;
 		req->get_auto_index(tmp);
 		
-		send_buffer = req->get_index_header(tmp);
+		send_buffer = req->get_index_header(tmp.size());
 		send_buffer += tmp;
 
 		status = 1;
@@ -135,7 +135,7 @@ void Client::set_response(void)
 		string tmp;
 		req->launch_cgi(tmp, _file_fd);
 		
-		send_buffer = req->get_cgi_header(tmp.size());
+		send_buffer = req->get_index_header(tmp.size());
 		send_buffer += tmp;
 		status = 1;
 		
