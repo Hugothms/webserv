@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 10:21:05 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 11:22:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,11 +126,16 @@ Request::Request(const string &buffer)
 	
 	// If there is content length, then we are in post mode, add Body header;
 	if (headers.count("Content-Length") > 0)
-		headers.insert(pair<string, string>("Body", &buffer[pos]));
+	{
+		unsigned int t = ::atoi(headers["Content-Length"].c_str());
+
+		headers.insert(pair<string, string>("Body", string(buffer, pos, t )));
+		DEBUG("INSERTING BODY, POS IS |" <<  headers["Body"]<<"|");
+	}
 	
-	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
-	// 	DEBUG(it->first << ": " << it->second);
-	// DEBUG("****** REQUEST PARSED *******");
+	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
+		DEBUG(it->first << ": " << it->second);
+	DEBUG("****** REQUEST PARSED *******");
 	// DEBUG("Done")
 }
 
@@ -438,7 +443,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		if (type == "POST")
 		{
 			close(in_pipe[0]);
-			
+			DEBUG("WRITING |"<<headers["Body"] <<'|');
 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
 				DEBUG("WRITE ERROR");
 			close(in_pipe[1]);
