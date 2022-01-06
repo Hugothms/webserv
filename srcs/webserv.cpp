@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 11:29:44 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 11:49:29 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,6 +184,9 @@ void	Webserv::listen(void)
 						Log("Client receive = -1, killing him", YELLOW);
 						// DEBUG("client seems to have left, clearing his marks");
 						clear_fd(*client);
+						delete (*client);
+						client = _clients.erase(client);
+						--client;
 					}
 					else if ((*client)->is_done_recv())
 					{

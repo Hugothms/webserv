@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 11:28:55 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 11:47:39 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,6 @@ int Client::receive(void)
 		req->get_s_header("Body") += string(buff, len);
 		DEBUG("Storing in body");
 	} //If we are in post mode, putting in the header field
-		
 	else
 	{
 		rec_buffer += string(buff, len);
