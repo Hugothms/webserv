@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/05 01:24:22 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 10:08:14 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void Client::set_response(void)
 	
 	rec_buffer.clear();
 	
-	
+
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
 	Log("prep response OK");
@@ -90,6 +90,10 @@ void Client::set_response(void)
 	Log("set filepath OK");
 
 
+	if (req->g_type() == "GET" && req->get_s_header("Content-Type").find("multipart") != string::npos)
+	{
+		Log("We  are in the mode", GREEN);
+	}
 	
 	// int nfd = 0;
 	int operation_status = req->get_file_status(_file_fd);
@@ -119,6 +123,7 @@ void Client::set_response(void)
 	{
 		string tmp;
 		req->launch_cgi(tmp, _file_fd);
+		
 		send_buffer = req->get_cgi_header(tmp.size());
 		send_buffer += tmp;
 		status = 1;
@@ -191,8 +196,12 @@ int Client::receive(void)
 	// 	rec_buffer += string(buff, len);
 	// }
 	
-	if (req != 0) //If we are in post mode, putting in the header field
+	if (req != 0)
+	{
 		req->get_s_header("Body") += string(buff, len);
+		DEBUG("Storing in body");
+	} //If we are in post mode, putting in the header field
+		
 	else
 		rec_buffer += string(buff, len);
 	
