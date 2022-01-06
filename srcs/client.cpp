@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 12:06:42 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 13:52:50 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,31 @@ bool Client::is_send_rdy() const
 void Client::set_response(void)
 {
 	send_rdy = 1;
-
 	_done_send = 0;
 	send_offset = 0;
 
-	if (req)
+
+	if (req && status != 4)
 		delete req;
-	req = new Request(rec_buffer);
+	if (status != 4)
+		req = new Request(rec_buffer);
 	
+	// if ()
+
+	if (req && req->g_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
+	{
+		Log("We  are in the mode", GREEN);
+		if (req->get_s_header("Body").empty())
+		{
+			DEBUG("Going stqtus 4");
+			status = 4;
+			return;
+		}
+		else
+			status = 1;
+		
+	}
+
 	rec_buffer.clear();
 	
 
@@ -90,10 +107,7 @@ void Client::set_response(void)
 	Log("set filepath OK");
 
 
-	if (req->g_type() == "GET" && req->get_s_header("Content-Type").find("multipart") != string::npos)
-	{
-		Log("We  are in the mode", GREEN);
-	}
+
 	
 	// int nfd = 0;
 	int operation_status = req->get_file_status(_file_fd);
@@ -177,11 +191,11 @@ void Client::clear_send(void)
 int Client::receive(void)
 {
 	char buff[BUFF_S];
-	int len;
 
 	_done_recv = 0;
 
-	len = recv(_fd, buff, BUFF_S, 0);
+	int len = recv(_fd, buff, BUFF_S, 0);
+	DEBUG("received");
 	if (len <= 0)
 	{
 		DEBUG("No data received, client is done");
@@ -189,46 +203,27 @@ int Client::receive(void)
 		return (-1);
 	}
 
-	// if (req != 0 && fast_pipe) //If we are in post mode
-	// {
-	// 	//We should fill a buffer to sendin
-	// 	rec_buffer.clear();
-	// 	rec_buffer += string(buff, len);
-	// }
-	
 	if (req != 0)
 	{
 		req->get_s_header("Body") += string(buff, len);
-		DEBUG("Storing in body");
-	} //If we are in post mode, putting in the header field
-	else
-	{
-		rec_buffer += string(buff, len);
-		// DEBUG("Rbuff:");
 	}
-	
-	
+	else
+		rec_buffer += string(buff, len);
 
 	if (len < BUFF_S)
 	{
-		// DEBUG("rec_buff : " << rec_buffer);
-		DEBUG("_done_recv = 1");
 		_done_recv = 1;
 	}
-
 
 	return (_done_recv);
 }
 
 void Client::send_header(void)
 {
-	// static string test;
-
 	int actual = BUFF_S;
 
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
-
 
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
 
@@ -236,70 +231,67 @@ void Client::send_header(void)
 
 	if (send_offset == send_buffer.size())
 	{
-		// µ%£M12345+°./§§%µ£
-		DEBUG("SEND HEADER DONE:|" << send_buffer << "|");
-
-		// DEBUG("send_buffer");
-		
-
-
-		// if (req != 0 && send_buffer.compare("HTTP/1.1 100 Continue") != 0)
-		// {
-		// 	delete req;
-		// 	req = 0;
-		// }
-		// _done_send = 1;
-		// send_rdy = 0;
-		// _done_recv = 0;
 		send_buffer.clear();
 		status = 2;
 	}
 }
 
+void Client::clean(void)
+{
+	if  (_file_fd != 0)
+		close(_file_fd);
+	_done_recv = 0;
+	_file_fd = 0;
+	status = 0;
+	delete req;
+	req = 0;
+}
+
 void Client::send_fd(void)
 {
-	static string tmp;
+	// static string tmp;
 
 	if (_file_fd == 0)
 	{
-		tmp.clear();
+		// tmp.clear();
 		_done_recv = 0;
 		delete req;
 		req = 0;
 		status = 0;
+		// clean();
+		// clean();
 		return ;
 	}
 
 	char buff[BUFF_S];
-	for (int i = 0; i < BUFF_S; i++)
-		buff[i] = 0;
-	// memset(buff, 0, BUFF_S);
-	// Log("Send FD");
 	int s_read = read(_file_fd, buff, BUFF_S);
 	
 
-	tmp += string(buff, 0, BUFF_S);
+	// tmp += string(buff, 0, BUFF_S);
 	// DEBUG("Read is " << s_read);
 	if (s_read <= 0)
 	{
-		Log("s_read 0");
-		_done_recv = 0;
+		// Log("s_read 0");
 		close(_file_fd);
-
 		_file_fd = 0;
+		_done_recv = 0;
 		status = 0;
+
 		delete req;
 		req = 0;
+
+		
+		
 		return;
 	}
-	Log("Sending_fd..");
+	// Log("Sending_fd..");
 	::send(_fd, buff, s_read, 0);
-	Log("Done");
+	// Log("Done");
 	if (s_read < BUFF_S)
 	{
-		Log("send_fd complete");
-		// DEBUG("FD_SEND DONE :|" << tmp << "|");
-		tmp.clear();
+		Log("Done sending file to client");
+		//Add target
+
 		close(_file_fd);
 		_done_recv = 0;
 		_file_fd = 0;
@@ -328,57 +320,32 @@ void Client::smart_send(void)
 	}	
 }
 
-void Client::send(void)
-{
-	int actual = BUFF_S;
+// void Client::send(void)
+// {
+// 	int actual = BUFF_S;
 
-	if (send_offset + actual > send_buffer.size())
-		actual = send_buffer.size() - send_offset;
-
-	// if (fast_pipe == 2)
-	// {
-	// 	//We send 100 Continue
-	// 	::send(_fd, send_buffer.c_str(), send_buffer.size(), 0);
-		
+// 	if (send_offset + actual > send_buffer.size())
+// 		actual = send_buffer.size() - send_offset;
 
 
+// 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
 
-	// 	fast_pipe = 1;
-	// 	return;
-	// }
+// 	send_offset += actual;
 
-	// if (fast_pipe == 1)
-	// {
-	// 	char buff[BUFF_S];
-
-	
-
-
-	// 	::send(_fd, rec_buffer.c_str(), rec_buffer.size(), 0);
-		
-	// 	if (file_done)
-
-	// 	return;
-	// }
-
-	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
-
-	send_offset += actual;
-
-	if (send_offset == send_buffer.size())
-	{
-		DEBUG("****** RESPONSE SENT *******");
-		if (req != 0 && send_buffer.compare("HTTP/1.1 100 Continue") != 0)
-		{
-			delete req;
-			req = 0;
-		}
-		_done_send = 1;
-		send_rdy = 0;
-		_done_recv = 0;
-		send_buffer.clear();
-	}
-}
+// 	if (send_offset == send_buffer.size())
+// 	{
+// 		DEBUG("****** RESPONSE SENT *******");
+// 		if (req != 0 && send_buffer.compare("HTTP/1.1 100 Continue") != 0)
+// 		{
+// 			delete req;
+// 			req = 0;
+// 		}
+// 		_done_send = 1;
+// 		send_rdy = 0;
+// 		_done_recv = 0;
+// 		send_buffer.clear();
+// 	}
+// }
 
 void Client::set_fd(const int fd)
 {
