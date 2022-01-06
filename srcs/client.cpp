@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 10:53:15 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 11:28:55 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ int Client::receive(void)
 
 	if (len < BUFF_S)
 	{
-		DEBUG("rec_buff : " << rec_buffer);
+		// DEBUG("rec_buff : " << rec_buffer);
 		DEBUG("_done_recv = 1");
 		_done_recv = 1;
 	}
