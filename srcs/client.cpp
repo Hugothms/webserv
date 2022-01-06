@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 20:19:26 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 20:40:58 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,8 @@ Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rd
 	client_len = sizeof(client_addr);
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
 
-	Log("New client", GREEN);
-	
-	// DEBUG("Client created with fd " << _fd);
-
-	// inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
-	// printf("Incoming connection from %s:%d.\n", new_client->v4str(), new_client->client_addr.sin_port);
+	inet_ntop(AF_INET, &(client_addr.sin_addr), client_ipv4_str, INET_ADDRSTRLEN);
+	Log("New client from " + string(client_ipv4_str), GREEN);
 }
 
 Client::~Client()
@@ -52,20 +48,20 @@ void Client::set_done_recv(bool t)
 {
 	_done_recv = t;
 }
-string* Client::get_rec_buff(void)
+/*string* Client::get_rec_buff(void)
 {
 	return (&rec_buffer);
-}
+}*/
 
-string* Client::get_send_buff(void)
-{
-	return (&send_buffer);
-}
+// string* Client::get_send_buff(void)
+// {
+// 	return (&send_buffer);
+// }
 
-bool Client::is_send_rdy() const
-{
-	return send_rdy;
-}
+// bool Client::is_send_rdy() const
+// {
+// 	return send_rdy;
+// }
 
 int Client::status(void) const
 {
@@ -96,20 +92,16 @@ void Client::set_response(void)
 		}
 		else
 			_status = 1;
-		
 	}
 
 	rec_buffer.clear();
 	
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
-	// Log("prep response OK");
 	req->set_filepath();
-	// Log("set filepath OK");
-
+	
 	int operation_status = req->get_file_status(_file_fd);
-	// Log("File status OK");
-
+	
 	if (operation_status == 0)
 	{
 		send_buffer = req->get_normal_header();
@@ -134,16 +126,9 @@ void Client::set_response(void)
 		
 		send_buffer = req->get_index_header(tmp.size());
 		send_buffer += tmp;
-		_status = 1;
-		
+		_status = 1;	
 		_file_fd = 0;
-		//This is a CGI
 	}
-}
-
-void Client::clear_recv(void)
-{
-	rec_buffer.clear();
 }
 
 bool Client::is_done_send(void) const
@@ -151,15 +136,6 @@ bool Client::is_done_send(void) const
 	return _done_send;
 }
 
-void Client::set_done_send(bool t)
-{
-	_done_send = t;
-}
-
-void Client::clear_send(void)
-{
-	send_buffer.clear();
-}
 
 int Client::receive(void)
 {
@@ -177,18 +153,12 @@ int Client::receive(void)
 	}
 
 	if (req != 0)
-	{
 		req->get_s_header("Body") += string(buff, len);
-	}
 	else
 		rec_buffer += string(buff, len);
 
 	if (len < BUFF_S)
-	{
-		DEBUG("RECEIVED OK");
-
 		_done_recv = 1;
-	}
 
 	return (_done_recv);
 }
@@ -211,79 +181,46 @@ void Client::send_header(void)
 	}
 }
 
-void Client::clean(void)
-{
-	if  (_file_fd != 0)
-		close(_file_fd);
-	_done_recv = 0;
-	_file_fd = 0;
-	_status = 0;
-	delete req;
-	req = 0;
-}
-
 void Client::send_fd(void)
 {
-
+	char 	buff[BUFF_S];
+	int 	s_read;
+	
 	if (_file_fd == 0)
 	{
-		_done_recv = 0;
 		delete req;
-		req = 0;
-		_status = 0;
+		_done_recv = _status = 0;
+		req = NULL;
 		return ;
 	}
 
-	char buff[BUFF_S];
-	int s_read = read(_file_fd, buff, BUFF_S);
+	s_read = read(_file_fd, buff, BUFF_S);
 	
-
 	if (s_read <= 0)
 	{
 		close(_file_fd);
-		_file_fd = 0;
-		_done_recv = 0;
-		_status = 0;
-
 		delete req;
-		req = 0;
-
-		
-		
+		_file_fd = _done_recv = _status = 0;
+		req = NULL;
 		return;
 	}
 	::send(_fd, buff, s_read, 0);
 	if (s_read < BUFF_S)
 	{
 		Log("Done sending file to client", YELLOW);
-		//Add target
-
 		close(_file_fd);
-		_done_recv = 0;
-		_file_fd = 0;
-		_status = 0;
 		delete req;
-		req = 0;
-		//All sent
+		_status = _done_recv = _file_fd = 0;
+		req = NULL;		
 	}
-
-
-
 }
 
 void Client::smart_send(void)
 {
-	//1 Means we have the header ready and the FD in store
 	if (_status == 1)
-	{
 		this->send_header();
-	}
-	else if (_status == 2) //Send from the FD
-	{
-		this->send_fd();
-		// _done_recv = 0;
-		// Log("Now send the rest");
-	}	
+	else if (_status == 2) 
+		this->send_fd();	
 }
 
 void Client::set_fd(const int fd)
