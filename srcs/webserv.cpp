@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 10:54:21 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 11:29:44 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void	Webserv::listen(void)
 						
 						Log("OK", GREEN);
 					}
-					DEBUG("DONE AFTER RECV" << (*client)->is_done_recv() )	;
+					// DEBUG("DONE AFTER RECV" << (*client)->is_done_recv() )	;
 				}
 				else
 				{

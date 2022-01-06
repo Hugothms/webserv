@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 11:22:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 11:39:51 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ Request::Request(const string &buffer)
 	{
 		unsigned int t = ::atoi(headers["Content-Length"].c_str());
 
-		headers.insert(pair<string, string>("Body", string(buffer, pos, t )));
+		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
 		DEBUG("INSERTING BODY, POS IS |" <<  headers["Body"]<<"|");
 	}
 	
@@ -443,7 +443,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		if (type == "POST")
 		{
 			close(in_pipe[0]);
-			DEBUG("WRITING |"<<headers["Body"] <<'|');
+			DEBUG("WRITING |"<< headers["Body"] <<'|');
 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
 				DEBUG("WRITE ERROR");
 			close(in_pipe[1]);
