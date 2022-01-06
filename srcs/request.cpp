@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 12:03:54 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 13:39:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ Request::Request(const string &buffer)
 
 		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
 		DEBUG("INSERTING BODY, POS IS |" <<  headers["Body"]<<"|");
+		if (headers["Body"].empty())
+			DEBUG("NEED MORE DQTQ");
 	}
 	
 	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
@@ -286,7 +288,7 @@ char **Request::build_cgi_env(string &extention_name)
 void trim_headers(string &to_trim, string extention_name)
 {
 
-	DEBUG("EXT NAME " << extention_name);
+	// DEBUG("EXT NAME " << extention_name);
 	if (extention_name == ".php")
 	{
 		to_trim.erase(0, 64);

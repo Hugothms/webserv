@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 11:49:29 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 13:48:55 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,128 +167,34 @@ void	Webserv::listen(void)
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
 
-
-		// Log("Looping");
-
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
 			{
-				// Log("Client seems to have something to share", YELLOW);
-				if ((*client)->status == 0) //Or if we need more data to feed CGI
+				if (((*client)->status == 0 || (*client)->status == 4) && (*client)->receive() == -1) //Or if we need more data to feed CGI
 				{
-
-					// Log("Client status is 0", YELLOW);
-					if ((*client)->receive() == -1)
-					{
-						Log("Client receive = -1, killing him", YELLOW);
-						// DEBUG("client seems to have left, clearing his marks");
 						clear_fd(*client);
 						delete (*client);
 						client = _clients.erase(client);
 						--client;
-					}
-					else if ((*client)->is_done_recv())
-					{
-						Log("Client did send what he had, creating rq from it", GREEN);
-						
-						Log("OK", GREEN);
-					}
-					// DEBUG("DONE AFTER RECV" << (*client)->is_done_recv() )	;
-				}
-				else
-				{
-					DEBUG("Oh no its" << (*client)->status );
 				}
 			}
 			else if ((*client)->is_done_recv())
 			{
-				if ((*client)->status == 0) //We ready to send it, build resp
+				if ((*client)->status == 0 )//||(*client)->status == 4 )
 				{
-					Log("Setting response", RED);
+					DEBUG("SET RESP")
 					(*client)->set_response();
-					Log("OK", RED);
 				}
-				else if ((*client)->status == 1 || (*client)->status == 2 )
-				{
+				else if ((*client)->status > 0)
 					(*client)->smart_send();
-					//Send 
-				}
-				else
-				{
-					DEBUG("status is " << (*client)->status);
-				}
-				// else if ((*client)->is_done_send() == 0) //Transmit response
-				// {
-				// 	(*client)->send();
-				// }
 			}
 			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
 					DEBUG("AH, FOUND ONE");	
-			// else
-			// {
-			// 	DEBUG("Here");
-			// }
-			// else
-			// {
-			// 	Log("ono");
-			// }
-			// else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
-			// {
-			// 	DEBUG("AH, FOUND ONE");
-   //  			// file descriptor is invalid or closed
-			// }
-		
 		}
 	}
 }
-// void	Webserv::listen(void)
-// {
-// 	while (true)
-// 	{
-// 		// DEBUG("Waiting for new connections...");
-// 		loop_prep();
 
-// 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
-// 		accept_new_conn();
-
-// 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
-// 		{
-// 			if (FD_ISSET((*client)->get_fd(), &lcopy_set)) //Case where there is stuff to read
-// 			{
-// 				DEBUG("client seems ready to transmit data");
-
-// 				if ((*client)->receive() == -1)
-// 				{
-// 					DEBUG("client seems to have left, clearing his marks");
-// 					clear_fd(*client);
-// 				}
-// 				else if ((*client)->is_done_recv())
-// 				{
-// 					(*client)->req = new Request(*(*client)->get_rec_buff());
-// 				}
-// 			}
-// 			else if ((*client)->is_done_recv())
-// 			{
-// 				if ((*client)->is_send_rdy() == 0) //We ready to send it, build resp
-// 				{
-// 					DEBUG("****** BUILDING RESPONSE *******");
-// 					(*client)->set_response();
-// 				}
-// 				else if ((*client)->is_done_send() == 0) //Transmit response
-// 				{
-// 					(*client)->send();
-// 				}
-// 			}
-// 			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
-// 			{
-// 				DEBUG("AH, FOUND ONE");
-//     			// file descriptor is invalid or closed
-// 			}
-		
-// 		}
-// 	}
-// }
 
 void Webserv::stop(void)
 {
