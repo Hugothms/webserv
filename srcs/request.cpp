@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 17:11:35 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 18:55:04 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,8 +362,8 @@ void	Request::launch_cgi(string &body, const int pos)
 		   body += reading_buf;
 		close(out_pipe[0]);
 
-		Log("CGI OUTPUT:\n" + body, WHITE);
-		trim_headers(body, extention_name);
+		// Log("CGI OUTPUT:\n" + body, WHITE);
+		// trim_headers(body, extention_name);
 	}
 }
 
