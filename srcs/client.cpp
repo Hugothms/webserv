@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 10:08:14 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 10:53:15 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,12 +203,16 @@ int Client::receive(void)
 	} //If we are in post mode, putting in the header field
 		
 	else
+	{
 		rec_buffer += string(buff, len);
+		// DEBUG("Rbuff:");
+	}
 	
 	
 
 	if (len < BUFF_S)
 	{
+		DEBUG("rec_buff : " << rec_buffer);
 		DEBUG("_done_recv = 1");
 		_done_recv = 1;
 	}
@@ -258,7 +262,14 @@ void Client::send_fd(void)
 	static string tmp;
 
 	if (_file_fd == 0)
+	{
+		tmp.clear();
+		_done_recv = 0;
+		delete req;
+		req = 0;
+		status = 0;
 		return ;
+	}
 
 	char buff[BUFF_S];
 
