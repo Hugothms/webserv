@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 18:55:04 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 20:08:39 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,19 +273,8 @@ char **Request::build_cgi_env(string &extention_name)
 }
 
 
-
-void trim_headers(string &to_trim, string extention_name)
-{
-	if (extention_name == ".php")
-	{
-		// Log("Trimming " + to_trim.substr(0,64));
-		// to_trim.erase(0, 64);
-	}
-}
-
 void	Request::launch_cgi(string &body, const int pos)
 {
-	// look: https://github.com/brokenfiles/webserv/blob/c1601dfad39a04299bc86b165994a87f3146d78d/srcs/classes/cgi/Cgi.cpp addMetaVariables
 	DEBUG("launch_cgi");
 
 	string extention_name = filepath.substr(pos);
@@ -295,7 +284,7 @@ void	Request::launch_cgi(string &body, const int pos)
 
 	if (pipe(out_pipe) == -1)
 	{
-		cerr << "cgi: pipe failed" << endl;
+		Log("cgi: pipe failed", RED);
 		exit(EXIT_FAILURE);
 	}
 
@@ -303,17 +292,17 @@ void	Request::launch_cgi(string &body, const int pos)
 	code = 200;
 	
 	//We need to trim and write the body to stdin
-	if (type == "POST")
+	if (type == "POST" && pipe(in_pipe) == -1)
 	{	
-		if (pipe(in_pipe) == -1)
-			DEBUG("PIPE ERROR");
+		Log("cgi: pipe failed", RED);
+		exit(EXIT_FAILURE);	
 	}
 		
 	pid_t pid = fork();
 	
 	if (pid < 0)
 	{
-		cerr << "cgi: fork failed" << endl;
+		Log("cgi: fork failed",RED);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
@@ -321,29 +310,27 @@ void	Request::launch_cgi(string &body, const int pos)
 		char **_ev = build_cgi_env(extention_name);
 		char **_av = build_cgi_av(extention_name);
 	
-
 		if (type == "POST")
 		{
 			close(in_pipe[1]);
 			if (dup2(in_pipe[0], 0) == -1)
 			{
-				DEBUG("DUP2 ERR");
-				exit(0);
+				Log("cgi: dup2 error",RED);
+				exit(EXIT_FAILURE);
 			}
 		}
 		close(out_pipe[0]);
 		if (dup2(out_pipe[1], 1) == -1)
 		{
-			DEBUG("DUP2 ERR");
-			exit(0);
+			Log("cgi: dup2 error",RED);
+			exit(EXIT_FAILURE);
 		}
 
 		if (execve(_av[0], _av, _ev) < 0)
 		{
-			Log("Execve fucked");
+			Log("Execve error",RED);
 			code = 404;
 		}
-		//Need to free
 	}
 	else
 	{
@@ -361,9 +348,6 @@ void	Request::launch_cgi(string &body, const int pos)
 		while(read(out_pipe[0], &reading_buf, 1) > 0)
 		   body += reading_buf;
 		close(out_pipe[0]);
-
-		// Log("CGI OUTPUT:\n" + body, WHITE);
-		// trim_headers(body, extention_name);
 	}
 }
 
@@ -383,21 +367,21 @@ void	Request::get_auto_index(string &body)
 		while ((ent = readdir (dir)) != NULL)
 		{
 			string name = ent->d_name;
-			ifstream file(name.c_str(), ofstream::in);
-			if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
-			{
-				// todo exit ?
-			}
+			// ifstream file(name.c_str(), ofstream::in);
+			// if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
+			// {
+			// 	// todo exit ?
+			// }
 			if (is_directory(filepath + name))
 				name += '/';
-			file.close();
+			// file.close();
 			auto_index << "<p><a href=\"" << name << "\" class=\"active\">" << name << "</a></p>\n";
 		}
 		closedir (dir);
 	}
 	else
 	{
-		perror("opendir");
+		Log("opendir error");
 		exit(EXIT_FAILURE);
 	}
 	auto_index << "	</div>\n\
@@ -433,39 +417,17 @@ void	Request::set_filepath(void)
 		DEBUG("Target is a DIRECTORY !");
 		if (location->get_index().length())
 			filepath += location->get_index();
-		else
-		{
-			// 	filepath += server->get_index();
-		}
 	}
-	// DEBUG("filepath: " << filepath << endl << endl);
 }
-
-// int Request::give_403(void)
-// {
-
-// }
-
 
 int Request::get_file_status(int &nfd)
 {
-	
-
 	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
-
-
-	DEBUG("t_filepath is" << t_filepath);
-	DEBUG("filepath is" << filepath);
-
-
 
 	if (is_directory(filepath))
 	{
 		if (filepath[filepath.size() - 1] == '/' && location->get_autoindex())
 		{
-			// string tmp;
-			// get_auto_index(&tmp);
-			// status = 42;
 			code = 200;
 			return 1;
 		}
@@ -473,20 +435,14 @@ int Request::get_file_status(int &nfd)
 		{
 			code = 403;
 			passed_cgi = true;
-			// file.close();
 			filepath = error_page(403);
-			// file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
 		}
-
-
-
-		//Don't do it yet
 	}
 	else
 	{
 		ifstream file(t_filepath.c_str(), ofstream::in);
 		
-		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
+		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 		{
 			code = 404;
 			passed_cgi = true;
@@ -505,77 +461,12 @@ int Request::get_file_status(int &nfd)
 					return 2;
 				}
 			}
-
-			code = 200;	
+			code = 404;	
 		}
-
 		file.close();	
 	}
-
-	// Log("Opening file");
-
-	
-	
-	// Log("File verifs OK");
-	
-
-	
 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
-	
-	// Log("Open is ok as well");
 	return 0;
-
-}
-
-void 	Request::get_body(string &body)
-{
-	// set_filepath();
-	DEBUG("CREATING FILE");
-	ifstream file(filepath.c_str(), ofstream::in);
-	DEBUG("DONE");
-	if (is_directory(filepath))
-	{
-		if (filepath[filepath.size() - 1] == '/' && location->get_autoindex())
-			return (get_auto_index(body));
-		else
-		{
-			code = 403;
-			passed_cgi = true;
-			file.close();
-			file.open(static_cast<const char *>(error_page(403).c_str()), ofstream::in);
-		}
-	}
-	if (filepath.length() && get_type(filepath, false) != "text/html")
-	{
-
-		// DEBUG("CGI SEARCHED");
-		map<string, string> cgis = server->get_cgis();
-		for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
-		{
-			size_t pos;
-			if ((pos = filepath.find(cgi->first) ) != string::npos)
-			{
-				passed_cgi = true;
-				file.close();
-				// launch_cgi(body, filepath.substr(pos));
-				return ;
-			}
-		}
-	}
-	// DEBUG("type-----------" << get_type(filepath, false));
-	if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
-	{
-		code = 404;
-		passed_cgi = true;
-		file.close();
-		file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
-	}
-	else if (code == 0)
-		code = 200;
-	DEBUG("PUT INTO BODY");
-	body = string((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-	DEBUG("DONE");
-	file.close();
 }
 
 bool	Request::select_location(void)
@@ -589,7 +480,6 @@ bool	Request::select_location(void)
 	string searched_path = target;
 	while (searched_path != "")
 	{
-		// DEBUG(searched_path);
 		for (list<Location>::iterator it_location = locations.begin(); it_location != locations.end(); it_location++)
 		{
 			if (searched_path == it_location->get_path())
@@ -621,11 +511,7 @@ string& Request::get_s_header(string name)
 	return headers[name];
 }
 
-void Request::add_to_body(string data)
-{
-	headers["Body"] += data;
-}
-
+//These clearly don't need as much space on screen
 string Request::get_index_header(size_t length)
 {
 	stringstream header;
@@ -663,8 +549,6 @@ string Request::get_normal_header()
 
 string	Request::get_header(const size_t length)
 {
-
-
 	stringstream header;
 	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
@@ -690,41 +574,26 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-void Request::prep_response(const list<Server*> &servers)
+
+//Pas sur de la complete utilité de cette fonction
+
+void Request::prep_response(const list<Server*> &servers) 
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
-	{
 		return ;
-		// DEBUG("CASE 1");
-		// return (get_response());	
-	}
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
-	{
 		code = 413;
-		// DEBUG("CASE 2");
-		// // return (get_response());
-	}
 	if (location->get_HTTP_redirection_type() > 0)
-	{
-		// DEBUG("CASE 3");
-		// DEBUG("REDIR TYPE");
 		code = location->get_HTTP_redirection_type();
-		// return (get_header(0));
-	}
 	else if (type == "HEAD")
 	{
-		// DEBUG("CASE 5");
+		//TODO
 		string body;
-		get_body(body);
-		// return (get_header(body.length()));
+		// get_body(body);
 	}
 	else if (type == "DELETE")
 	{
-		//todo
-		// DEBUG("CASE 7");
+		//TODO
 		string delete_file = server->get_root() + location->get_upload_directory() + target;
-		// remove(delete_file.c_str());
-		// return (get_response());
 	}
-	// return (get_response());
 }

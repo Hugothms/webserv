@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 14:57:20 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 20:21:03 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,6 @@ void Webserv::accept_new_conn(void)
 			_clients.push_back(client);
 			//TO MOVE
 			
-			client->status = 0;
 
 			FD_SET(client->get_fd(), &listen_set);
 			FD_SET(client->get_fd(), &write_set);
@@ -165,7 +164,7 @@ void	Webserv::listen(void)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
 			{
-				if (((*client)->status == 0 || (*client)->status == 4) && (*client)->receive() == -1) //Or if we need more data to feed CGI
+				if (((*client)->status() == 0 || (*client)->status() == 4) && (*client)->receive() == -1) //Or if we need more data to feed CGI
 				{
 						clear_fd(*client);
 						delete (*client);
@@ -176,12 +175,12 @@ void	Webserv::listen(void)
 			else if ((*client)->is_done_recv())
 			{
 
-				if ((*client)->status == 0 ||(*client)->status == 4 )
+				if ((*client)->status() == 0 ||(*client)->status() == 4 )
 				{
 					DEBUG("SET RESP")
 					(*client)->set_response();
 				}
-				else if ((*client)->status > 0)
+				else if ((*client)->status() > 0)
 					(*client)->smart_send();
 			}
 			else if (fcntl((*client)->get_fd(), F_GETFL) < 0) 

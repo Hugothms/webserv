@@ -6,18 +6,18 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 17:29:00 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 20:19:26 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 
-Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0), status(0)
+Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0)
 {
 	client_len = sizeof(client_addr);
 }
 
-Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), status(0)
+Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0)
 {
 	client_len = sizeof(client_addr);
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -67,7 +67,10 @@ bool Client::is_send_rdy() const
 	return send_rdy;
 }
 
-
+int Client::status(void) const
+{
+	return _status;
+}
 
 void Client::set_response(void)
 {
@@ -76,9 +79,9 @@ void Client::set_response(void)
 	send_offset = 0;
 
 
-	if (req && status != 4)
+	if (req && _status != 4)
 		delete req;
-	if (status != 4)
+	if (_status != 4)
 		req = new Request(rec_buffer);
 	
 	// if ()
@@ -86,37 +89,31 @@ void Client::set_response(void)
 	if (req && req->g_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
 	{
 		// Log("We  are in the mode", GREEN);
-		if (req->get_s_header("Body").size() != atoi(req->get_s_header("Content-Length").c_str()))
+		if (req->get_s_header("Body").size() != static_cast<unsigned int>(atoi(req->get_s_header("Content-Length").c_str())))
 		{
-			Log("Going stqtus 4");
-			status = 4;
+			_status = 4;
 			return;
 		}
 		else
-			status = 1;
+			_status = 1;
 		
 	}
 
 	rec_buffer.clear();
 	
-
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
 	// Log("prep response OK");
 	req->set_filepath();
 	// Log("set filepath OK");
 
-
-
-	
-	// int nfd = 0;
 	int operation_status = req->get_file_status(_file_fd);
 	// Log("File status OK");
 
 	if (operation_status == 0)
 	{
 		send_buffer = req->get_normal_header();
-		status = 1;
+		_status = 1;
 		return ;
 	}
 	else if (operation_status == 1)
@@ -127,7 +124,7 @@ void Client::set_response(void)
 		send_buffer = req->get_index_header(tmp.size());
 		send_buffer += tmp;
 
-		status = 1;
+		_status = 1;
 		
 	}
 	else if (operation_status == 2)
@@ -137,7 +134,7 @@ void Client::set_response(void)
 		
 		send_buffer = req->get_index_header(tmp.size());
 		send_buffer += tmp;
-		status = 1;
+		_status = 1;
 		
 		_file_fd = 0;
 		//This is a CGI
@@ -210,7 +207,7 @@ void Client::send_header(void)
 	if (send_offset == send_buffer.size())
 	{
 		send_buffer.clear();
-		status = 2;
+		_status = 2;
 	}
 }
 
@@ -220,24 +217,20 @@ void Client::clean(void)
 		close(_file_fd);
 	_done_recv = 0;
 	_file_fd = 0;
-	status = 0;
+	_status = 0;
 	delete req;
 	req = 0;
 }
 
 void Client::send_fd(void)
 {
-	// static string tmp;
 
 	if (_file_fd == 0)
 	{
-		// tmp.clear();
 		_done_recv = 0;
 		delete req;
 		req = 0;
-		status = 0;
-		// clean();
-		// clean();
+		_status = 0;
 		return ;
 	}
 
@@ -245,15 +238,12 @@ void Client::send_fd(void)
 	int s_read = read(_file_fd, buff, BUFF_S);
 	
 
-	// tmp += string(buff, 0, BUFF_S);
-	// DEBUG("Read is " << s_read);
 	if (s_read <= 0)
 	{
-		// Log("s_read 0");
 		close(_file_fd);
 		_file_fd = 0;
 		_done_recv = 0;
-		status = 0;
+		_status = 0;
 
 		delete req;
 		req = 0;
@@ -262,9 +252,7 @@ void Client::send_fd(void)
 		
 		return;
 	}
-	// Log("Sending_fd..");
 	::send(_fd, buff, s_read, 0);
-	// Log("Done");
 	if (s_read < BUFF_S)
 	{
 		Log("Done sending file to client", YELLOW);
@@ -273,7 +261,7 @@ void Client::send_fd(void)
 		close(_file_fd);
 		_done_recv = 0;
 		_file_fd = 0;
-		status = 0;
+		_status = 0;
 		delete req;
 		req = 0;
 		//All sent
@@ -286,11 +274,11 @@ void Client::send_fd(void)
 void Client::smart_send(void)
 {
 	//1 Means we have the header ready and the FD in store
-	if (status == 1)
+	if (_status == 1)
 	{
 		this->send_header();
 	}
-	else if (status == 2) //Send from the FD
+	else if (_status == 2) //Send from the FD
 	{
 		this->send_fd();
 		// _done_recv = 0;
