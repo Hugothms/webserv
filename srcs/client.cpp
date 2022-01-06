@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 14:42:49 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 15:02:45 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,12 +262,12 @@ void Client::send_fd(void)
 		
 		return;
 	}
-	// Log("Sending_fd..");
+	Log("Sending_fd..");
 	::send(_fd, buff, s_read, 0);
 	// Log("Done");
 	if (s_read < BUFF_S)
 	{
-		Log("Done sending file to client");
+		Log("Done sending file to client", YELLOW);
 		//Add target
 
 		close(_file_fd);

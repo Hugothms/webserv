@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 14:41:27 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:57:20 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void	Webserv::listen(void)
 				else if ((*client)->status > 0)
 					(*client)->smart_send();
 			}
-			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
+			else if (fcntl((*client)->get_fd(), F_GETFL) < 0) 
 					DEBUG("AH, FOUND ONE");	
 		}
 	}
