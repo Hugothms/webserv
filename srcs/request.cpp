@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 11:39:51 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 12:03:54 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -580,17 +580,8 @@ int Request::get_file_status(int &nfd)
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad()) // || file_is_empty(file))
 		{
 			code = 404;
-
 			passed_cgi = true;
-			// file.close();
-
-			// file.close();
-			// file.open(static_cast<const char *>(error_page(404).c_str()), ofstream::in);
-
 			filepath = error_page(404);
-			// nfd = open(static_cast<const char *>(error_page(404).c_str()), O_RDONLY);
-
-			// return 0;
 		}
 		else
 		{
@@ -600,15 +591,8 @@ int Request::get_file_status(int &nfd)
 				size_t pos;
 				if ((pos = filepath.find(cgi->first)) != string::npos)
 				{
-					Log("Found the CGI for this file");
-					// passed_cgi = true;
 					file.close();
-
-					//THIS IS NOT AN FD, USED TO GET FILE EXTENTION
 					nfd = pos;
-					
-
-					// launch_cgi(filepath.substr(pos));
 					return 2;
 				}
 			}
