@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 13:39:22 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:10:54 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,15 +73,15 @@ Request::Request(const string &buffer)
 	size_t pos;
 
 
-	DEBUG("******* NEW REQUEST BUFF: ********\n");
-	DEBUG(buffer);
-	DEBUG("******* END OF REQUEST BUFF ********\n");
+	// DEBUG("******* NEW REQUEST BUFF: ********\n");
+	// DEBUG(buffer);
+	// DEBUG("******* END OF REQUEST BUFF ********\n");
 
 
-	pos = buffer.find("Content-Type: ");
+	// pos = buffer.find("Content-Type: ");
 	
 	//This is used to see if we have a post rq ?
-	if (pos != string::npos)
+	if ((pos = buffer.find("Content-Type: ")) != string::npos)
 	{
 		content_type = buffer.substr(pos, buffer.find('\n', pos));
 		pos = content_type.find_first_of(": ") + 2;
@@ -130,9 +130,9 @@ Request::Request(const string &buffer)
 		unsigned int t = ::atoi(headers["Content-Length"].c_str());
 
 		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
-		DEBUG("INSERTING BODY, POS IS |" <<  headers["Body"]<<"|");
-		if (headers["Body"].empty())
-			DEBUG("NEED MORE DQTQ");
+		// DEBUG("INSERTING BODY, POS IS |" <<  headers["Body"]<<"|");
+		// if (headers["Body"].empty())
+		// 	DEBUG("NEED MORE DQTQ");
 	}
 	
 	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
@@ -548,7 +548,8 @@ int Request::get_file_status(int &nfd)
 	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
 
 
-	DEBUG("filepath is" << t_filepath);
+	DEBUG("t_filepath is" << t_filepath);
+	DEBUG("filepath is" << filepath);
 
 
 
@@ -673,24 +674,24 @@ void 	Request::get_body(string &body)
 	file.close();
 }
 
-string 	Request::get_response(void)
-{
-	string response;
-	string body;
+// string 	Request::get_response(void)
+// {
+// 	string response;
+// 	string body;
 
-	// size_
+// 	// size_
 
-	get_body(body);
-	response = get_header(body.length());
-	response += body;
-	// if (type == "text/html")
-	// {
-	// 	DEBUG("********* RESPONSE *********");
-	// 	DEBUG(response);
-	// }
-	// DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
-	return response;
-}
+// 	get_body(body);
+// 	response = get_header(body.length());
+// 	response += body;
+// 	// if (type == "text/html")
+// 	// {
+// 	// 	DEBUG("********* RESPONSE *********");
+// 	// 	DEBUG(response);
+// 	// }
+// 	// DEBUG("@@@@@@@@@@@@@@@@@@ END @@@@@@@@@@@@@@@@@@");
+// 	return response;
+// }
 
 bool	Request::select_location(void)
 {
@@ -879,46 +880,46 @@ void Request::prep_response(const list<Server*> &servers)
 // }
 
 
-string	Request::respond(const list<Server*> &servers, char fast_pipe)
-{
+// string	Request::respond(const list<Server*> &servers, char fast_pipe)
+// {
 
-	// prep_response(servers);
-	// if (fast_pipe > 0)
-	// {
-	// 	//Do stuff		
-	// }
+// 	// prep_response(servers);
+// 	// if (fast_pipe > 0)
+// 	// {
+// 	// 	//Do stuff		
+// 	// }
 
-	// if (!select_server(servers) || !select_location() || !method_allow())
-	// 	return (get_response());
-	// if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
-	// {
-	// 	code = 413;
-	// 	return (get_response());
-	// }
-	// if (location->get_HTTP_redirection_type() > 0)
-	// {
-	// 	DEBUG("REDIR TYPE");
-	// 	code = location->get_HTTP_redirection_type();
-	// 	return (get_header(0));
-	// }
-	// if (type == "GET")
-	// 	return(get_response());
-	// else if (type == "HEAD")
-	// {
-	// 	string body;
-	// 	get_body(body);
-	// 	return (get_header(body.length()));
-	// }
-	// else if (type == "POST")
-	// {
-	// 	return (get_response());
-	// }
-	// else if (type == "DELETE")
-	// {
-	// 	//todo
-	// 	string delete_file = server->get_root() + location->get_upload_directory() + target;
-	// 	remove(delete_file.c_str());
-	// 	return (get_response());
-	// }
-	return (get_response());
-}
+// 	// if (!select_server(servers) || !select_location() || !method_allow())
+// 	// 	return (get_response());
+// 	// if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
+// 	// {
+// 	// 	code = 413;
+// 	// 	return (get_response());
+// 	// }
+// 	// if (location->get_HTTP_redirection_type() > 0)
+// 	// {
+// 	// 	DEBUG("REDIR TYPE");
+// 	// 	code = location->get_HTTP_redirection_type();
+// 	// 	return (get_header(0));
+// 	// }
+// 	// if (type == "GET")
+// 	// 	return(get_response());
+// 	// else if (type == "HEAD")
+// 	// {
+// 	// 	string body;
+// 	// 	get_body(body);
+// 	// 	return (get_header(body.length()));
+// 	// }
+// 	// else if (type == "POST")
+// 	// {
+// 	// 	return (get_response());
+// 	// }
+// 	// else if (type == "DELETE")
+// 	// {
+// 	// 	//todo
+// 	// 	string delete_file = server->get_root() + location->get_upload_directory() + target;
+// 	// 	remove(delete_file.c_str());
+// 	// 	return (get_response());
+// 	// }
+// 	return (get_response());
+// }

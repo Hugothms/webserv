@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 13:48:55 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 14:01:28 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,8 @@ void	Webserv::listen(void)
 			}
 			else if ((*client)->is_done_recv())
 			{
-				if ((*client)->status == 0 )//||(*client)->status == 4 )
+
+				if ((*client)->status == 0 ||(*client)->status == 4 )
 				{
 					DEBUG("SET RESP")
 					(*client)->set_response();
