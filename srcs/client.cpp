@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 15:02:45 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 17:29:00 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,9 @@ void Client::set_response(void)
 	if (req && req->g_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
 	{
 		// Log("We  are in the mode", GREEN);
-		if (req->get_s_header("Body").empty())
+		if (req->get_s_header("Body").size() != atoi(req->get_s_header("Content-Length").c_str()))
 		{
-			DEBUG("Going stqtus 4");
+			Log("Going stqtus 4");
 			status = 4;
 			return;
 		}
@@ -262,7 +262,7 @@ void Client::send_fd(void)
 		
 		return;
 	}
-	Log("Sending_fd..");
+	// Log("Sending_fd..");
 	::send(_fd, buff, s_read, 0);
 	// Log("Done");
 	if (s_read < BUFF_S)
