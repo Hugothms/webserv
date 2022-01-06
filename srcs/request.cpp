@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 14:43:25 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 15:23:06 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,91 +276,11 @@ char **Request::build_cgi_env(string &extention_name)
 
 void trim_headers(string &to_trim, string extention_name)
 {
-
-	// DEBUG("EXT NAME " << extention_name);
 	if (extention_name == ".php")
 	{
 		to_trim.erase(0, 64);
 	}
 }
-
-
-// int	Request::launch_cgi(string extention_name)
-// {
-// 	int out_pipe[2];
-// 	int in_pipe[2];
-
-// 	if (pipe(out_pipe) == -1)
-// 	{
-// 		cerr << "cgi: pipe failed" << endl;
-// 		exit(EXIT_FAILURE);
-// 	}
-
-// 	code = 200;
-	
-// 	//We need to trim and write the body to stdin
-// 	if (type == "POST")
-// 	{	
-// 		if (pipe(in_pipe) == -1)
-// 			DEBUG("PIPE ERROR");
-// 	}
-// 	pid_t pid = fork();
-	
-// 	if (pid < 0)
-// 	{
-// 		cerr << "cgi: fork failed" << endl;
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	else if (pid == 0)
-// 	{	
-// 		char **_ev = build_cgi_env(extention_name);
-// 		char **_av = build_cgi_av(extention_name);
-	
-
-// 		if (type == "POST")
-// 		{
-// 			close(in_pipe[1]);
-// 			if (dup2(in_pipe[0], 0) == -1)
-// 			{
-// 				DEBUG("DUP2 ERR");
-// 				exit(0);
-// 			}
-// 		}
-// 		close(out_pipe[0]);
-// 		if (dup2(out_pipe[1], 1) == -1)
-// 		{
-// 			DEBUG("DUP2 ERR");
-// 			exit(0);
-// 		}
-
-// 		if (execve(_av[0], _av, _ev) < 0)
-// 			code = 404;
-// 		//Need to free
-// 	}
-// 	else
-// 	{
-// 		close(out_pipe[1]);
-// 		if (type == "POST")
-// 		{
-// 			close(in_pipe[0]);
-	
-// 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
-// 				DEBUG("WRITE ERROR");
-// 			close(in_pipe[1]);
-// 		}
-// 		wait(0);
-
-// 		return (out_pipe[0]);
-// 		// char reading_buf;
-// 		// while(read(out_pipe[0], &reading_buf, 1) > 0)
-// 		   // body += reading_buf;
-// 		// close(out_pipe[0]);
-
-// 		// DEBUG("CGI OUTPUT:\n" << body);
-// 		trim_headers(body, extention_name);
-// 	}
-// }
-
 
 void	Request::launch_cgi(string &body, const int pos)
 {
@@ -369,13 +289,9 @@ void	Request::launch_cgi(string &body, const int pos)
 
 	string extention_name = filepath.substr(pos);
 
-	// string extention_name = file.substr()
-
 	int out_pipe[2];
 	int in_pipe[2];
 
-
-	//Create pipes for input and output
 	if (pipe(out_pipe) == -1)
 	{
 		cerr << "cgi: pipe failed" << endl;
@@ -391,10 +307,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		if (pipe(in_pipe) == -1)
 			DEBUG("PIPE ERROR");
 	}
-	
-	//Get values for execve
-
-	
+		
 	pid_t pid = fork();
 	
 	if (pid < 0)
@@ -425,7 +338,10 @@ void	Request::launch_cgi(string &body, const int pos)
 		}
 
 		if (execve(_av[0], _av, _ev) < 0)
+		{
+			Log("Execve fucked");
 			code = 404;
+		}
 		//Need to free
 	}
 	else
