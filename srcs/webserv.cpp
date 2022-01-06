@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 09:56:37 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 10:54:21 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ void	Webserv::listen(void)
 		accept_new_conn();
 
 
-
+		// Log("Looping");
 
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
@@ -193,10 +193,13 @@ void	Webserv::listen(void)
 					}
 					DEBUG("DONE AFTER RECV" << (*client)->is_done_recv() )	;
 				}
+				else
+				{
+					DEBUG("Oh no its" << (*client)->status );
+				}
 			}
 			else if ((*client)->is_done_recv())
 			{
-				
 				if ((*client)->status == 0) //We ready to send it, build resp
 				{
 					Log("Setting response", RED);
@@ -208,11 +211,21 @@ void	Webserv::listen(void)
 					(*client)->smart_send();
 					//Send 
 				}
+				else
+				{
+					DEBUG("status is " << (*client)->status);
+				}
 				// else if ((*client)->is_done_send() == 0) //Transmit response
 				// {
 				// 	(*client)->send();
 				// }
 			}
+			else if (fcntl((*client)->get_fd(), F_GETFL) < 0 && errno == EBADF) 
+					DEBUG("AH, FOUND ONE");	
+			// else
+			// {
+			// 	DEBUG("Here");
+			// }
 			// else
 			// {
 			// 	Log("ono");
