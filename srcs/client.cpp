@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 11:47:39 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/06 12:06:42 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,7 +271,9 @@ void Client::send_fd(void)
 	}
 
 	char buff[BUFF_S];
-
+	for (int i = 0; i < BUFF_S; i++)
+		buff[i] = 0;
+	// memset(buff, 0, BUFF_S);
 	// Log("Send FD");
 	int s_read = read(_file_fd, buff, BUFF_S);
 	
