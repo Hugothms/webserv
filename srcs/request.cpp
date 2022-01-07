@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/07 08:43:22 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/07 08:49:03 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -505,7 +505,6 @@ string& Request::get_s_header(string name)
 	return headers[name];
 }
 
-//These clearly don't need as much space on screen
 string Request::get_header(size_t fileSize, const bool already_calculated)
 {
 	if (!already_calculated)
@@ -538,7 +537,6 @@ bool	Request::method_allow(void)
 	code = 405;
 	return false;
 }
-
 
 //Pas sur de la complete utilité de cette fonction
 void Request::prep_response(const list<Server*> &servers)
