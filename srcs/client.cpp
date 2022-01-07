@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 20:40:58 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/07 08:41:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Client::set_response(void)
 		delete req;
 	if (_status != 4)
 		req = new Request(rec_buffer);
-	
+
 	// if ()
 
 	if (req && req->g_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
@@ -95,16 +95,16 @@ void Client::set_response(void)
 	}
 
 	rec_buffer.clear();
-	
+
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
 	req->set_filepath();
-	
+
 	int operation_status = req->get_file_status(_file_fd);
-	
+
 	if (operation_status == 0)
 	{
-		send_buffer = req->get_normal_header();
+		send_buffer = req->get_header(0, false);
 		_status = 1;
 		return ;
 	}
@@ -112,21 +112,21 @@ void Client::set_response(void)
 	{
 		string tmp;
 		req->get_auto_index(tmp);
-		
-		send_buffer = req->get_index_header(tmp.size());
+
+		send_buffer = req->get_header(tmp.size(), true);
 		send_buffer += tmp;
 
 		_status = 1;
-		
+
 	}
 	else if (operation_status == 2)
 	{
 		string tmp;
 		req->launch_cgi(tmp, _file_fd);
-		
-		send_buffer = req->get_index_header(tmp.size());
+
+		send_buffer = req->get_header(tmp.size(), true);
 		send_buffer += tmp;
-		_status = 1;	
+		_status = 1;
 		_file_fd = 0;
 	}
 }
@@ -185,7 +185,7 @@ void Client::send_fd(void)
 {
 	char 	buff[BUFF_S];
 	int 	s_read;
-	
+
 	if (_file_fd == 0)
 	{
 		delete req;
@@ -195,7 +195,7 @@ void Client::send_fd(void)
 	}
 
 	s_read = read(_file_fd, buff, BUFF_S);
-	
+
 	if (s_read <= 0)
 	{
 		close(_file_fd);
@@ -211,7 +211,7 @@ void Client::send_fd(void)
 		close(_file_fd);
 		delete req;
 		_status = _done_recv = _file_fd = 0;
-		req = NULL;		
+		req = NULL;
 	}
 }
 
@@ -219,8 +219,8 @@ void Client::smart_send(void)
 {
 	if (_status == 1)
 		this->send_header();
-	else if (_status == 2) 
-		this->send_fd();	
+	else if (_status == 2)
+		this->send_fd();
 }
 
 void Client::set_fd(const int fd)

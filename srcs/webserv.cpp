@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 20:21:03 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/07 08:44:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	Webserv::parse_config(const string config_file)
 		Log("Please provide a config file");
 		exit (1);
 	}
-	
+
 	const string config = get_content_file(config_file);
 	DEBUG("Provided config:" << endl << config);
 
@@ -110,7 +110,7 @@ void Webserv::accept_new_conn(void)
 			client->push_back_server(*server);
 			_clients.push_back(client);
 			//TO MOVE
-			
+
 
 			FD_SET(client->get_fd(), &listen_set);
 			FD_SET(client->get_fd(), &write_set);
@@ -183,8 +183,8 @@ void	Webserv::listen(void)
 				else if ((*client)->status() > 0)
 					(*client)->smart_send();
 			}
-			else if (fcntl((*client)->get_fd(), F_GETFL) < 0) 
-					DEBUG("AH, FOUND ONE");	
+			else if (fcntl((*client)->get_fd(), F_GETFL) < 0)
+					DEBUG("AH, FOUND ONE");
 		}
 	}
 }

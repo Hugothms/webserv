@@ -3,13 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   log.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 18:55:27 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/04 20:44:55 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/07 08:44:05 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "includes.hpp"
+
 
 #ifndef LOG_HPP
 #define LOG_HPP
@@ -45,11 +45,11 @@ class Log
 	{
 		std::time_t t = std::time(0);   // get time now
     	std::tm* now = std::localtime(&t);
-   	 	
+
    	 	std::cout << color << "[";
 
    	 	std::cout << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'
-         <<  now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":" 
+         <<  now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":"
          << now->tm_sec << "] : " << msg << RESET << std::endl;
 	}
 

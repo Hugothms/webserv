@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 20:35:46 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/07 08:43:55 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,13 @@ class Client
 
 		void set_fd(const int nfd);
 		int get_fd(void) const;
-	
+
 
 		int receive(void);
 		int  status(void) const;
 		bool is_done_recv(void) const;
 		void set_done_recv(bool t);
-		
+
 		void set_response(void);
 
 		void send(void);
