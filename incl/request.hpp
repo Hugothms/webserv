@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/06 14:37:05 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/07 08:43:28 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Request
 		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
 		string				target;			// The URL requested
-		
+
 
 		// * FOR INTERNAL USE *
 		const Server		*server;
@@ -80,17 +80,14 @@ class Request
 		string 	g_type(void) const;
 		string 	get_response(void);
 		void 	get_body(string &body);
-		string	get_header(const size_t length);
-		string	get_cgi_header(const size_t length);
-		string	get_index_header(size_t fileSize);
-		string	get_normal_header();
+		string	get_cgi_header(const size_t fileSize);
+		string	get_header(size_t fileSize, const bool already_calculated);
 		void 	launch_cgi(string &body, const int pos);
 		void	get_auto_index(string &body);
 		void	set_filepath(void);
 		bool 	method_allow(void);
 		string	error_page(const int error_code);
 		int  	get_file_status(int &nfd);
-		// void prep_response(const list<Server*> &servers)
 };
 
 // * utils_header.cpp

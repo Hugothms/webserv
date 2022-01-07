@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/06 20:08:39 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/07 08:43:22 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
 #include <fcntl.h>
+
 map<unsigned int, string> create_map_return_codes(void)
 {
 	map<unsigned int, string> codes;
@@ -82,9 +83,7 @@ Request::Request(const string &buffer)
 		pos = content_type.find_first_of(": ") + 2;
 		content_type = content_type.substr(pos, (content_type.find("\n", 0) - pos));
 	}
-
 	pos = 0;
-
 	DEBUG("target is" << buffer.c_str() + pos);
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
@@ -117,14 +116,14 @@ Request::Request(const string &buffer)
 		}
 		headers.insert(pair<string, string>(header, get_str_before_char(buffer, "\r\n", &pos)));
 	}
-	
+
 	// If there is content length, then we are in post mode, add Body header;
 	if (headers.count("Content-Length") > 0)
 	{
 		unsigned int t = ::atoi(headers["Content-Length"].c_str());
 		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
 	}
-	
+
 	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 	// 	DEBUG(it->first << ": " << it->second);
 	DEBUG("****** REQUEST PARSED *******");
@@ -200,7 +199,7 @@ void trim_tr(string &to_trim)
 			it = to_trim.erase(it);
 			--it;
 		}
-	}	
+	}
 	// return to_trim;
 }
 
@@ -216,7 +215,6 @@ char **Request::build_cgi_av(string &extention_name)
 	av.push_back(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
 	char **_av = static_cast<char**>(malloc(sizeof(char *) * (av.size() + 1)));
-		
 	for (size_t j = 0; j < av.size(); j++)
 	{
 		_av[j] = ft_strdup(av[j]);
@@ -235,7 +233,6 @@ char **Request::build_cgi_env(string &extention_name)
 	free(cwd);
 	string newfilepath("/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
-
 	ev.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	ev.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	ev.push_back("REDIRECT_STATUS=200");
@@ -243,7 +240,6 @@ char **Request::build_cgi_env(string &extention_name)
 	ev.push_back("REQUEST_METHOD=" + type);
 	ev.push_back("SCRIPT_FILENAME=" + server_root + newfilepath);
 	ev.push_back("SCRIPT_NAME=" + newfilepath);
-
 
 	if (type == "GET")
 	{
@@ -253,7 +249,6 @@ char **Request::build_cgi_env(string &extention_name)
 	}
 	else if (type == "POST")
 	{
-
 		//Are you fucking with me ?
 		trim_tr(content_type);
 
@@ -262,7 +257,6 @@ char **Request::build_cgi_env(string &extention_name)
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
-		
 	for (size_t j = 0; j < ev.size(); j++)
 	{
 		_ev[j] = ft_strdup(ev[j]);
@@ -290,26 +284,26 @@ void	Request::launch_cgi(string &body, const int pos)
 
 	//We probably shouldn't assume that
 	code = 200;
-	
+
 	//We need to trim and write the body to stdin
 	if (type == "POST" && pipe(in_pipe) == -1)
-	{	
+	{
 		Log("cgi: pipe failed", RED);
-		exit(EXIT_FAILURE);	
+		exit(EXIT_FAILURE);
 	}
-		
+
 	pid_t pid = fork();
-	
+
 	if (pid < 0)
 	{
 		Log("cgi: fork failed",RED);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
-	{	
+	{
 		char **_ev = build_cgi_env(extention_name);
 		char **_av = build_cgi_av(extention_name);
-	
+
 		if (type == "POST")
 		{
 			close(in_pipe[1]);
@@ -441,7 +435,7 @@ int Request::get_file_status(int &nfd)
 	else
 	{
 		ifstream file(t_filepath.c_str(), ofstream::in);
-		
+
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 		{
 			code = 404;
@@ -461,9 +455,9 @@ int Request::get_file_status(int &nfd)
 					return 2;
 				}
 			}
-			code = 404;	
+			code = 404;
 		}
-		file.close();	
+		file.close();
 	}
 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 	return 0;
@@ -512,49 +506,20 @@ string& Request::get_s_header(string name)
 }
 
 //These clearly don't need as much space on screen
-string Request::get_index_header(size_t length)
+string Request::get_header(size_t fileSize, const bool already_calculated)
 {
+	if (!already_calculated)
+	{
+		ifstream file(filepath.c_str(), ofstream::in);
+		file.seekg(0, ios::end);
+		fileSize = file.tellg();
+	}
 	stringstream header;
 	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
 	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << ::get_type(filepath, 1) << endl;
-	header << "Content-Length: " << length << endl;
-	header << "Connection: Closed" << endl;
-	if (location && location->get_HTTP_redirection_type() > 0)
-		header << "Location: " << location->get_HTTP_redirection() << endl;
-	header << endl;
-	return (header.str());
-}
-
-
-string Request::get_normal_header()
-{
-	ifstream file(filepath.c_str(), ofstream::in);
-	file.seekg(0, ios::end);	
-	size_t fileSize = file.tellg();
-
-	stringstream header;
-	header << "HTTP/1.1 " << codes[code] << endl;
-	header << "Date: " << get_time_stamp() << endl;
-	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << ::get_type(filepath, passed_cgi) << endl;
+	header << "Content-Type: " << ::get_type(filepath, passed_cgi || already_calculated) << endl;
 	header << "Content-Length: " << fileSize << endl;
-	header << "Connection: Closed" << endl;
-	if (location && location->get_HTTP_redirection_type() > 0)
-		header << "Location: " << location->get_HTTP_redirection() << endl;
-	header << endl;
-	return (header.str());
-}
-
-string	Request::get_header(const size_t length)
-{
-	stringstream header;
-	header << "HTTP/1.1 " << codes[code] << endl;
-	header << "Date: " << get_time_stamp() << endl;
-	header << "Server: webserv/0.01" << endl;
-	header << "Content-Type: " << ::get_type(filepath, passed_cgi) << endl;
-	header << "Content-Length: " << length << endl;
 	header << "Connection: Closed" << endl;
 	if (location && location->get_HTTP_redirection_type() > 0)
 		header << "Location: " << location->get_HTTP_redirection() << endl;
@@ -576,8 +541,7 @@ bool	Request::method_allow(void)
 
 
 //Pas sur de la complete utilité de cette fonction
-
-void Request::prep_response(const list<Server*> &servers) 
+void Request::prep_response(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
 		return ;
