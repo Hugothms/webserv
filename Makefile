@@ -33,12 +33,12 @@ SRC			=	main.cpp			\
 				utils_header.cpp	\
 				utils_parsing.cpp	\
 				client.cpp			\
-				webserv.cpp			
+				webserv.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
 
-CFLAGS		=	-Wall -Wextra -std=c++98 -Ofast -g3 -fsanitize=address #-Werror
+CFLAGS		=	-Wall -Wextra -std=c++98 -Ofast #-g3 -fsanitize=address #-Werror
 CC			=	clang++
 RM			=	rm -rf
 
