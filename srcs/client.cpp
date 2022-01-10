@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/10 15:10:43 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:22:14 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,19 +131,7 @@ void Client::set_response(void)
 	}
 	else if (operation_status == 4)
 	{
-		//The case where we delete;
-		// DEBUG("FILEPATH IS " << req->target);
-		// string test = 
-		// ifstream file(req->target.c_str(), ofstream::in);
-		// if (!file)
-		// {
-		// 	DEBUG("can't find it");
-		// 	req->code = 404;
-		// }
 		req->delete_rq();
-		// file.seekg(0, ios::end);
-		// fileSize = file.tellg();
-		
 		_status = 1;
 		send_buffer = req->get_header(0, 1);
 		DEBUG("DELETE TIME STATUS IS 4");

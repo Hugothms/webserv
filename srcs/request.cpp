@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 15:17:45 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:20:33 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,8 +439,7 @@ void Request::delete_rq(void)
 	string path;
 
 	path += "./" + server->get_root() + target;
-
-	DEBUG("DELETE THAT SHIT :" << path );
+	code = 200;
 	if (remove(path.c_str()) == -1)
 		code = 404;
 }
