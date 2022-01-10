@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 15:24:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 16:05:06 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void Webserv::clear_fd(Client *client)
 
 void	Webserv::listen(void)
 {
-	Log("Listening started", GREEN);
+	Log("Server started", GREEN);
 	while (true)
 	{
 		// DEBUG("Waiting for new connections...");

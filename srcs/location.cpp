@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/07 08:44:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 16:19:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,7 @@
 
 Location::Location()
 : HTTP_redirection_type(0), autoindex(false)
-{
-	// map_pointer_function.insert(make_pair("HTTP_redirection", &(Location::set_HTTP_redirection)));
-	// map_pointer_function.insert(make_pair("root", &(Location::set_path)));
-	// map_pointer_function.insert(make_pair("index", &(Location::set_index)));
-	// map_pointer_function.insert(make_pair("upload_directory", &(Location::set_upload_directory)));
-}
+{}
 
 Location::~Location()
 {
@@ -33,11 +28,11 @@ bool	Location::is_valid(string &error) const
 	list<string> allow = get_allow();
 	if (allow.size() == 0)
 		error = (get_path() + " location: allowed method(s) are not set");
-	for (list<string>::iterator HTTP_method = allow.begin(); HTTP_method != allow.end(); HTTP_method++)
-	{
-		if (*HTTP_method == "POST" && get_upload_directory().length() == 0)
-			error = (get_path() + " location: directory_upload is not set (and HTTP method POST is allowed)");
-	}
+	// for (list<string>::iterator HTTP_method = allow.begin(); HTTP_method != allow.end(); HTTP_method++)
+	// {
+	// 	if (*HTTP_method == "POST" && get_upload_directory().length() == 0)
+	// 		error = (get_path() + " location: directory_upload is not set (and HTTP method POST is allowed)");
+	// }
 	if (get_location_root() == "")
 		error = (get_path() + " location: location_root is not set");
 	return (error.length() == 0);
@@ -76,11 +71,6 @@ string			Location::get_location_root() const
 string			Location::get_index() const
 {
 	return (this->index);
-}
-
-string			Location::get_upload_directory() const
-{
-	return (this->upload_directory);
 }
 
 bool			Location::get_autoindex() const
@@ -125,11 +115,6 @@ void Location::set_location_root(const string location_root)
 void Location::set_index(const string index)
 {
 	this->index = index;
-}
-
-void Location::set_upload_directory(const string upload_directory)
-{
-	this->upload_directory = upload_directory;
 }
 
 void Location::set_autoindex(const bool autoindex)

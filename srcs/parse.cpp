@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 15:22:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 16:20:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,19 +89,6 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 				get_str_before_char(config, "\n", pos);
 			}
 		}
-		else if (tmp == "upload_directory")
-		{
-			if ((tmp = get_str_before_char(config, ";", pos, "\r\t /")).length())
-			{
-				if (tmp.length() > 0 && tmp[0] != '/')
-					tmp = '/' + tmp;
-				if (tmp.length() > 1 && tmp[tmp.size() - 1] == '/')
-					tmp.resize(tmp.length() - 1);
-				location.set_upload_directory(tmp);
-				DEBUG("\t\t\t" << tmp);
-				get_str_before_char(config, "\n", pos);
-			}
-		}
 		else if (tmp == "autoindex")
 		{
 			if ((tmp = get_str_before_char(config, ";", pos)) == "0" || tmp == "1")
@@ -146,7 +133,6 @@ Server	*parse_server(const string &config, size_t *pos)
 	Server *server = new Server();
 	while (*pos < end && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
-		DEBUG("pos " << *pos);
 		DEBUG("\t" << tmp);
 		if (tmp.empty() || (tmp[0] == '#'))
 		{

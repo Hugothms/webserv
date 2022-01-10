@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/10 13:27:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 16:03:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int Server::setup(void)
 		perror("socket");
 		exit(1);
 	}
+	Log("Listening socket created on port : " + to_string(port), GREEN);
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
