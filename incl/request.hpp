@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/07 08:43:28 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 15:09:56 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ class Request
 	private :
 		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
-		string				target;			// The URL requested
+
 
 
 		// * FOR INTERNAL USE *
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
-		unsigned int		code;
+		
 		bool 				passed_cgi;
 
 
@@ -69,6 +69,10 @@ class Request
 		*/
 
 	public :
+
+		string				target;			// The URL requested
+		unsigned int		code;
+
 		void prep_response(const list<Server*> &servers);
 		string &get_s_header(string name);
 		void add_to_body(string toadd);
@@ -85,9 +89,11 @@ class Request
 		void 	launch_cgi(string &body, const int pos);
 		void	get_auto_index(string &body);
 		void	set_filepath(void);
+		string	get_filepath(void);
 		bool 	method_allow(void);
 		string	error_page(const int error_code);
 		int  	get_file_status(int &nfd);
+		void 	delete_rq(void);
 };
 
 // * utils_header.cpp

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/07 08:41:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 15:10:43 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void Client::set_response(void)
 	req->set_filepath();
 
 	int operation_status = req->get_file_status(_file_fd);
-
+	DEBUG("OPSTAT IS " << operation_status);
 	if (operation_status == 0)
 	{
 		send_buffer = req->get_header(0, false);
@@ -128,6 +128,25 @@ void Client::set_response(void)
 		send_buffer += tmp;
 		_status = 1;
 		_file_fd = 0;
+	}
+	else if (operation_status == 4)
+	{
+		//The case where we delete;
+		// DEBUG("FILEPATH IS " << req->target);
+		// string test = 
+		// ifstream file(req->target.c_str(), ofstream::in);
+		// if (!file)
+		// {
+		// 	DEBUG("can't find it");
+		// 	req->code = 404;
+		// }
+		req->delete_rq();
+		// file.seekg(0, ios::end);
+		// fileSize = file.tellg();
+		
+		_status = 1;
+		send_buffer = req->get_header(0, 1);
+		DEBUG("DELETE TIME STATUS IS 4");
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 14:05:18 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:17:45 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -395,8 +395,18 @@ void	Request::get_auto_index(string &body)
 	body = auto_index.str();
 }
 
+string	Request::get_filepath(void)
+{
+	return filepath;
+}
 void	Request::set_filepath(void)
 {
+	if (type == "DELETE")
+	{
+		code = 200;
+		filepath = "";
+		return;
+	}
 	if (!server || !location)
 	{
 		filepath = "";
@@ -424,9 +434,28 @@ void	Request::set_filepath(void)
 	}
 }
 
+void Request::delete_rq(void)
+{
+	string path;
+
+	path += "./" + server->get_root() + target;
+
+	DEBUG("DELETE THAT SHIT :" << path );
+	if (remove(path.c_str()) == -1)
+		code = 404;
+}
+
 int Request::get_file_status(int &nfd)
 {
 	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
+
+	if (type == "DELETE")
+	{
+		DEBUG("TYPE DELETE IN GET FILE STATUS");
+		code = 200;
+		nfd = 0;
+		return 4;
+	}
 
 	if (is_directory(filepath))
 	{
@@ -523,6 +552,7 @@ string Request::get_header(size_t fileSize, const bool already_calculated)
 		file.seekg(0, ios::end);
 		fileSize = file.tellg();
 	}
+	DEBUG("GET HEADER");
 	stringstream header;
 	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
@@ -533,6 +563,7 @@ string Request::get_header(size_t fileSize, const bool already_calculated)
 	if (location && location->get_HTTP_redirection_type() > 0)
 		header << "Location: " << location->get_HTTP_redirection() << endl;
 	header << endl;
+	DEBUG("RET HEADER");
 	return (header.str());
 }
 
@@ -557,15 +588,11 @@ void Request::prep_response(const list<Server*> &servers)
 		code = 413;
 	if (location->get_HTTP_redirection_type() > 0)
 		code = location->get_HTTP_redirection_type();
-	else if (type == "HEAD")
-	{
-		//TODO
-		string body;
-		// get_body(body);
-	}
 	else if (type == "DELETE")
 	{
 		//TODO
-		string delete_file = server->get_root() + location->get_upload_directory() + target;
+		string delete_file = server->get_root() + target;
+		Log("Trying to delete " + delete_file, BLUE);
+		code = 200;
 	}
 }
