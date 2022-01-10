@@ -14,7 +14,6 @@
 #define LOCATION_HPP
 
 #include "includes.hpp"
-#include "server.hpp"
 
 class Server;
 

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/19 14:38:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 16:31:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # define WEBSERV_HPP
 
 # include "includes.hpp"
-# include "server.hpp"
+// # include "server.hpp"
 # include "client.hpp"
 
 class Server;

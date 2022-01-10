@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2021/11/21 18:53:53 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 16:30:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define SERVER_HPP
 
 # include "includes.hpp"
-# include "location.hpp"
+// # include "location.hpp"
 # include "request.hpp"
 // # include "client.hpp"
+
+// class Request;
 
 # define V4 AF_INET
 # define V6 AF_INET6
