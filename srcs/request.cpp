@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/07 08:49:03 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 14:05:18 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,17 @@ string to_string_custom(const int &error_code)
 string	Request::error_page(const int error_code)
 {
 	if (server && server->get_error_pages().size() && server->get_error_pages()[error_code].length())
-			return (server->get_root() + server->get_error_pages()[error_code]);
+	{
+		string tmp = server->get_root() + server->get_error_pages()[error_code];
+
+		ifstream file(tmp.c_str(), ofstream::in);
+		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
+		{
+			return ("default_error_pages/" + to_string_custom(error_code) + ".html");
+		}
+		file.close();
+		return (server->get_root() + server->get_error_pages()[error_code]);
+	}
 	return ("default_error_pages/" + to_string_custom(error_code) + ".html");
 }
 

@@ -12,7 +12,7 @@
 		echo "s1 is ".$_GET["s1"].".<br/>";
 		echo "s2 is ".$_GET["s2"].".<br/>";
 	}
-	else if(isset($_GET["s1"]) || isset($_GET["s2"]))
+	else if(isset($_POST["s1"]) || isset($_POST["s2"]))
 	{
 		echo "Using the POST method to pass data<br/>";
 		echo "s1 is ".$_POST["s1"].".<br/>";
