@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 15:20:33 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:26:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ string Request::g_type(void) const
 }
 
 Request::Request(const string &buffer)
-:  location(0), code(0), passed_cgi(false)
+:  location(0), passed_cgi(false), code(0)
 {
 	size_t pos;
 

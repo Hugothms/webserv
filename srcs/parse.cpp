@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/22 10:46:38 by user42           ###   ########.fr       */
+/*   Updated: 2022/01/10 15:22:25 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 {
 	Location	location;
 	string		tmp;
+	size_t		end;
+
 	tmp = get_str_before_char(config, " ", pos);
+	end = config.length() - 1;
 	if (tmp.length() > 0 && tmp[0] != '/')
 		tmp = '/' + tmp;
 	if (tmp.length() > 1 && tmp[tmp.size() - 1] == '/')
@@ -26,7 +29,7 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 	location.set_path(tmp);
 	if (get_str_before_char(config, " ;\n", pos) != "{")
 		err_parsing_config(server, "expecting '{' after 'server'");
-	while (config[*pos] && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
+	while (*pos < end && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
 		if (tmp[0] == '#')
 		{
@@ -116,9 +119,9 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 		// else
 		// 	break;
 	}
-	if (tmp != "}")
+	if (tmp != "}" && config[end] != '}' && *pos != end)
 	{
-		cerr << location.get_path() << " location: no ending bracket" << endl;
+		cerr << location.get_path() << " location: no closing bracket" << endl;
 		exit(EXIT_FAILURE);
 	}
 	DEBUG("\t}");
@@ -131,20 +134,27 @@ Location	parse_location(const string &config, size_t *pos, Server *server)
 Server	*parse_server(const string &config, size_t *pos)
 {
 	string tmp;
+	size_t end;
+
 	DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!!");
 	tmp = get_str_before_char(config, "\n", pos);
+	end = config.length() - 1;
 	if (tmp != "{")
-		return NULL ;
+		return NULL;
 	DEBUG("{");
+	// DEBUG(end);
 	Server *server = new Server();
-	while (config[*pos] && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
+	while (*pos < end && (tmp = get_str_before_char(config, " ;\n", pos)) != "}")
 	{
+		DEBUG("pos " << *pos);
 		DEBUG("\t" << tmp);
 		if (tmp.empty() || (tmp[0] == '#'))
 		{
 			if (config[*pos - 1] == ' ' || config[*pos - 1] == ';')
 				(get_str_before_char(config, "\n", pos));
 			else if (!config[*pos])
+				break;
+			else
 				break;
 		}
 		else if (tmp == "location")
@@ -241,7 +251,13 @@ Server	*parse_server(const string &config, size_t *pos)
 			tmp = get_str_before_char(config, "\n", pos);
 		}
 	}
-	if (tmp != "}")
+	// DEBUG("\n\ntmp         :" << tmp);
+	// DEBUG("config[end] |" << config[end] << "|" )
+	// DEBUG("pos         :" << *pos);
+	if (config[end] == '}' && *pos >= end)
+		err_parsing_config(server, "no empty line after closing bracket");
+	if ((tmp == "location" && (config[end] == '}' || *pos >= end)) ||
+		(tmp == "" && *pos >= end))
 		err_parsing_config(server, "no closing bracket");
 	string error;
 	if (!server->is_valid(error))

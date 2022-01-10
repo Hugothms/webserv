@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/10 15:09:56 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/10 15:25:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,16 @@ class Request
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
-		
+
 		bool 				passed_cgi;
 
 
 		map<string, string>	headers;
 		string 				content_type;
 		// int 				file_fd;
+
+		string				target;			// The URL requested
+		unsigned int		code;
 
 		char **build_cgi_env(string &extention_name);
 		char **build_cgi_av(string &extention_name);
@@ -70,8 +73,6 @@ class Request
 
 	public :
 
-		string				target;			// The URL requested
-		unsigned int		code;
 
 		void prep_response(const list<Server*> &servers);
 		string &get_s_header(string name);

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2021/11/19 14:23:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 15:24:40 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ string get_content_file(const string &filename)
  * @param stop	set of stoping chars
  * @param pos	position where to start in str
  * @param skip	set of chars to ignore at the begin (default: " \\t")
- * @return first substring found between the start and the first occurence of a char in 'stop' (or empty string if '\\n' is found first)
+ * @return first substring found between pos and the first occurence of a char in 'stop' (or empty string if '\\n' is found first)
  *
 **/
 string get_str_before_char(const string &str, const string stop, size_t *pos, const string skip)

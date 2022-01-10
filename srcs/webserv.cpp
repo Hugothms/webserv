@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/07 08:44:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/10 15:24:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	Webserv::parse_config(const string config_file)
 
 	// Parse and add multiple _servers in "_servers"
 	size_t pos = 0;
-	while (config[pos]) // config parsing loop
+	while (pos < config.length() - 1) // config parsing loop
 	{
 		string tmp = get_str_before_char(config, " \n", &pos);
 		if (tmp == "server")
@@ -73,9 +73,13 @@ void	Webserv::parse_config(const string config_file)
 			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
+		else if (tmp.length() == 0)
+		{
+			break;
+		}
 	}
 	Log("Config file loaded", GREEN);
-	// DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
+	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
 }
 
 void Webserv::build(void)
