@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/10 16:03:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/11 19:08:39 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ Server::~Server()
 	DEBUG("KILLED");
 }
 
+string to_string_customa(const int &error_code)
+{
+	stringstream ret;
+	ret << error_code;
+	return ret.str();
+}
 int Server::setup(void)
 {
 	listen_fd = socket(AF_INET, SOCK_STREAM , 0);
@@ -32,7 +38,7 @@ int Server::setup(void)
 		perror("socket");
 		exit(1);
 	}
-	Log("Listening socket created on port : " + to_string(port), GREEN);
+	Log("Listening socket created on port : " + to_string_customa(port), GREEN);
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);

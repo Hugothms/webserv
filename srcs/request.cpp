@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 15:26:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/11 19:35:45 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -448,6 +448,7 @@ int Request::get_file_status(int &nfd)
 {
 	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
 
+	code = 200;
 	if (type == "DELETE")
 	{
 		DEBUG("TYPE DELETE IN GET FILE STATUS");
@@ -493,7 +494,7 @@ int Request::get_file_status(int &nfd)
 					return 2;
 				}
 			}
-			code = 404;
+			// code = 200;
 		}
 		file.close();
 	}
