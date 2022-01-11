@@ -51,32 +51,38 @@ bool Webserv::conflict_ip_address_port_server_names(const string &new_ip_address
 
 void	Webserv::parse_config(const string config_file)
 {
-	if (config_file == "")
+	size_t line_count = 0;
+	if (!config_file.length())
 	{
 		Log("Please provide a config file");
 		exit (1);
 	}
-
-	const string config = get_content_file(config_file);
-	DEBUG("Provided config:" << endl << config);
-
-	// Parse and add multiple _servers in "_servers"
-	size_t pos = 0;
-	while (pos < config.length() - 1) // config parsing loop
+	const vector<string> config = ft_split(get_content_file(config_file), "\n");
+	if (!config.length())
 	{
-		string tmp = get_str_before_char(config, " \n", &pos);
-		if (tmp == "server")
+		Log("Config file is empty");
+		exit (1);
+	}
+	DEBUG("Provided config:" << endl << config);
+	// Parse and add multiple _servers in "_servers"
+	for(vector<string>::const_iterator it = config.begin(); it != config.end(); it++)
+	{
+		vector<string> line = ft_split(config, " \t");
+		if (line[0] == "server")
 		{
-			Server *server = parse_server(config, &pos);
+			Server *server = parse_server(config, &line_count);
 			if (server && conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
 			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
-		else if (tmp.length() == 0)
-		{
-			break;
-		}
+		// else if (tmp.length() == 0)
+		// {
+		// 	break;
+		// }
+		it++;
+		for (size_t i = 0; i < line_count; i++)
+			it++;
 	}
 	Log("Config file loaded", GREEN);
 	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
