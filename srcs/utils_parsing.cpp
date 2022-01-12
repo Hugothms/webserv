@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 15:24:40 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/12 17:49:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,47 @@ string get_content_file(const string &filename)
 	myfile.close();
 	// return content.substr(0, content.length() - 1);
 	return content;
+}
+
+static bool	ft_in_charset(char const c, const string &charset)
+{
+	int	i_charset;
+
+	i_charset = 0;
+	while (charset[i_charset])
+	{
+		if (c == charset[i_charset++])
+			return true;
+	}
+	return false;
+}
+
+/**
+ * split str into a char ** each time there is a char from charset
+ * @param str		"sentence" that will be splited
+ * @param charset	set of "delimiters" that will delimits the "words"
+ * @return			a tab of "words"
+**/
+vector<string> ft_split(const string &str, const string &charset)
+{
+	vector<string> res;
+	string			tmp;
+	size_t			i;
+
+	i = 0;
+	while (i < str.length())
+	{
+		while (i < str.length() && ft_in_charset(str[i], charset))
+			i++;
+		if (i < str.length())
+		{
+			tmp = "";
+			while (i < str.length() && !ft_in_charset(str[i], charset))
+				tmp += str[i++];
+			res.push_back(tmp);
+		}
+	}
+	return (res);
 }
 
 /**
