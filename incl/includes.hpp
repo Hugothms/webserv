@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/11 15:08:34 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/12 17:46:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ using namespace std;
 #  define DEBUG(x)
 # endif
 
-# define WHITESPACES" \t"
+# define WHITESPACES "; \t"
 
 # define DEBUG_LINE(x) cerr << __FILE__ << ':' << __LINE__ << '\t' << x << endl
 
@@ -59,13 +59,13 @@ class Location;
 
 
 //* PARSING
-Server			*parse_server(const vector<string> config, size_t *pos);
+Server			*parse_server(const vector<string> config, size_t *line_count);
 bool			is_integer(const string &s);
 string			get_content_file(const string &filename);
 string			get_str_before_char(const string &str, const string stop, size_t *pos, const string skip = "\r\t ");
 bool			file_is_empty(ifstream &file);
 bool			is_directory(const string &filename);
 void			err_parsing_config(const Server *server, const string error);
-vector<string> ft_split(const string &str, const string c);
+vector<string>	ft_split(const string &str, const string &charset);
 
 #endif

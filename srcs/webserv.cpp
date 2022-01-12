@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/10 16:05:06 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/12 17:05:45 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,23 +51,28 @@ bool Webserv::conflict_ip_address_port_server_names(const string &new_ip_address
 
 void	Webserv::parse_config(const string config_file)
 {
-	size_t line_count = 0;
 	if (!config_file.length())
 	{
 		Log("Please provide a config file");
 		exit (1);
 	}
 	const vector<string> config = ft_split(get_content_file(config_file), "\n");
-	if (!config.length())
+	if (!config.size())
 	{
 		Log("Config file is empty");
 		exit (1);
 	}
-	DEBUG("Provided config:" << endl << config);
+	// DEBUG("Provided config:" << endl << config);
 	// Parse and add multiple _servers in "_servers"
-	for(vector<string>::const_iterator it = config.begin(); it != config.end(); it++)
+	size_t line_count = 0;
+	vector<string>::const_iterator it = config.begin() + line_count;
+	while (it != config.end())
 	{
-		vector<string> line = ft_split(config, " \t");
+		size_t old_line_count = line_count;
+		vector<string> line = ft_split(config[line_count], WHITESPACES);
+		// DEBUG("");
+		// DEBUG("config[line_count]  : " << config[line_count]);
+		// DEBUG("parse_config line[0]: " << line[0]);
 		if (line[0] == "server")
 		{
 			Server *server = parse_server(config, &line_count);
@@ -81,8 +86,13 @@ void	Webserv::parse_config(const string config_file)
 		// 	break;
 		// }
 		it++;
-		for (size_t i = 0; i < line_count; i++)
+		// DEBUG("line_count: " << line_count << " old_line_count: " << old_line_count);
+		// DEBUG("it: " << *it);
+		for (size_t i = old_line_count; i < line_count - 1; i++)
+		{
+			// DEBUG("for parse_config 2");
 			it++;
+		}
 	}
 	Log("Config file loaded", GREEN);
 	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
