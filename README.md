@@ -9,7 +9,7 @@ or more conveniently:
 
 ## Features
 ### ✅ It supports:
-* GET, POST & DELETE HTTP methods
+* [GET, POST, DELETE] HTTP methods
 * A configuration file given as an argument (examples of configurations in 'config' directory)
 
 ### ❌ It doesn't support:
