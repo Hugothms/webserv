@@ -6,14 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/17 12:26:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:51:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
-: max_client_body_size(1024)
+: max_client_body_size(1024), listen_fd(0)
 {}
 
 Server::~Server()

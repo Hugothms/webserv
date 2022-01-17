@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/12 17:49:02 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:51:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,12 @@ bool is_directory(const string &filename)
 
 void	err_parsing_config(const Server *server, const string error)
 {
-	cerr << "'" << server->get_root() << "' server configuration is invalid: " << error << '.' << endl;
-	delete server;
+	if (server)
+	{
+		cerr << RED << "'" << server->get_root() << "' server configuration is invalid: " << error << '.' << RESET << endl;
+		delete server;
+	}
+	else
+		cerr << RED << "configuration is invalid." << RESET << endl;
 	exit(EXIT_FAILURE);
 }

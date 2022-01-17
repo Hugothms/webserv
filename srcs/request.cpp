@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 11:36:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:50:42 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ Request::Request(const string &buffer)
 {
 	size_t pos;
 
-	DEBUG("REQUEST BUFF IS ");
+	DEBUG("--REQUEST BUFF IS: ");
 	DEBUG(buffer);
-	DEBUG("END OF REQUEST ");
+	DEBUG("--END OF REQUEST ");
 	//This is used to see if we have a post rq ?
 	if ((pos = buffer.find("Content-Type: ")) != string::npos)
 	{
@@ -84,10 +84,10 @@ Request::Request(const string &buffer)
 		content_type = content_type.substr(pos, (content_type.find("\n", 0) - pos));
 	}
 	pos = 0;
-	// DEBUG("target is" << buffer.c_str() + pos);
+	// DEBUG("target before is" << buffer.c_str() + pos);
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
-	DEBUG("target is" << target);
+	DEBUG("target is " << target);
 
 	get_str_before_char(buffer, "\n", &pos);
 
@@ -161,11 +161,15 @@ string	Request::error_page(const int error_code)
 **/
 bool	Request::select_server(const list<Server*> &servers)
 {
-	string host = headers["Host"];
-	unsigned int port = atoi(headers["Port"].c_str());
+	string host = this->headers["Host"];
+	unsigned int port = atoi(this->headers["Port"].c_str());
+	// DEBUG("looking for server " << host << ":" << port);
 	this->server = NULL;
+	// DEBUG("will search in servers size: "<< servers.size());
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
+		// DEBUG((*server)->get_ip_address() << ":" << (*server)->get_port());
+		// DEBUG(port);
 		if ((*server)->get_port() == port)
 		{
 			if (this->server == NULL)
@@ -415,13 +419,14 @@ void	Request::set_filepath(void)
 	filepath = server->get_root();
 	if (target.compare("/") == 0)
 	{
-		filepath += '/' + server->get_index();
-		return ;
+		if (location->get_index().length())
+			target += '/' + location->get_index();
+		else
+			target += '/' + server->get_index();
 	}
-	size_t pos = target.find(location->get_path());
-	if (pos == 0)
+	if (target.find(location->get_path()) == 0)
 	{
-		string tmp = target.substr(pos + location->get_path().length());
+		string tmp = target.substr(location->get_path().length());
 		filepath += location->get_location_root() + tmp;
 	}
 	else

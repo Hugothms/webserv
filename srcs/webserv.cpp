@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 12:24:16 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:52:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void Webserv::build(void)
 	}
 }
 
-
 void Webserv::accept_new_conn(void)
 {
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
@@ -115,7 +114,6 @@ void Webserv::accept_new_conn(void)
 			client->push_back_server(*server);
 			_clients.push_back(client);
 			//TO MOVE
-
 
 			FD_SET(client->get_fd(), &listen_set);
 			FD_SET(client->get_fd(), &write_set);
@@ -171,10 +169,10 @@ void	Webserv::listen(void)
 			{
 				if (((*client)->status() == 0 || (*client)->status() == 4) && (*client)->receive() == -1) //Or if we need more data to feed CGI
 				{
-						clear_fd(*client);
-						delete (*client);
-						client = _clients.erase(client);
-						--client;
+					clear_fd(*client);
+					delete (*client);
+					client = _clients.erase(client);
+					--client;
 				}
 			}
 			else if ((*client)->is_done_recv())
@@ -189,11 +187,10 @@ void	Webserv::listen(void)
 					(*client)->smart_send();
 			}
 			else if (fcntl((*client)->get_fd(), F_GETFL) < 0)
-					DEBUG("AH, FOUND ONE");
+				DEBUG("AH, FOUND ONE");
 		}
 	}
 }
-
 
 void Webserv::stop(void)
 {

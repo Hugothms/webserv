@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/10 15:25:40 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:48:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ class Request
 	private :
 		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
-
 
 
 		// * FOR INTERNAL USE *
