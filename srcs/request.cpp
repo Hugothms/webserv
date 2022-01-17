@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 16:50:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:55:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ bool	Request::select_server(const list<Server*> &servers)
 	}
 	if (!this->server)
 		return false;
-	// DEBUG("Found default server for port: " << port);
+	// DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
 	return true;
 }
 
