@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 18:55:27 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/07 08:44:05 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 12:26:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Log
 
    	 	std::cout << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'
          <<  now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":"
-         << now->tm_sec << "] : " << msg << RESET << std::endl;
+         << now->tm_sec << "]: " << msg << RESET << std::endl;
 	}
 
 };

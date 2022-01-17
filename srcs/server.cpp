@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/11 19:08:39 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/17 12:26:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int Server::setup(void)
 		perror("socket");
 		exit(1);
 	}
-	Log("Listening socket created on port : " + to_string_customa(port), GREEN);
+	Log("Listening socket created on port: " + to_string_customa(port), GREEN);
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
