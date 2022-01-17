@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/12 20:36:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 12:24:16 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,8 @@ void	Webserv::parse_config(const string config_file)
 	}
 	// Parse and add multiple _servers in "_servers"
 	size_t line_count = 0;
-	vector<string>::const_iterator it = config.begin() + line_count;
-	while (it != config.end())
+	while (line_count < config.size())
 	{
-		size_t old_line_count = line_count;
 		vector<string> line = ft_split(config[line_count], WHITESPACES);
 		if (line[0] == "server")
 		{
@@ -77,9 +75,9 @@ void	Webserv::parse_config(const string config_file)
 			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
-		it++;
-		for (size_t i = old_line_count; i < line_count - 1; i++)
-			it++;
+		// DEBUG("\n**********\nline_count       : " << line_count);
+		// DEBUG("config[line_count]:|" << config[line_count] << "|");
+		line_count++;
 	}
 	Log("Config file loaded", GREEN);
 	DEBUG("!!!!!!! CONFIG PARSED !!!!!!" << endl);
@@ -95,7 +93,7 @@ void Webserv::build(void)
 	//Setup the set for listening on different ports/IP
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port() << "\n");
+		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port());
 		fd = (*server)->setup();
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)

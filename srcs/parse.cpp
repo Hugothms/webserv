@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/12 20:46:22 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 12:22:56 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 	location.set_path(line[1]);
 	if (line[2] != "{")
 		err_parsing_config(server, "expecting '{' after 'location' directory");
-	// (*line_count)++;
+	(*line_count)++;
 	DEBUG("\t{");
 	vector<string>::const_iterator it = config.begin() + *line_count;
 	while (it != config.end())
@@ -36,12 +36,12 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		{
 			it++;
 			(*line_count)++;
-			DEBUG("COMMENT");
+			// DEBUG("COMMENT");
 			continue;
 			// if (config[*line_count-1] != '\n')
 		}
 		else if (line[0].size() && line[0] != "}")
-			DEBUG("l\t\t" << line[0] << ":");
+			DEBUG("\t\t" << line[0] << ":");
 
 		if (line[0] == "}")
 			break;
@@ -114,7 +114,7 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		cerr << location.get_path() << " location: missing closing bracket" << endl;
 		exit(EXIT_FAILURE);
 	}
-	DEBUG("\t} END LOCATION");
+	DEBUG("\t}");
 	if (location.get_location_root().size() == 0)
 		location.set_location_root(location.get_path());
 	location.set_server(server);
@@ -141,7 +141,8 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 	while (it != config.end())
 	{
 		vector<string> line = ft_split(*it, WHITESPACES);
-		DEBUG("s\t" << line[0]);
+		if (line[0] != "}")
+		DEBUG("\t" << line[0]);
 		if (line[0][0] == '#')
 		{
 			it++;
@@ -150,6 +151,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 		}
 		if (line[0] == "}")
 		{
+			(*line_count)++;
 			break;
 		}
 		else if (line[0] == "location")
@@ -159,7 +161,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			size_t old_line_count = *line_count;
 			server->push_back_location(parse_location(config, line_count, server));
 			it += *line_count - old_line_count;
-			DEBUG("apres location" << *it);
+			// DEBUG("apres location" << *it);
 			// DEBUG("apres location" << *(it +1));
 			continue;
 		}
@@ -250,10 +252,12 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 		err_parsing_config(server, "missing closing bracket");
 		exit(EXIT_FAILURE);
 	}
-	DEBUG("\n\nline[0]         :" << line[0]);
-	DEBUG("line_count         :" << *line_count);
+	DEBUG("}");
+	// DEBUG("\nline_count           : " << *line_count);
+	// DEBUG("config[*line_count]:|" << config[*line_count] << "|");
 	string error;
 	if (!server->is_valid(error))
 		err_parsing_config(server, error);
+	// (*line_count)++;
 	return server;
 }

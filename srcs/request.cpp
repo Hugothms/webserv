@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/11 19:35:45 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/17 11:36:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ Request::Request(const string &buffer)
 		content_type = content_type.substr(pos, (content_type.find("\n", 0) - pos));
 	}
 	pos = 0;
-	DEBUG("target is" << buffer.c_str() + pos);
+	// DEBUG("target is" << buffer.c_str() + pos);
 	type = get_str_before_char(buffer, " ", &pos);
 	target = get_str_before_char(buffer, " ", &pos);
 	DEBUG("target is" << target);
