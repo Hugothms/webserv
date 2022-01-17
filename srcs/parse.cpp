@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 12:22:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/17 16:47:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,13 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		{
 			if (line.size() != 2)
 				err_parsing_config(server, "expecting 1 argument after 'root'");
-			if (line[0].size() > 0 && line[0][0] != '/')
-				line[0] = '/' + line[0];
-			if (line[0].size() > 1 && line[0][line[0].size() - 1] == '/')
-				line[0].resize(line[0].size() - 1);
-			location.set_location_root(line[0]);
-			DEBUG("\t\t\t" << line[0]);
+			string tmp = line[1];
+			if (tmp.size() > 0 && tmp[0] != '/')
+				tmp = '/' + tmp;
+			if (tmp.size() > 1 && tmp[tmp.size() - 1] == '/')
+				tmp.resize(tmp.size() - 1);
+			location.set_location_root(tmp);
+			DEBUG("\t\t\t" << tmp);
 		}
 		else if (line[0] == "index")
 		{
@@ -95,7 +96,7 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		{
 			if (line[1] == "0" || line[1] == "1")
 			{
-				location.set_autoindex(atoi(line[0].c_str()));
+				location.set_autoindex(atoi(line[1].c_str()));
 				DEBUG("\t\t\t" << line[0]);
 			}
 		}
