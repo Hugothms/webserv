@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 13:14:14 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 21:15:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class Request
 
 	int get_max_body() const;
 		void prep_response(const list<Server*> &servers);
-		string &get_s_header(string name);
+		string get_s_header(string name);
 		void add_to_body(string toadd);
 		Request(const string &buffer);
 		~Request();

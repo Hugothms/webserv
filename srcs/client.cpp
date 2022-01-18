@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 13:14:02 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 21:36:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 // 	client_len = sizeof(client_addr);
 // }
 
-Client::Client(int new_listen_fd, list<Server*>& _servers) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0), servers(_servers)
+Client::Client(int new_listen_fd, list<Server*>& _servers) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), servers(_servers), _status(0)
 {
 	client_len = sizeof(client_addr);
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -104,7 +104,6 @@ void Client::set_response(void)
 	}
 
 
-	
 	unsigned int ctlen = atoi(req->get_s_header("Content-Length").c_str());
 	DEBUG("CTLEN IS " << ctlen);
 	// DEBUG("CODE IS " << req->get_code());
@@ -118,13 +117,10 @@ void Client::set_response(void)
 	// 	req->code = 413;
 
 
-
-
 	// 	// exit(0);
 	// }
 	// DEBUG("MAX BODY OK");
 	// if (req->get_s_header("Content-Length"))
-
 
 
 	req->set_filepath();
@@ -150,7 +146,7 @@ void Client::set_response(void)
 
 	}
 	else if (operation_status == 2)
-	{	
+	{
 		DEBUG("CODE B4 IS " << req->get_code());
 		string tmp;
 		req->launch_cgi(tmp, _file_fd);
@@ -192,7 +188,7 @@ int Client::receive(void)
 	}
 
 	if (req != 0)
-		req->get_s_header("Body") += string(buff, len);
+		req->get_s_header("Body") += string(buff, len); //todo: tu peux m'expliquer ca Dingzo pls ?
 	else
 		rec_buffer += string(buff, len);
 

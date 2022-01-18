@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 18:38:23 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 21:47:37 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,19 +94,19 @@ Request::Request(const string &buffer)
 		// if (buffer[pos] == '\n')
 		// 	pos++;
 		vector<string> header = ft_split(*it, ": ");
-		if (header.size() != 2)
+		if (header.size() < 2)
 			break ; // case empty line
 		if (header[0] == "Host")
 		{
 			DEBUG("header[1]: " << header[1]);
 			vector<string> tmp = ft_split(header[1], ":");
-			if (tmp.size() != 2 || !tmp[0].size()) // BAD REQUEST
+			if (header.size() != 3 || !header[1].size()) // BAD REQUEST
 			{
 				code = 400;
 				break;
 			}
-			headers.insert(pair<string, string>("Host", tmp[0]));
-			headers.insert(pair<string, string>("Port", tmp[1]));
+			headers.insert(pair<string, string>("Host", header[1]));
+			headers.insert(pair<string, string>("Port", header[2]));
 		}
 		else
 			headers.insert(pair<string, string>(header[0], header[1]));
@@ -135,17 +135,9 @@ string to_string_custom(const int &error_code)
 
 string	Request::error_page(const int error_code)
 {
-
-	// for(int i = 0; i < server->get_error_pages().size(); i++)
-	// {
-		DEBUG("S:"<< server->get_error_pages()[404]);
-	// }
-
-
-
-	if (server && server->get_error_pages().size() && server->get_error_pages()[error_code].length())
+	if (server && server->get_error_pages().find(error_code) != server->get_error_pages().end())
 	{
-		string tmp = server->get_root() + '/' + server->get_error_pages()[error_code];
+		string tmp = server->get_root() + '/' + server->get_error_pages().find(error_code)->second;
 		DEBUG("TMP IS :" << tmp);
 		ifstream file(tmp.c_str(), ofstream::in);
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
@@ -153,7 +145,7 @@ string	Request::error_page(const int error_code)
 			return ("default_error_pages/" + to_string_custom(error_code) + ".html");
 		}
 		file.close();
-		return (server->get_root() + server->get_error_pages()[error_code]);
+		return (server->get_root() + server->get_error_pages().find(error_code)->second);
 	}
 	else
 		DEBUG("NO SERVER");
@@ -168,10 +160,23 @@ string	Request::error_page(const int error_code)
 **/
 bool	Request::select_server(const list<Server*> &servers)
 {
-	string host = this->headers["Host"];
-	unsigned int port = atoi(this->headers["Port"].c_str());
-	DEBUG("looking for server " << host << ":" << port);
 	this->server = NULL;
+	string host = this->headers.find("Host")->second;
+	if (!host.size())
+	{
+		DEBUG("NO HOST");
+		code = 400;
+		return false;
+	}
+	string tmp = this->headers.find("Port")->second;
+	if (!tmp.size())
+	{
+		DEBUG("NO PORT");
+		code = 400;
+		return false;
+	}
+	unsigned int port = atoi(tmp.c_str());
+	DEBUG("looking for server " << host << ":" << port);
 	DEBUG("will search in servers size: "<< servers.size());
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
@@ -230,8 +235,9 @@ char **Request::build_cgi_av(string &extention_name)
 	char *cwd = getcwd(NULL, 0);
 	string server_root = string(cwd);
 	free(cwd);
-	string bin_path = server->get_cgis()[extention_name];
-
+	string bin_path;
+	if (server->get_cgis().find(extention_name) != server->get_cgis().end())
+		bin_path = server->get_cgis().find(extention_name)->second;
 	av.push_back(bin_path);
 	av.push_back(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
@@ -429,7 +435,7 @@ bool Request::body_size_ok(unsigned int size)
 
 int Request::get_max_body() const
 {
-	if (server != 0)
+	if (server)
 		return (int)server->get_max_client_body_size();
 	return -1;
 }
@@ -447,7 +453,7 @@ void	Request::set_filepath(void)
 	}
 	// if (code == 413)
 	// {
-	// 	// filepath = server->get_error_pages()[413];
+	//	// filepath = server->get_error_pages().find(413)->second;
 	// 	// DEBUG("FILEPATH IS "<<  filepath );
 	// }
 	if (!server || !location)
@@ -496,8 +502,8 @@ int Request::get_file_status(int &nfd)
 
 	if (code == 400)
 	{
-
 		filepath = error_page(400);
+		// DEBUG("error 400, filepath: " << filepath);
 		nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 		return 0;
 	}
@@ -607,9 +613,11 @@ bool	Request::select_location(void)
 	return false;
 }
 
-string& Request::get_s_header(string name)
+string Request::get_s_header(string name)
 {
-	return headers[name];
+	if (headers.find(name) != headers.end())
+		return headers[name];
+	return "";
 }
 
 int 	Request::get_code(void) const

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 12:30:59 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 21:15:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,8 +204,3 @@ void	Server::set_max_client_body_size(const unsigned int max_client_body_size)
 {
 	this->max_client_body_size = max_client_body_size;
 }
-
-// unsigned int Server::get_max_client_body_size()
-// {
-// 	return this->max_client_body_size;
-// }

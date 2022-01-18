@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 18:47:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 21:31:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			if (line.size() != 3)
 				err_parsing_config(server, "expecting 2 arguments after 'error_page'");
 			server->push_back_error_page(pair<unsigned int, string>((unsigned int)atoi(line[1].c_str()), line[2]));
-			DEBUG("\t\t" << ((unsigned int)atoi(line[1].c_str())) << " " << server->get_error_pages()[(unsigned int)atoi(line[1].c_str())]);
+			DEBUG("\t\t" << ((unsigned int)atoi(line[1].c_str())) << " " << line[2]);
 		}
 		else if (line[0] == "cgi")
 		{
