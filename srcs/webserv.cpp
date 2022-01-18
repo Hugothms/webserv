@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 11:57:25 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 14:09:36 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,10 @@ bool Webserv::conflict_ip_address_port_server_names(const string &new_ip_address
 	{
 		if ((*server)->get_ip_address() == new_ip_address && (*server)->get_port() == new_port)
 		{
-			list<string> x = (*server)->get_server_names();
-			for (list<string>::iterator server_name = x.begin(); server_name != x.end(); server_name++)
+			list<string> server_names = (*server)->get_server_names();
+			if (!server_names.size() || !new_server_names.size())
+				return true;
+			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 			{
 				for (list<string>::const_iterator new_server_name = new_server_names.begin(); new_server_name != new_server_names.end(); new_server_name++)
 				{
@@ -93,7 +95,6 @@ void Webserv::build(void)
 	//Setup the set for listening on different ports/IP
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
-
 		bool already_setup = false;
 		for (list<Server*>::iterator server_check = _servers.begin(); server_check != server; server_check++)
 		{
@@ -111,9 +112,9 @@ void Webserv::build(void)
 
 
 		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port());
-		
+
 		fd = (*server)->setup();
-		
+
 		new_fd.fd = fd;
 		new_fd.ip_address = (*server)->get_ip_address();
 		new_fd.port = (*server)->get_port();
@@ -121,7 +122,7 @@ void Webserv::build(void)
 		fd_list.push_back(new_fd);
 
 
-		
+
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
