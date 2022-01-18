@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 16:47:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 11:21:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,8 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 	if (location.get_location_root().size() == 0)
 		location.set_location_root(location.get_path());
 	location.set_server(server);
+	DEBUG("*line_count        :" << *line_count);
+	DEBUG("config[*line_count]:" << config[*line_count]);
 	return location;
 }
 
@@ -248,7 +250,12 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 		(*line_count)++;
 	}
 	vector<string> end = ft_split(config[*line_count], WHITESPACES);
-	if (end[0] != "}")
+	while (!end.size() || end[0] != "}")
+	{
+		(*line_count)++;
+		end = ft_split(config[*line_count], WHITESPACES);
+	}
+	if (end.size() && end[0] != "}")
 	{
 		err_parsing_config(server, "missing closing bracket");
 		exit(EXIT_FAILURE);
