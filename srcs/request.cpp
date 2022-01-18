@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 21:47:37 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 21:59:01 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ Request::Request(const string &buffer)
 			break ; // case empty line
 		if (header[0] == "Host")
 		{
-			DEBUG("header[1]: " << header[1]);
 			vector<string> tmp = ft_split(header[1], ":");
 			if (header.size() != 3 || !header[1].size()) // BAD REQUEST
 			{
@@ -123,6 +122,7 @@ Request::Request(const string &buffer)
 	DEBUG("----------------------------");
 	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 		DEBUG(it->first << ": " << it->second);
+	DEBUG("----------------------------");
 	DEBUG("****** REQUEST PARSED *******");
 }
 
@@ -176,12 +176,11 @@ bool	Request::select_server(const list<Server*> &servers)
 		return false;
 	}
 	unsigned int port = atoi(tmp.c_str());
-	DEBUG("looking for server " << host << ":" << port);
-	DEBUG("will search in servers size: "<< servers.size());
+	// DEBUG("looking for server " << host << ":" << port);
+	// DEBUG("will search in servers size: "<< servers.size());
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
-		DEBUG((*server)->get_ip_address() << ":" << (*server)->get_port());
-		DEBUG("port: " << port);
+		// DEBUG("cadidate: " << (*server)->get_ip_address() << ":" << (*server)->get_port() << "\t" << ((*server)->get_server_names().size() ? (*server)->get_server_names().front() : "NO NAME"));
 		if ((*server)->get_port() == port)
 		{
 			if (this->server == NULL)
@@ -192,6 +191,7 @@ bool	Request::select_server(const list<Server*> &servers)
 				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
 				{
 					this->server = *server;
+					DEBUG("Return good server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
 					return true;
 				}
 			}
@@ -199,7 +199,7 @@ bool	Request::select_server(const list<Server*> &servers)
 	}
 	if (!this->server)
 		return false;
-	DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
+	// DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
 	return true;
 }
 

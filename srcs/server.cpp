@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 21:15:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 21:59:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ string			Server::get_index() const
 
 unsigned int	Server::get_max_client_body_size() const
 {
-	DEBUG("I AM HERE : " << max_client_body_size);
 	return max_client_body_size;
 }
 
