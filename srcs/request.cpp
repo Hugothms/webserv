@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 13:26:22 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 13:40:30 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,12 @@ Request::Request(const string &buffer)
 :  location(0), passed_cgi(false), code(0)
 {
 	size_t pos;
+	size_t line_count = 0;
 
 	// DEBUG("--REQUEST BUFF IS: ");
 	// DEBUG(buffer);
 	// DEBUG("--END OF REQUEST ");
+	vector<string> request = ft_split(buffer, WHITESPACES);
 	//This is used to see if we have a post rq ?
 	if ((pos = buffer.find("Content-Type: ")) != string::npos)
 	{
@@ -85,14 +87,16 @@ Request::Request(const string &buffer)
 	}
 	pos = 0;
 	// DEBUG("target before is" << buffer.c_str() + pos);
-	type = get_str_before_char(buffer, " ", &pos);
-	target = get_str_before_char(buffer, " ", &pos);
+	vector<string> line = ft_split(request[line_count++], WHITESPACES);
+	type = line[0];
+	target = line[1];
 	DEBUG("target is " << target);
 
-	get_str_before_char(buffer, "\n", &pos);
-
 	size_t len = buffer.length();
-	while (pos <= len && buffer[pos])
+	vector<string>::const_iterator it = request.begin() + line_count;
+	// DEBUG("ouside 1: " << *it);
+	// DEBUG("ouside 2: " << *it);
+	while (it != request.end())
 	{
 		if (buffer[pos] == '\n')
 			pos++;
@@ -279,12 +283,12 @@ char **Request::build_cgi_env(string &extention_name)
 		trim_tr(content_type);
 
 		ev.push_back("CONTENT_TYPE=" + content_type);
-		
+
 		if (code == 413)
 			ev.push_back("CONTENT_LENGTH=0");
 		else
 			ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
-		
+
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
