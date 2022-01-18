@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 11:21:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 12:43:27 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 		{
 			if (line.size() != 3)
 				err_parsing_config(server, "expecting 2 arguments after 'error_page'");
-			server->push_back_error_page(pair<unsigned int, string>(atoi(line[0].c_str()), line[1]));
+			server->push_back_error_page(pair<unsigned int, string>(atoi(line[1].c_str()), line[2]));
 			DEBUG("\t\t" << atoi(line[1].c_str()) << " " << line[2]);
 		}
 		else if (line[0] == "cgi")

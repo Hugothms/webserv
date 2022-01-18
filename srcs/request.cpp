@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 12:33:13 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 13:02:42 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,10 +140,18 @@ string to_string_custom(const int &error_code)
 
 string	Request::error_page(const int error_code)
 {
+
+	// for(int i = 0; i < server->get_error_pages().size(); i++)
+	// {
+		DEBUG("S:"<< server->get_error_pages()[404]);
+	// }
+
+
+
 	if (server && server->get_error_pages().size() && server->get_error_pages()[error_code].length())
 	{
-		string tmp = server->get_root() + server->get_error_pages()[error_code];
-
+		string tmp = server->get_root() + '/' + server->get_error_pages()[error_code];
+		DEBUG("TMP IS :" << tmp);
 		ifstream file(tmp.c_str(), ofstream::in);
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 		{
@@ -152,6 +160,8 @@ string	Request::error_page(const int error_code)
 		file.close();
 		return (server->get_root() + server->get_error_pages()[error_code]);
 	}
+	else
+		DEBUG("NO SERVER");
 	return ("default_error_pages/" + to_string_custom(error_code) + ".html");
 }
 
@@ -437,12 +447,12 @@ void	Request::set_filepath(void)
 		if (location->get_index().length())
 			target += '/' + location->get_index();
 		else
-			target += server->get_index();
+			target += '/' + server->get_index();
 	}
 	if (target.find(location->get_path()) == 0)
 	{
 		string tmp = target.substr(location->get_path().length());
-		filepath += location->get_location_root() + tmp;
+		filepath += location->get_location_root() + '/' + tmp;
 	}
 	else
 		filepath += target;
@@ -509,7 +519,9 @@ int Request::get_file_status(int &nfd)
 			DEBUG("STATUS 404");
 			code = 404;
 			passed_cgi = true;
+
 			filepath = error_page(404);
+			DEBUG("New filepath is : " << filepath);
 		}
 		else
 		{
