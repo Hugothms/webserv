@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 13:40:30 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 18:38:23 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,11 @@ Request::Request(const string &buffer)
 :  location(0), passed_cgi(false), code(0)
 {
 	size_t pos;
-	size_t line_count = 0;
 
 	// DEBUG("--REQUEST BUFF IS: ");
 	// DEBUG(buffer);
 	// DEBUG("--END OF REQUEST ");
-	vector<string> request = ft_split(buffer, WHITESPACES);
+	vector<string> request = ft_split(buffer, "\r\n");
 	//This is used to see if we have a post rq ?
 	if ((pos = buffer.find("Content-Type: ")) != string::npos)
 	{
@@ -85,42 +84,33 @@ Request::Request(const string &buffer)
 		pos = content_type.find_first_of(": ") + 2;
 		content_type = content_type.substr(pos, (content_type.find("\n", 0) - pos));
 	}
-	pos = 0;
-	// DEBUG("target before is" << buffer.c_str() + pos);
-	vector<string> line = ft_split(request[line_count++], WHITESPACES);
+	vector<string>::const_iterator it = request.begin();
+	vector<string> line = ft_split(*it++, WHITESPACES);
 	type = line[0];
 	target = line[1];
 	DEBUG("target is " << target);
-
-	size_t len = buffer.length();
-	vector<string>::const_iterator it = request.begin() + line_count;
-	// DEBUG("ouside 1: " << *it);
-	// DEBUG("ouside 2: " << *it);
 	while (it != request.end())
 	{
-		if (buffer[pos] == '\n')
-			pos++;
-		string header = get_str_before_char(buffer, ":\n", &pos);
-		if (header.length() == 0)
+		// if (buffer[pos] == '\n')
+		// 	pos++;
+		vector<string> header = ft_split(*it, ": ");
+		if (header.size() != 2)
 			break ; // case empty line
-		if (header == "Host")
+		if (header[0] == "Host")
 		{
-			string ip_address;
-			string port;
-			if ((ip_address = get_str_before_char(buffer, ":", &pos)).length())
-				port = get_str_before_char(buffer, "\r\n", &pos);
-			else
+			DEBUG("header[1]: " << header[1]);
+			vector<string> tmp = ft_split(header[1], ":");
+			if (tmp.size() != 2 || !tmp[0].size()) // BAD REQUEST
 			{
-				// ip_address = get_str_before_char(buffer, "\r\n", &pos);
-				// port = "80";
-				code = 400;//, BAD REQUEST
+				code = 400;
 				break;
 			}
-			headers.insert(pair<string, string>("Host", ip_address));
-			headers.insert(pair<string, string>("Port", port));
-			continue;
+			headers.insert(pair<string, string>("Host", tmp[0]));
+			headers.insert(pair<string, string>("Port", tmp[1]));
 		}
-		headers.insert(pair<string, string>(header, get_str_before_char(buffer, "\r\n", &pos)));
+		else
+			headers.insert(pair<string, string>(header[0], header[1]));
+		it++;
 	}
 
 	// If there is content length, then we are in post mode, add Body header;
@@ -130,8 +120,9 @@ Request::Request(const string &buffer)
 		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
 	}
 
-	// for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
-	// 	DEBUG(it->first << ": " << it->second);
+	DEBUG("----------------------------");
+	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
+		DEBUG(it->first << ": " << it->second);
 	DEBUG("****** REQUEST PARSED *******");
 }
 
@@ -185,7 +176,7 @@ bool	Request::select_server(const list<Server*> &servers)
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
 		DEBUG((*server)->get_ip_address() << ":" << (*server)->get_port());
-		DEBUG(port);
+		DEBUG("port: " << port);
 		if ((*server)->get_port() == port)
 		{
 			if (this->server == NULL)
@@ -425,7 +416,8 @@ void	Request::get_auto_index(string &body)
 
 bool Request::body_size_ok(unsigned int size)
 {
-	if (size > get_max_body())
+	// todo: i just added "get_max_body() != -1 &&" to this condition
+	if (get_max_body() != -1 && (int) size > get_max_body())
 	{
 		DEBUG("data is too big, max is " << get_max_body());
 		code = 413;
@@ -474,8 +466,9 @@ void	Request::set_filepath(void)
 	}
 	if (target.find(location->get_path()) == 0)
 	{
-		string tmp = target.substr(location->get_path().length());
-		filepath += location->get_location_root() + '/' + tmp;
+		filepath += location->get_location_root() + '/' + target.substr(location->get_path().length());
+		// DEBUG("filepath is " << filepath);
+		// DEBUG("tmp is " << tmp);
 	}
 	else
 		filepath += target;
