@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 16:55:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 12:33:13 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ Request::Request(const string &buffer)
 {
 	size_t pos;
 
-	DEBUG("--REQUEST BUFF IS: ");
-	DEBUG(buffer);
-	DEBUG("--END OF REQUEST ");
+	// DEBUG("--REQUEST BUFF IS: ");
+	// DEBUG(buffer);
+	// DEBUG("--END OF REQUEST ");
 	//This is used to see if we have a post rq ?
 	if ((pos = buffer.find("Content-Type: ")) != string::npos)
 	{
@@ -107,8 +107,10 @@ Request::Request(const string &buffer)
 				port = get_str_before_char(buffer, "\r\n", &pos);
 			else
 			{
-				ip_address = get_str_before_char(buffer, "\r\n", &pos);
-				port = "80";
+				// ip_address = get_str_before_char(buffer, "\r\n", &pos);
+				// port = "80";
+				code = 400;//, BAD REQUEST
+				break;
 			}
 			headers.insert(pair<string, string>("Host", ip_address));
 			headers.insert(pair<string, string>("Port", port));
@@ -163,13 +165,13 @@ bool	Request::select_server(const list<Server*> &servers)
 {
 	string host = this->headers["Host"];
 	unsigned int port = atoi(this->headers["Port"].c_str());
-	// DEBUG("looking for server " << host << ":" << port);
+	DEBUG("looking for server " << host << ":" << port);
 	this->server = NULL;
-	// DEBUG("will search in servers size: "<< servers.size());
+	DEBUG("will search in servers size: "<< servers.size());
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
-		// DEBUG((*server)->get_ip_address() << ":" << (*server)->get_port());
-		// DEBUG(port);
+		DEBUG((*server)->get_ip_address() << ":" << (*server)->get_port());
+		DEBUG(port);
 		if ((*server)->get_port() == port)
 		{
 			if (this->server == NULL)
@@ -187,7 +189,7 @@ bool	Request::select_server(const list<Server*> &servers)
 	}
 	if (!this->server)
 		return false;
-	// DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
+	DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
 	return true;
 }
 
@@ -290,14 +292,16 @@ void	Request::launch_cgi(string &body, const int pos)
 	int out_pipe[2];
 	int in_pipe[2];
 
-	if (pipe(out_pipe) == -1)
+	if (pipe(out_pipe) == -1 && code != 413)
 	{
 		Log("cgi: pipe failed", RED);
 		exit(EXIT_FAILURE);
 	}
 
 	//We probably shouldn't assume that
-	code = 200;
+	code = (code == 413) ? 413 : 200;
+	// if (code != 413)
+	// 	code = 200;
 
 	//We need to trim and write the body to stdin
 	if (type == "POST" && pipe(in_pipe) == -1)
@@ -346,7 +350,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		if (type == "POST")
 		{
 			close(in_pipe[0]);
-			DEBUG("WRITING |"<< headers["Body"] <<'|');
+			// DEBUG("WRITING |"<< headers["Body"] <<'|');
 			if (write(in_pipe[1], headers["Body"].c_str(), headers["Body"].size()) < 0)
 				DEBUG("WRITE ERROR");
 			close(in_pipe[1]);
@@ -398,7 +402,12 @@ void	Request::get_auto_index(string &body)
 	code = 200;
 	body = auto_index.str();
 }
-
+int Request::get_max_body() const
+{
+	if (server != 0)
+		return (int)server->get_max_client_body_size();
+	return -1;
+}
 string	Request::get_filepath(void)
 {
 	return filepath;
@@ -411,8 +420,14 @@ void	Request::set_filepath(void)
 		filepath = "";
 		return;
 	}
+	// if (code == 413)
+	// {
+	// 	// filepath = server->get_error_pages()[413];
+	// 	// DEBUG("FILEPATH IS "<<  filepath );
+	// }
 	if (!server || !location)
 	{
+		DEBUG("RETURNING EMPTY PATH");
 		filepath = "";
 		return;
 	}
@@ -422,7 +437,7 @@ void	Request::set_filepath(void)
 		if (location->get_index().length())
 			target += '/' + location->get_index();
 		else
-			target += '/' + server->get_index();
+			target += server->get_index();
 	}
 	if (target.find(location->get_path()) == 0)
 	{
@@ -453,7 +468,16 @@ int Request::get_file_status(int &nfd)
 {
 	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
 
-	code = 200;
+	if (code == 400)
+	{
+
+		filepath = error_page(400);
+		nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
+		return 0;
+	}
+	if (code == 0)
+		code = 200;
+	DEBUG("CODE IS " << code);
 	if (type == "DELETE")
 	{
 		DEBUG("TYPE DELETE IN GET FILE STATUS");
@@ -479,9 +503,10 @@ int Request::get_file_status(int &nfd)
 	else
 	{
 		ifstream file(t_filepath.c_str(), ofstream::in);
-
+		DEBUG("REQUESTED FILEPATH IS " << filepath);
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 		{
+			DEBUG("STATUS 404");
 			code = 404;
 			passed_cgi = true;
 			filepath = error_page(404);
@@ -503,6 +528,10 @@ int Request::get_file_status(int &nfd)
 		}
 		file.close();
 	}
+	// if (code != 413)
+	// 	code = 200;
+	// else if (code == 413)
+	// 	DEBUG("WE HAVE CODE 413");
 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 	return 0;
 }
@@ -549,6 +578,11 @@ string& Request::get_s_header(string name)
 	return headers[name];
 }
 
+int 	Request::get_code(void) const
+{
+	return code;
+}
+
 string Request::get_header(size_t fileSize, const bool already_calculated)
 {
 	if (!already_calculated)
@@ -558,6 +592,7 @@ string Request::get_header(size_t fileSize, const bool already_calculated)
 		fileSize = file.tellg();
 	}
 	DEBUG("GET HEADER");
+	DEBUG("CODE IS " << code);
 	stringstream header;
 	header << "HTTP/1.1 " << codes[code] << endl;
 	header << "Date: " << get_time_stamp() << endl;
@@ -588,9 +623,15 @@ bool	Request::method_allow(void)
 void Request::prep_response(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
+	{
+		DEBUG("EARLY RETURN");
 		return ;
+	}
 	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
+	{
+		DEBUG("THIS IS TOO BIG");
 		code = 413;
+	}
 	if (location->get_HTTP_redirection_type() > 0)
 		code = location->get_HTTP_redirection_type();
 	else if (type == "DELETE")

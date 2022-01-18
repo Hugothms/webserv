@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 16:52:41 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 11:57:25 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,35 @@ void Webserv::build(void)
 	//Setup the set for listening on different ports/IP
 	for (list<Server*>::iterator server = _servers.begin(); server != _servers.end(); server++)
 	{
+
+		bool already_setup = false;
+		for (list<Server*>::iterator server_check = _servers.begin(); server_check != server; server_check++)
+		{
+			if ((*server_check)->get_ip_address() == (*server)->get_ip_address() && (*server_check)->get_port() == (*server)->get_port())
+				already_setup = true;
+		}
+		if (already_setup)
+		{
+			DEBUG("already_setup, skipping");
+			continue;
+		}
+
+		fd_combo new_fd;
+
+
+
 		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port());
+		
 		fd = (*server)->setup();
+		
+		new_fd.fd = fd;
+		new_fd.ip_address = (*server)->get_ip_address();
+		new_fd.port = (*server)->get_port();
+
+		fd_list.push_back(new_fd);
+
+
+		
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;
@@ -107,11 +134,11 @@ void Webserv::accept_new_conn(void)
 	{
 		if (FD_ISSET((*server)->get_listen_fd(), &lcopy_set))
 		{
-			Client *client = new Client((*server)->get_listen_fd());
+			Client *client = new Client((*server)->get_listen_fd(), _servers);
 			// DEBUG("PID OF NEW IS " << client->get_fd());
 			// Log("New client connected", GREEN);
-
-			client->push_back_server(*server);
+			// client->server
+			// client->push_back_server(*server);
 			_clients.push_back(client);
 			//TO MOVE
 

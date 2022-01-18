@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/17 16:48:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 12:31:16 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 
-Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0)
-{
-	client_len = sizeof(client_addr);
-}
+// Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0)
+// {
+// 	client_len = sizeof(client_addr);
+// }
 
-Client::Client(int new_listen_fd) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0)
+Client::Client(int new_listen_fd, list<Server*>& _servers) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0), servers(_servers)
 {
 	client_len = sizeof(client_addr);
 	_fd = accept(new_listen_fd, get_sockaddr(), get_addr_len());
@@ -76,11 +76,20 @@ void Client::set_response(void)
 
 
 	if (req && _status != 4)
+	{
 		delete req;
+		req = 0;
+	}
 	if (_status != 4)
 		req = new Request(rec_buffer);
 
 	// if ()
+	// DEBUG("Content Length is " << req->get_s_header("Content-Length"))
+
+	rec_buffer.clear();
+
+	//Function that allows later calls to get the data
+	req->prep_response(servers);
 
 	if (req && req->g_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
 	{
@@ -94,14 +103,28 @@ void Client::set_response(void)
 			_status = 1;
 	}
 
-	rec_buffer.clear();
 
-	//Function that allows later calls to get the data
-	req->prep_response(servers);
+	
+	unsigned int ctlen = atoi(req->get_s_header("Content-Length").c_str());
+	DEBUG("CTLEN IS " << ctlen);
+	// DEBUG("CODE IS " << req->get_code());
+
+
+	if (req && ctlen > req->get_max_body() )
+	{
+		DEBUG("DATA IS TOO BIG");
+		exit(0);
+	}
+	DEBUG("MAX BODY OK");
+	// if (req->get_s_header("Content-Length"))
+
+
+
 	req->set_filepath();
 
 	int operation_status = req->get_file_status(_file_fd);
 	DEBUG("OPSTAT IS " << operation_status);
+	DEBUG("FILEPATH IS " << req->get_filepath());
 	if (operation_status == 0)
 	{
 		send_buffer = req->get_header(0, false);
@@ -120,7 +143,8 @@ void Client::set_response(void)
 
 	}
 	else if (operation_status == 2)
-	{
+	{	
+		DEBUG("CODE B4 IS " << req->get_code());
 		string tmp;
 		req->launch_cgi(tmp, _file_fd);
 
@@ -128,6 +152,7 @@ void Client::set_response(void)
 		send_buffer += tmp;
 		_status = 1;
 		_file_fd = 0;
+		DEBUG("CODE AF IS " << req->get_code());
 	}
 	else if (operation_status == 4)
 	{
@@ -183,6 +208,7 @@ void Client::send_header(void)
 
 	if (send_offset == send_buffer.size())
 	{
+		DEBUG("HEADER IS " << send_buffer);
 		send_buffer.clear();
 		_status = 2;
 	}
@@ -227,7 +253,11 @@ void Client::smart_send(void)
 	if (_status == 1)
 		this->send_header();
 	else if (_status == 2)
+	{
+		Log("Sending file");
 		this->send_fd();
+		Log("Done");
+	}
 }
 
 void Client::set_fd(const int fd)

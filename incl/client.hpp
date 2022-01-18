@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/07 08:43:55 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 11:58:03 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,18 @@ class Client
 		string				rec_buffer;
 		string				send_buffer;
 		Request 			*req;
-		list<Server*>		servers;
+		list<Server*>&		servers;
 		int 				_status;
 
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
 
-		Client();
+		// Client();
 
 	public :
 
-		Client(int new_listen_fd);
+		Client(int new_listen_fd, list<Server*>& servers);
 
 		~Client();
 

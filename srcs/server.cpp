@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/17 16:51:42 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 12:30:59 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server()
-: max_client_body_size(1024), listen_fd(0)
+: max_client_body_size(0), listen_fd(0)
 {}
 
 Server::~Server()
@@ -28,6 +28,7 @@ string to_string_customa(const int &error_code)
 	stringstream ret;
 	ret << error_code;
 	return ret.str();
+
 }
 int Server::setup(void)
 {
@@ -129,6 +130,7 @@ string			Server::get_index() const
 
 unsigned int	Server::get_max_client_body_size() const
 {
+	DEBUG("I AM HERE : " << max_client_body_size);
 	return max_client_body_size;
 }
 
@@ -202,3 +204,8 @@ void	Server::set_max_client_body_size(const unsigned int max_client_body_size)
 {
 	this->max_client_body_size = max_client_body_size;
 }
+
+// unsigned int Server::get_max_client_body_size()
+// {
+// 	return this->max_client_body_size;
+// }

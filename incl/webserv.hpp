@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/17 16:48:44 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 11:56:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,17 @@ class Webserv
 	private:
 		list<Server*>	_servers;
 		list<Client*>	_clients;
+
+		typedef struct
+		{
+			int 			fd;
+			string 			ip_address;
+			unsigned int 	port;	
+		} fd_combo;
+
+
+		list<fd_combo>		fd_list;
+		// list<string>	fd_list;
 
 		fd_set 			listen_set;
 		fd_set 			lcopy_set;

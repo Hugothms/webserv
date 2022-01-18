@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/10 16:30:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 09:43:33 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ class Server
 		string						get_index(void) const;
 		unsigned int				get_max_client_body_size(void) const;
 		int 						get_listen_fd(void) const;
-
+		// int		get_max_body() const;
 		void set_locations(const list<Location> locations);
 		void push_back_location(const Location location);
 		void set_server_names(const list<string> server_names);
@@ -80,6 +80,7 @@ class Server
 		void set_root(const string root);
 		void set_index(const string index);
 		void set_max_client_body_size(const unsigned int max_client_body_size);
+		// unsigned int get_max_client_body_size() const;
 };
 
 #endif

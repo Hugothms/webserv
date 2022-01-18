@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/17 16:48:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/18 11:05:51 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class Request
 
 	public :
 
-
+	int get_max_body() const;
 		void prep_response(const list<Server*> &servers);
 		string &get_s_header(string name);
 		void add_to_body(string toadd);
@@ -82,6 +82,7 @@ class Request
 		bool	select_server(const list<Server*> &servers);
 		bool	select_location(void);
 		string 	g_type(void) const;
+		int 	get_code(void) const;
 		string 	get_response(void);
 		void 	get_body(string &body);
 		string	get_cgi_header(const size_t fileSize);
