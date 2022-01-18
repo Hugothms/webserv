@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 11:05:51 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 13:14:14 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ class Request
 		string	error_page(const int error_code);
 		int  	get_file_status(int &nfd);
 		void 	delete_rq(void);
+		bool 	body_size_ok(unsigned int size);
+
 };
 
 // * utils_header.cpp

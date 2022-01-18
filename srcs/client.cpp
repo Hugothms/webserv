@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 12:31:16 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 13:14:02 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,19 @@ void Client::set_response(void)
 	// DEBUG("CODE IS " << req->get_code());
 
 
-	if (req && ctlen > req->get_max_body() )
-	{
-		DEBUG("DATA IS TOO BIG");
-		exit(0);
-	}
-	DEBUG("MAX BODY OK");
+	req->body_size_ok(ctlen);
+	// if (req && ctlen > req->get_max_body() )
+	// {
+	// 	DEBUG("DATA IS TOO BIG");
+	// 	r
+	// 	req->code = 413;
+
+
+
+
+	// 	// exit(0);
+	// }
+	// DEBUG("MAX BODY OK");
 	// if (req->get_s_header("Content-Length"))
 
 

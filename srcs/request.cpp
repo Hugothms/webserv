@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 13:02:42 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/18 13:26:22 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,7 +279,12 @@ char **Request::build_cgi_env(string &extention_name)
 		trim_tr(content_type);
 
 		ev.push_back("CONTENT_TYPE=" + content_type);
-		ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
+		
+		if (code == 413)
+			ev.push_back("CONTENT_LENGTH=0");
+		else
+			ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
+		
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
@@ -302,7 +307,7 @@ void	Request::launch_cgi(string &body, const int pos)
 	int out_pipe[2];
 	int in_pipe[2];
 
-	if (pipe(out_pipe) == -1 && code != 413)
+	if (pipe(out_pipe) == -1)
 	{
 		Log("cgi: pipe failed", RED);
 		exit(EXIT_FAILURE);
@@ -332,7 +337,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		char **_ev = build_cgi_env(extention_name);
 		char **_av = build_cgi_av(extention_name);
 
-		if (type == "POST")
+		if (type == "POST" && code != 413)
 		{
 			close(in_pipe[1]);
 			if (dup2(in_pipe[0], 0) == -1)
@@ -357,7 +362,7 @@ void	Request::launch_cgi(string &body, const int pos)
 	else
 	{
 		close(out_pipe[1]);
-		if (type == "POST")
+		if (type == "POST" && code != 413)
 		{
 			close(in_pipe[0]);
 			// DEBUG("WRITING |"<< headers["Body"] <<'|');
@@ -369,6 +374,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		char reading_buf;
 		while(read(out_pipe[0], &reading_buf, 1) > 0)
 		   body += reading_buf;
+		DEBUG("OUT OF CGI IS " << body);
 		close(out_pipe[0]);
 	}
 }
@@ -412,6 +418,19 @@ void	Request::get_auto_index(string &body)
 	code = 200;
 	body = auto_index.str();
 }
+
+bool Request::body_size_ok(unsigned int size)
+{
+	if (size > get_max_body())
+	{
+		DEBUG("data is too big, max is " << get_max_body());
+		code = 413;
+		return false;
+	}
+	return true;
+}
+
+
 int Request::get_max_body() const
 {
 	if (server != 0)
@@ -485,6 +504,12 @@ int Request::get_file_status(int &nfd)
 		nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 		return 0;
 	}
+	// else if (code == 413)
+	// {
+	// 	// filepath = error_page(413);
+	// 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
+	// 	return 0;
+	// }
 	if (code == 0)
 		code = 200;
 	DEBUG("CODE IS " << code);
