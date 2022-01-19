@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 10:32:46 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:22:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ vector<string> ft_split(const string &str, const string &charset)
 			res.push_back(tmp);
 		}
 	}
-	return (res);
+	return res;
 }
 
 /**

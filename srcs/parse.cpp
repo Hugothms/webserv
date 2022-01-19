@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 15:03:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:24:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,13 +137,15 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 	while (it != config.end())
 	{
 		vector<string> line = ft_split(*it, WHITESPACES);
+		if (!line.size() || !line[0].size())
+			break;
 		if (line[0][0] == '#')
 		{
 			it++;
 			(*line_count)++;
 			continue;
 		}
-		else if (line[0].size() && line[0] != "}")
+		else if (line[0] != "}")
 			DEBUG("\t" << line[0] << ":");
 		if (line[0] == "}")
 		{
