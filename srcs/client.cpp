@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 10:27:26 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 14:23:99 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,37 +104,45 @@ void Client::set_response(void)
 	int operation_status = req->get_file_status(_file_fd);
 	DEBUG("OPSTAT IS " << operation_status);
 	DEBUG("FILEPATH IS " << req->get_filepath());
-	if (operation_status == 0)
+	switch (operation_status)
 	{
-		send_buffer = req->get_header(0, false);
-		_status = 1;
-		return ;
-	}
-	else if (operation_status == 1)
-	{
-		string tmp;
-		req->get_auto_index(tmp);
-		send_buffer = req->get_header(tmp.size(), true);
-		send_buffer += tmp;
-		_status = 1;
-	}
-	else if (operation_status == 2)
-	{
-		DEBUG("CODE B4 IS " << req->get_code());
-		string tmp;
-		req->launch_cgi(tmp, _file_fd);
-		send_buffer = req->get_header(tmp.size(), true);
-		send_buffer += tmp;
-		_status = 1;
-		_file_fd = 0;
-		DEBUG("CODE AF IS " << req->get_code());
-	}
-	else if (operation_status == 4)
-	{
-		req->delete_rq();
-		_status = 1;
-		send_buffer = req->get_header(0, 1);
-		DEBUG("DELETE TIME STATUS IS 4");
+		case 0:
+		{
+			send_buffer = req->get_header(0, false);
+			_status = 1;
+			break;
+		}
+		case 1:
+		{
+			string tmp;
+			req->get_auto_index(tmp);
+			send_buffer = req->get_header(tmp.size(), true);
+			send_buffer += tmp;
+			_status = 1;
+			break;
+		}
+		case 2:
+		{
+			DEBUG("CODE B4 IS " << req->get_code());
+			string tmp;
+			req->launch_cgi(tmp, _file_fd);
+			send_buffer = req->get_header(tmp.size(), true);
+			send_buffer += tmp;
+			_status = 1;
+			_file_fd = 0;
+			DEBUG("CODE AF IS " << req->get_code());
+			break;
+		}
+		case 4:
+		{
+			req->delete_rq();
+			_status = 1;
+			send_buffer = req->get_header(0, 1);
+			DEBUG("DELETE TIME STATUS IS 4");
+			break;
+		}
+		default:
+			break;
 	}
 }
 

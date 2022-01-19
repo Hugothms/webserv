@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 13:18:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 14:40:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ Request::Request(const string &buffer)
 		if (header[0] == "Host")
 		{
 			vector<string> tmp = ft_split(header[1], ":");
-			if (header.size() != 3 || !header[1].size()) // BAD REQUEST
+			if ((header.size() != 3 && !(header.size() == 2 && header[1] == "localhost")) || !header[1].size()) // BAD REQUEST
 			{
 				code = 400;
 				break;
@@ -135,11 +135,11 @@ string to_string_custom(const int &error_code)
 
 string	Request::error_page(const int error_code)
 {
-	if (server && server->get_error_pages().size() && server->get_error_pages().find(error_code) != server->get_error_pages().end())
+	if (server && server->get_error_pages().size() && server->get_error_pages().find(error_code) != server->get_error_pages().end() && server->get_error_pages()[error_code].size())
 	{
-		string tmp = server->get_root() + '/' + server->get_error_pages().find(error_code)->second;
-		DEBUG("TMP IS :" << tmp);
-		ifstream file(tmp.c_str(), ofstream::in);
+		string error_page_filename = server->get_root() + '/' + server->get_error_pages()[error_code];
+		DEBUG("TMP IS :" << error_page_filename);
+		ifstream file(error_page_filename.c_str(), ofstream::in);
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 		{
 			return ("default_error_pages/" + to_string_custom(error_code) + ".html");
@@ -148,7 +148,7 @@ string	Request::error_page(const int error_code)
 		return (server->get_root() + server->get_error_pages().find(error_code)->second);
 	}
 	else
-		DEBUG("NO SERVER");
+		DEBUG("NO ERROR PAGE FOUND");
 	return ("default_error_pages/" + to_string_custom(error_code) + ".html");
 }
 
@@ -161,34 +161,46 @@ string	Request::error_page(const int error_code)
 bool	Request::select_server(const list<Server*> &servers)
 {
 	this->server = NULL;
-	string host = this->headers.find("Host")->second;
+	string host;
+	if (this->headers.find("Host") != this->headers.end())
+		host = this->headers.find("Host")->second;
+	else
+		host = "";
 	if (!host.size())
 	{
 		DEBUG("NO HOST");
 		code = 400;
 		return false;
 	}
-	string tmp = this->headers.find("Port")->second;
-	if (!tmp.size())
+	string tmp;
+	unsigned int port;
+	if (this->headers.find("Port") != this->headers.end())
+		tmp = this->headers.find("Port")->second;
+	else if (host != "localhost")
 	{
 		DEBUG("NO PORT");
 		code = 400;
 		return false;
 	}
-	unsigned int port = atoi(tmp.c_str());
-	// DEBUG("looking for server " << host << ":" << port);
+	if (host == "localhost" && !tmp.size())
+	{
+		port = 0;
+	}
+	else
+		port = atoi(tmp.c_str());
+	DEBUG("looking for server " << host << ":" << port);
 	// DEBUG("will search in servers size: "<< servers.size());
 	for (list<Server*>::const_iterator server = servers.begin(); server != servers.end(); server++)
 	{
-		// DEBUG("cadidate: " << (*server)->get_ip_address() << ":" << (*server)->get_port() << "\t" << ((*server)->get_server_names().size() ? (*server)->get_server_names().front() : "NO NAME"));
-		if ((*server)->get_port() == port)
+		DEBUG("cadidate: " << (*server)->get_ip_address() << ":" << (*server)->get_port() << "\t" << ((*server)->get_server_names().size() ? (*server)->get_server_names().front() : "NO NAME"));
+		if (port == 0 || (*server)->get_port() == port)
 		{
 			if (this->server == NULL)
 				this->server = *server;
 			list<string> server_names = (*server)->get_server_names();
 			for (list<string>::iterator server_name = server_names.begin(); server_name != server_names.end(); server_name++)
 			{
-				if ((*server_name == "0.0.0.0" || *server_name == host) && (*server)->get_port() == port)
+				if ((*server_name == "0.0.0.0" || *server_name == host) && (port == 0 || (*server)->get_port() == port))
 				{
 					this->server = *server;
 					DEBUG("Return good server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
@@ -198,8 +210,11 @@ bool	Request::select_server(const list<Server*> &servers)
 		}
 	}
 	if (!this->server)
+	{
+		DEBUG("NO SERVER FOUND");
 		return false;
-	// DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
+	}
+	DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
 	return true;
 }
 
@@ -466,8 +481,8 @@ void	Request::set_filepath(void)
 	if (target.find(location->get_path()) == 0)
 	{
 		size_t pos = location->get_path().length();
-		if (target[target.length() - 1] == '/')
-			pos++;
+		// if (target[target.length() - 1] == '/' && target.length() > pos && target[pos - 1] == '/')
+		// 	pos++;
 		string tmp = target.substr(pos);
 		filepath += location->get_location_root();
 		if (filepath[filepath.length() - 1] != '/')
@@ -483,8 +498,8 @@ void	Request::set_filepath(void)
 			filepath.resize(filepath.length() - 1);
 		if (location->get_index().length())
 			filepath += location->get_index();
-		DEBUG("filepath" << filepath);
 	}
+	DEBUG("filepath: " << filepath);
 }
 
 void Request::delete_rq(void)
@@ -524,7 +539,6 @@ int Request::get_file_status(int &nfd)
 		nfd = 0;
 		return 4;
 	}
-
 	if (is_directory(filepath))
 	{
 		if (filepath[filepath.size() - 1] == '/' && location->get_autoindex())
@@ -535,8 +549,9 @@ int Request::get_file_status(int &nfd)
 		else
 		{
 			code = 403;
-			passed_cgi = true;
 			filepath = error_page(403);
+			nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
+			return 0;
 		}
 	}
 	else
