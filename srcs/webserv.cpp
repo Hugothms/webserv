@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 10:35:14 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 14:58:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void	Webserv::parse_config(const string config_file)
 	while (line_count < config.size())
 	{
 		vector<string> line = ft_split(config[line_count], WHITESPACES);
+		// DEBUG("\nline[0]" << line[0]);
 		if (line[0] == "server")
 		{
 			Server *server = parse_server(config, &line_count);

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 12:00:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:03:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,6 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 	while (it != config.end())
 	{
 		vector<string> line = ft_split(*it, WHITESPACES);
-		if (line[0] != "}")
 		if (line[0][0] == '#')
 		{
 			it++;
@@ -148,7 +147,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			DEBUG("\t" << line[0] << ":");
 		if (line[0] == "}")
 		{
-			(*line_count)++;
+			// (*line_count)++;
 			break;
 		}
 		else if (line[0] == "location")
@@ -188,6 +187,8 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			if (line.size() != 2)
 				err_parsing_config(server, "expecting 1 argument after 'listen'");
 			vector<string> listen = ft_split(line[1], ":");
+			if (listen.size() != 1 && listen.size() != 2)
+				err_parsing_config(server, "expecting 'port' or 'address:port' after 'listen'");
 			string address;
 			string port;
 			address = listen[0];
@@ -196,12 +197,14 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 				address = "0.0.0.0";
 				port = listen[0];
 			}
+			else
+				port = listen[1];
 			if (address == "localhost")
 				address = "127.0.0.1";
 			server->set_ip_address(address);
 			DEBUG("\t\tip_address: " << address);
 			if (!is_integer(port))
-				err_parsing_config(server, "port in listen should be an interer");
+				err_parsing_config(server, "port in listen should be an integer");
 			server->set_port(atoi(port.c_str()));
 			DEBUG("\t\tport: " << atoi(port.c_str()));
 		}
