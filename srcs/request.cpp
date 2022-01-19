@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 15:53:53 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 22:31:00 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,10 +110,10 @@ Request::Request(const string &buffer)
 		it++;
 	}
 	// If there is content length, then we are in post mode, add Body header;
-	if (headers.count("Content-Length") > 0)
+	if (headers.count("Content-Length") > 0 && content_type.find("multipart") == string::npos)
 	{
 		unsigned int t = ::atoi(headers["Content-Length"].c_str());
-		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
+		headers.insert(pair<string, string>("Body", request.back()));//string(buffer, pos, t)));
 	}
 	DEBUG("----------------------------");
 	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
@@ -621,6 +621,11 @@ bool	Request::select_location(void)
 	}
 	this->location = NULL;
 	return false;
+}
+
+string& Request::give_head(string header)
+{
+	return (headers[header]);
 }
 
 string Request::get_s_header(string name)

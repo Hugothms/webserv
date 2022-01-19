@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 15:54:35 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 22:31:29 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,6 +172,7 @@ void	Webserv::listen(void)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
 			{
+				// DEBUG("Yeah give it:"<<(*client)->status() );
 				if (((*client)->status() == 0 || (*client)->status() == 4) && (*client)->receive() == -1) //Or if we need more data to feed CGI
 				{
 					clear_fd(*client);
@@ -184,8 +185,9 @@ void	Webserv::listen(void)
 			{
 				if ((*client)->status() == 0 ||(*client)->status() == 4 )
 				{
-					DEBUG("SET RESP")
+					
 					(*client)->set_response();
+					DEBUG("SET RESP :" << (*client)->status());
 				}
 				else if ((*client)->status() > 0)
 					(*client)->smart_send();

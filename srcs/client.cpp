@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 15:48:27 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 22:32:57 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,24 +56,33 @@ void Client::set_response(void)
 	_done_send = 0;
 	send_offset = 0;
 
-	if (req && _status != 4)
-	{
-		delete req;
-		req = 0;
-	}
-	if (_status != 4)
-		req = new Request(rec_buffer);
-	rec_buffer.clear();
+	// if (req && _status != 4)
+	// {
+	// 	delete req;
+	// 	req = 0;
+	// }
+	// if (_status != 4)
+	// {
+	// 	req = new Request(rec_buffer);
+	// 	rec_buffer.clear();
+	// }
+	
 
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
 
 	if (req && req->get_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
 	{
-		// Log("We  are in the mode", GREEN);
+		// DEBUG("We  are in the mode");
+		// DEBUG("|" << req->get_s_header("Body")<< "|");
 		if (req->get_s_header("Body").size() != static_cast<unsigned int>(atoi(req->get_s_header("Content-Length").c_str())))
 		{
+			// DEBUG("rcb is " << rec_buffer);
+			// req->get_s_header("Body") += rec_buffer;
+			// rec_buffer.clear();
+			// Log("NEED TO GET MORE DATA");
 			_status = 4;
+			// DEBUG("We  are in the WTF");
 			return;
 		}
 		else
@@ -81,7 +90,7 @@ void Client::set_response(void)
 	}
 
 	unsigned int ctlen = atoi(req->get_s_header("Content-Length").c_str());
-	DEBUG("CTLEN IS " << ctlen);
+	// DEBUG("CTLEN IS " << ctlen);
 	// DEBUG("CODE IS " << req->get_code());
 
 
@@ -109,6 +118,8 @@ void Client::set_response(void)
 		{
 			send_buffer = req->get_header(0, false);
 			_status = 1;
+			delete req;
+			req = 0;
 			break;
 		}
 		case 1:
@@ -118,18 +129,22 @@ void Client::set_response(void)
 			send_buffer = req->get_header(tmp.size(), true);
 			send_buffer += tmp;
 			_status = 1;
+			delete req;
+			req = 0;
 			break;
 		}
 		case 2:
 		{
-			DEBUG("CODE B4 IS " << req->get_code());
+			// DEBUG("CODE B4 IS " << req->get_code());
 			string tmp;
 			req->launch_cgi(tmp, _file_fd);
 			send_buffer = req->get_header(tmp.size(), true);
 			send_buffer += tmp;
 			_status = 1;
 			_file_fd = 0;
-			DEBUG("CODE AF IS " << req->get_code());
+			// DEBUG("CODE AF IS " << req->get_code());
+			delete req;
+			req = 0;
 			break;
 		}
 		case 4:
@@ -138,6 +153,8 @@ void Client::set_response(void)
 			_status = 1;
 			send_buffer = req->get_header(0, 1);
 			DEBUG("DELETE TIME STATUS IS 4");
+			delete req;
+			req = 0;
 			break;
 		}
 		default:
@@ -156,20 +173,36 @@ int Client::receive(void)
 
 	_done_recv = 0;
 	int len = recv(_fd, buff, BUFF_S, 0);
-	DEBUG("received");
+	// DEBUG("received :" << string(buff, 0, len));
 	if (len <= 0)
 	{
 		DEBUG("No data received, client is done");
 		_done_recv = 1;
 		return (-1);
 	}
-	if (req != 0)
-		req->get_s_header("Body") += string(buff, len); //todo: tu peux m'expliquer ca Dingzo pls ?
+	if (req != NULL)
+	{
+		// DEBUG("BUFF|"<< string(buff, len)<<"|");
+		req->give_head("Body") += string(buff, len); //todo: tu peux m'expliquer ca Dingzo pls ?
+		// DEBUG("BODY IS " << req->get_s_header("Body"));
+	}
 	else
 		rec_buffer += string(buff, len);
 
 	if (len < BUFF_S)
+	{
+		// status = 1
+		DEBUG("WE DONE RCV");
+
+		if (req == NULL)
+		{
+			req = new Request(rec_buffer);
+
+		}
+		rec_buffer.clear();
+
 		_done_recv = 1;
+	}
 	return (_done_recv);
 }
 
@@ -233,7 +266,7 @@ void Client::smart_send(void)
 		case 2:
 			Log("Sending file");
 			this->send_fd();
-			Log("Done");
+			// Log("Done");
 			break;
 		default:
 			break;
