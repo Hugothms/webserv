@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 09:43:33 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/19 15:38:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,16 @@ class Server
 		unsigned int				max_client_body_size;
 
 		// * FOR INTERNAL USE *
-		int 						listen_fd;
+		int						listen_fd;
 		struct sockaddr_in			hint;
 
 	public:
 		Server();
 		~Server();
-		void	s_listen(void);
-		int		setup(void);
-		bool	is_valid(string &error) const;
+		void						s_listen(void);
+		int							setup(void);
 
+		bool						is_valid(string &error) const;
 		list<Location>				get_locations(void) const;
 		list<string>				get_server_names(void) const;
 		map<string, string>			get_cgis(void) const;
@@ -65,22 +65,21 @@ class Server
 		string						get_root(void) const;
 		string						get_index(void) const;
 		unsigned int				get_max_client_body_size(void) const;
-		int 						get_listen_fd(void) const;
-		// int		get_max_body() const;
-		void set_locations(const list<Location> locations);
-		void push_back_location(const Location location);
-		void set_server_names(const list<string> server_names);
-		void push_back_server_name(const string server_name);
-		void set_cgis(const map<string, string> cgis);
-		void push_back_cgi(const string extention_name, const string exec_path);
-		void set_error_pages(const map<unsigned int, string> error_pages);
-		void push_back_error_page(const pair<unsigned int, string> error_page);
-		void set_ip_address(const string ip_address);
-		void set_port(const unsigned int port);
-		void set_root(const string root);
-		void set_index(const string index);
-		void set_max_client_body_size(const unsigned int max_client_body_size);
-		// unsigned int get_max_client_body_size() const;
+		int						get_listen_fd(void) const;
+
+		void						set_locations(const list<Location> locations);
+		void						push_back_location(const Location location);
+		void						set_server_names(const list<string> server_names);
+		void						push_back_server_name(const string server_name);
+		void						set_cgis(const map<string, string> cgis);
+		void						push_back_cgi(const string extention_name, const string exec_path);
+		void						set_error_pages(const map<unsigned int, string> error_pages);
+		void						push_back_error_page(const pair<unsigned int, string> error_page);
+		void						set_ip_address(const string ip_address);
+		void						set_port(const unsigned int port);
+		void						set_root(const string root);
+		void						set_index(const string index);
+		void						set_max_client_body_size(const unsigned int max_client_body_size);
 };
 
 #endif

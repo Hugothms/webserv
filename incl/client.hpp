@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 23:06:00 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 11:58:03 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/19 15:38:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,55 +24,42 @@
 
 class Client
 {
-	private :
-
+	private:
 		int					_fd;
-		int 				_file_fd;
-		bool 				_done_recv;
-		bool 				_done_send;
-		unsigned int 		send_offset;
-		bool 				send_rdy;
+		int				_file_fd;
+		bool				_done_recv;
+		bool				_done_send;
+		unsigned int		send_offset;
+		bool				send_rdy;
 		string				rec_buffer;
 		string				send_buffer;
-		Request 			*req;
+		Request			*req;
 		list<Server*>&		servers;
-		int 				_status;
+		int				_status;
 
 		struct sockaddr_in	client_addr;
 		char				client_ipv4_str[INET_ADDRSTRLEN];
 		socklen_t			client_len;
 
-		// Client();
-
-	public :
-
+	public:
 		Client(int new_listen_fd, list<Server*>& servers);
-
 		~Client();
-
 		void set_fd(const int nfd);
 		int get_fd(void) const;
-
-
 		int receive(void);
 		int  status(void) const;
 		bool is_done_recv(void) const;
 		void set_done_recv(bool t);
-
 		void set_response(void);
-
 		void send(void);
-
 		bool is_done_send(void) const;
-
 		void push_back_server(Server *s);
-
 		void send_header(void);
 		void smart_send(void);
 		void send_fd(void);
 
-		struct sockaddr* get_sockaddr(void);
-		socklen_t *get_addr_len(void);
+		struct sockaddr		*get_sockaddr(void);
+		socklen_t			*get_addr_len(void);
 };
 
 #endif

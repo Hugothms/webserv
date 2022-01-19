@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 14:23:99 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:35:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void Client::set_response(void)
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
 
-	if (req && req->g_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
+	if (req && req->get_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
 	{
 		// Log("We  are in the mode", GREEN);
 		if (req->get_s_header("Body").size() != static_cast<unsigned int>(atoi(req->get_s_header("Content-Length").c_str())))

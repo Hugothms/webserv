@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 14:40:41 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:35:41 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ Request::~Request()
 		delete(this->location);
 }
 
-string Request::g_type(void) const
+string Request::get_type(void) const
 {
 	return type;
 }

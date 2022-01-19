@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/12 17:46:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:30:39 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,11 @@ using namespace std;
 # else
 #  define DEBUG(x)
 # endif
-
 # define WHITESPACES "; \t"
-
 # define DEBUG_LINE(x) cerr << __FILE__ << ':' << __LINE__ << '\t' << x << endl
 
 class Server;
 class Location;
-
 
 //* PARSING
 Server			*parse_server(const vector<string> config, size_t *line_count);

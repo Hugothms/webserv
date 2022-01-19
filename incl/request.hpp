@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 21:15:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:38:29 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,25 +24,17 @@ class Request
 	private :
 		// * PARSED FROM HTTP REQUEST *
 		string				type;			// GET or POST or DELETE
-
+		string				target;			// The URL requested
+		map<string, string>	headers;
 
 		// * FOR INTERNAL USE *
 		const Server		*server;
 		const Location		*location;
 		string				filepath;
-
-		bool 				passed_cgi;
-
-
-		map<string, string>	headers;
-		string 				content_type;
-		// int 				file_fd;
-
-		string				target;			// The URL requested
+		string				content_type;
+		bool				passed_cgi;
 		unsigned int		code;
 
-		char **build_cgi_env(string &extention_name);
-		char **build_cgi_av(string &extention_name);
 		/* Ignored because not HTTP/1.1 compliant
 		string		dnt;
 		string		upgrade_insecure_requests;
@@ -53,7 +45,7 @@ class Request
 		string		sec_gpc;
 		*/
 
-		/* Unimplemented headers for now:
+		/* Unimplemented headers:
 		Accept-Charset
 		Authorization
 		Expect
@@ -70,33 +62,35 @@ class Request
 		TE
 		*/
 
-	public :
+		char **build_cgi_env(string &extention_name);
+		char **build_cgi_av(string &extention_name);
 
-	int get_max_body() const;
-		void prep_response(const list<Server*> &servers);
-		string get_s_header(string name);
-		void add_to_body(string toadd);
+	public :
 		Request(const string &buffer);
 		~Request();
+		void	prep_response(const list<Server*> &servers);
+		string	get_s_header(string name);
+		void	add_to_body(string toadd);
 		string	respond(const list<Server*> &servers, char fast_pipe = 0);
 		bool	select_server(const list<Server*> &servers);
 		bool	select_location(void);
-		string 	g_type(void) const;
-		int 	get_code(void) const;
-		string 	get_response(void);
-		void 	get_body(string &body);
+		string	get_response(void);
+		void	get_body(string &body);
 		string	get_cgi_header(const size_t fileSize);
 		string	get_header(size_t fileSize, const bool already_calculated);
-		void 	launch_cgi(string &body, const int pos);
+		void	launch_cgi(string &body, const int pos);
 		void	get_auto_index(string &body);
 		void	set_filepath(void);
 		string	get_filepath(void);
-		bool 	method_allow(void);
+		bool	method_allow(void);
 		string	error_page(const int error_code);
-		int  	get_file_status(int &nfd);
-		void 	delete_rq(void);
-		bool 	body_size_ok(unsigned int size);
+		int	get_file_status(int &nfd);
+		void	delete_rq(void);
+		bool	body_size_ok(unsigned int size);
 
+		int		get_max_body() const;
+		string	get_type(void) const;
+		int		get_code(void) const;
 };
 
 // * utils_header.cpp

@@ -27,13 +27,14 @@ class Location
 		unsigned int	HTTP_redirection_type;
 		string			HTTP_redirection;
 		string			location_root;
-		string			index; // file served when a directory is requested
-		bool 			autoindex;
+		string			index;
+		bool			autoindex;
 
 	public:
 		Location();
 		~Location();
 		bool			is_valid(string &error) const;
+
 		Server			*get_server(void) const;
 		list<string>	get_allow(void) const;
 		string			get_path(void) const;
@@ -43,26 +44,15 @@ class Location
 		string			get_index(void) const;
 		bool			get_autoindex(void) const;
 
-		void set_server(Server *server);
-		void set_allow(const list<string> allow);
-		void push_back_HTTP_method(const string HTTP_method);
-		void set_path(const string location);
-		void set_HTTP_redirection_type(const unsigned int type);
-		void set_HTTP_redirection(const string HTTP_redirection);
-		void set_location_root(const string location_root);
-		void set_index(const string index);
-		void set_autoindex(const bool autoindex);
-
-
-		// <string, void (Location::*)(const string)>
-
-		// typedef void (Location::*my_pointer_function)(const string);
-		// map<string, my_pointer_function const> map_pointer_function;
-
-		// void set(const string &key, const string value) {
-		// 	my_pointer_function fp = map_pointer_function[key];
-		// 	return (this->*fp)(value);
-		// }
+		void			set_server(Server *server);
+		void			set_allow(const list<string> allow);
+		void			push_back_HTTP_method(const string HTTP_method);
+		void			set_path(const string location);
+		void			set_HTTP_redirection_type(const unsigned int type);
+		void			set_HTTP_redirection(const string HTTP_redirection);
+		void			set_location_root(const string location_root);
+		void			set_index(const string index);
+		void			set_autoindex(const bool autoindex);
 };
 
 #endif

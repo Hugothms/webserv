@@ -6,13 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/28 18:55:27 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/17 12:26:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:29:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef LOG_HPP
-#define LOG_HPP
+# define LOG_HPP
 
 #define RESET   "\033[0m"
 #define BLACK   "\033[30m"      /* Black */
@@ -32,26 +31,23 @@
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
-
-
 class Log
 {
 	public :
+		Log()
+		{}
 
-	Log()
-	{}
+		Log(std::string msg, string color = RED)
+		{
+			std::time_t t = std::time(0);   // get time now
+			std::tm* now = std::localtime(&t);
 
-	Log(std::string msg, string color = RED)
-	{
-		std::time_t t = std::time(0);   // get time now
-    	std::tm* now = std::localtime(&t);
+			std::cout << color << "[";
 
-   	 	std::cout << color << "[";
-
-   	 	std::cout << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'
-         <<  now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":"
-         << now->tm_sec << "]: " << msg << RESET << std::endl;
-	}
-
+			std::cout << (now->tm_year + 1900) << '-' << (now->tm_mon + 1) << '-'
+			<<  now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":"
+			<< now->tm_sec << "]: " << msg << RESET << std::endl;
+		}
 };
+
 #endif
