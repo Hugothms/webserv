@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 14:58:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:09:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void Webserv::build(void)
 		}
 		if (already_setup)
 		{
-			DEBUG("already_setup, skipping");
+			DEBUG("already_setup, skipping " << (*server)->get_ip_address() << ":" << (*server)->get_port());
 			continue;
 		}
 		fd_combo new_fd;
