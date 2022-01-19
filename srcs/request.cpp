@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 12:01:18 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 13:18:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,7 +439,6 @@ void	Request::set_filepath(void)
 	// if (code == 413)
 	// {
 	// 	filepath = server->get_error_pages().find(413)->second;
-	// 	DEBUG("FILEPATH IS "<<  filepath );
 	// }
 	if (!server || !location)
 	{
@@ -451,13 +450,29 @@ void	Request::set_filepath(void)
 	if (target.compare("/") == 0)
 	{
 		if (location->get_index().length())
-			target += '/' + location->get_index();
+		{
+			if (filepath[filepath.length() - 1] != '/')
+				target += '/';
+			target += location->get_index();
+		}
 		else
-			target += '/' + server->get_index();
+		{
+
+			if (filepath[filepath.length() - 1] != '/')
+				target += '/';
+			target += server->get_index();
+		}
 	}
 	if (target.find(location->get_path()) == 0)
 	{
-		filepath += location->get_location_root() + '/' + target.substr(location->get_path().length());
+		size_t pos = location->get_path().length();
+		if (target[target.length() - 1] == '/')
+			pos++;
+		string tmp = target.substr(pos);
+		filepath += location->get_location_root();
+		if (filepath[filepath.length() - 1] != '/')
+			filepath += '/';
+		filepath += tmp;
 	}
 	else
 		filepath += target;
