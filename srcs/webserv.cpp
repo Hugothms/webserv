@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 15:48:51 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:54:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void Webserv::accept_new_conn(void)
 	}
 }
 
-void 	Webserv::loop_prep(void) //This can be optimized
+void 	Webserv::loop_prep(void) // todo: This can be optimized
 {
 	int tmpfd;
 	lcopy_set = listen_set;

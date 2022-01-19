@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 21:59:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:54:13 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int Server::setup(void)
 	inet_pton(AF_INET, ip_address.c_str(), &(hint.sin_addr));
 
 	int opt = 1;
-	//Need to check conn alive and stuff
+	// Need to check conn alive and stuff
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
 	if (bind(listen_fd, (const struct sockaddr *)&hint, sizeof(hint)) == -1)
@@ -60,7 +60,7 @@ int Server::setup(void)
 		perror("bind");
 		exit(1);
 	}
-	//Chanege max number of clients
+	// Change max number of clients
 	listen(listen_fd, SOMAXCONN);
 	return (listen_fd);
 }

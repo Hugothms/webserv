@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 15:35:41 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:53:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,6 @@ Request::Request(const string &buffer)
 	DEBUG("target is " << target);
 	while (it != request.end())
 	{
-		// if (buffer[pos] == '\n')
-		// 	pos++;
 		vector<string> header = ft_split(*it, ": ");
 		if (header.size() < 2)
 			break ; // case empty line
@@ -111,14 +109,12 @@ Request::Request(const string &buffer)
 			headers.insert(pair<string, string>(header[0], header[1]));
 		it++;
 	}
-
 	// If there is content length, then we are in post mode, add Body header;
 	if (headers.count("Content-Length") > 0)
 	{
 		unsigned int t = ::atoi(headers["Content-Length"].c_str());
 		headers.insert(pair<string, string>("Body", string(buffer, pos, t)));
 	}
-
 	DEBUG("----------------------------");
 	for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
 		DEBUG(it->first << ": " << it->second);
@@ -322,7 +318,8 @@ void	Request::launch_cgi(string &body, const int pos)
 		exit(EXIT_FAILURE);
 	}
 
-	//We probably shouldn't assume that
+	// todo:
+	// We probably shouldn't assume that
 	code = (code == 413) ? 413 : 200;
 	// if (code != 413)
 	// 	code = 200;
@@ -451,6 +448,7 @@ void	Request::set_filepath(void)
 		filepath = "";
 		return;
 	}
+	// todo:
 	// if (code == 413)
 	// {
 	// 	filepath = server->get_error_pages().find(413)->second;
@@ -523,6 +521,7 @@ int Request::get_file_status(int &nfd)
 		nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 		return 0;
 	}
+	// todo:
 	// else if (code == 413)
 	// {
 	// 	// filepath = error_page(413);
@@ -580,14 +579,9 @@ int Request::get_file_status(int &nfd)
 					return 2;
 				}
 			}
-			// code = 200;
 		}
 		file.close();
 	}
-	// if (code != 413)
-	// 	code = 200;
-	// else if (code == 413)
-	// 	DEBUG("WE HAVE CODE 413");
 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 	return 0;
 }

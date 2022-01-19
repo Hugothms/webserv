@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/10 16:19:58 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:50:08 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,6 @@ bool	Location::is_valid(string &error) const
 	list<string> allow = get_allow();
 	if (allow.size() == 0)
 		error = (get_path() + " location: allowed method(s) are not set");
-	// for (list<string>::iterator HTTP_method = allow.begin(); HTTP_method != allow.end(); HTTP_method++)
-	// {
-	// 	if (*HTTP_method == "POST" && get_upload_directory().length() == 0)
-	// 		error = (get_path() + " location: directory_upload is not set (and HTTP method POST is allowed)");
-	// }
 	if (get_location_root() == "")
 		error = (get_path() + " location: location_root is not set");
 	return (error.length() == 0);
