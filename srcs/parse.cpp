@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 10:29:52 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 12:00:35 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,13 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 
 	if (line.size() != 3)
 		err_parsing_config(server, "expecting a directory and '{' after 'location'");
-	if (line[1].size() > 0 && line[1][0] != '/')
-		line[1] = '/' + line[1];
-	if (line[1].size() > 1 && line[1][line[1].size() - 1] == '/')
-		line[1].resize(line[1].size() - 1);
-	location.set_path(line[1]);
+	string tmp = line[1];
+	if (tmp.size() > 0 && tmp[0] != '/')
+		tmp = '/' + tmp;
+	if (tmp.size() > 1 && tmp[tmp.size() - 1] == '/')
+		tmp.resize(tmp.size() - 1);
+	location.set_path(tmp);
+	DEBUG("\t" << location.get_path());
 	if (line[2] != "{")
 		err_parsing_config(server, "expecting '{' after 'location' directory");
 	(*line_count)++;
@@ -90,15 +92,17 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		}
 		else if (line[0] == "autoindex")
 		{
+			if (line.size() != 2)
+				err_parsing_config(server, "expecting 1 argument after 'autoindex'");
 			if (line[1] == "0" || line[1] == "1")
 			{
 				location.set_autoindex(atoi(line[1].c_str()));
-				DEBUG("\t\t\t" << line[0]);
+				DEBUG("\t\t\t" << location.get_autoindex());
 			}
 		}
 		else
 		{
-			DEBUG("\t\t***OTHER_LOCATION: " << line[0]);
+			DEBUG("\t\t***OTHER LOCATION: " << line[0]);
 		}
 		it++;
 		(*line_count)++;
@@ -113,8 +117,6 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 	if (location.get_location_root().size() == 0)
 		location.set_location_root(location.get_path());
 	location.set_server(server);
-	DEBUG("*line_count        :" << *line_count);
-	DEBUG("config[*line_count]:" << config[*line_count]);
 	return location;
 }
 
@@ -136,13 +138,14 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 	{
 		vector<string> line = ft_split(*it, WHITESPACES);
 		if (line[0] != "}")
-		DEBUG("\t" << line[0]);
 		if (line[0][0] == '#')
 		{
 			it++;
 			(*line_count)++;
 			continue;
 		}
+		else if (line[0].size() && line[0] != "}")
+			DEBUG("\t" << line[0] << ":");
 		if (line[0] == "}")
 		{
 			(*line_count)++;
@@ -150,12 +153,11 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 		}
 		else if (line[0] == "location")
 		{
-			if (line.size() < 2)
+			if (line.size() != 3)
 				err_parsing_config(server, "expecting 2 arguments after 'location'");
 			size_t old_line_count = *line_count;
 			server->push_back_location(parse_location(config, line_count, server));
 			it += *line_count - old_line_count;
-			continue;
 		}
 		else if (line[0] == "server_name")
 		{
@@ -238,7 +240,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 		it++;
 		(*line_count)++;
 	}
-	vector<string> end = ft_split(config[*line_count], WHITESPACES);
+	vector<string> end = ft_split(*it, WHITESPACES);
 	while (!end.size() || end[0] != "}")
 	{
 		(*line_count)++;

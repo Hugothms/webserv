@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 10:24:50 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 12:01:18 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ string to_string_custom(const int &error_code)
 
 string	Request::error_page(const int error_code)
 {
-	if (server && server->get_error_pages().find(error_code) != server->get_error_pages().end())
+	if (server && server->get_error_pages().size() && server->get_error_pages().find(error_code) != server->get_error_pages().end())
 	{
 		string tmp = server->get_root() + '/' + server->get_error_pages().find(error_code)->second;
 		DEBUG("TMP IS :" << tmp);
@@ -458,16 +458,17 @@ void	Request::set_filepath(void)
 	if (target.find(location->get_path()) == 0)
 	{
 		filepath += location->get_location_root() + '/' + target.substr(location->get_path().length());
-		// DEBUG("filepath is " << filepath);
-		// DEBUG("tmp is " << tmp);
 	}
 	else
 		filepath += target;
 	if (filepath[filepath.length() - 1] == '/')
 	{
 		DEBUG("Target is a DIRECTORY !");
+		if (filepath[filepath.length() - 2] == '/')
+			filepath.resize(filepath.length() - 1);
 		if (location->get_index().length())
 			filepath += location->get_index();
+		DEBUG("filepath" << filepath);
 	}
 }
 
