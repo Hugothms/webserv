@@ -6,16 +6,11 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/18 21:36:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 10:27:26 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
-
-// Client::Client() :_fd(0), _done_recv(0), _done_send(0), send_rdy(0), req(0), _status(0)
-// {
-// 	client_len = sizeof(client_addr);
-// }
 
 Client::Client(int new_listen_fd, list<Server*>& _servers) : _fd(0),_done_recv(0), _done_send(0), send_rdy(0), req(0), servers(_servers), _status(0)
 {
@@ -44,24 +39,11 @@ bool Client::is_done_recv(void) const
 {
 	return _done_recv;
 }
+
 void Client::set_done_recv(bool t)
 {
 	_done_recv = t;
 }
-/*string* Client::get_rec_buff(void)
-{
-	return (&rec_buffer);
-}*/
-
-// string* Client::get_send_buff(void)
-// {
-// 	return (&send_buffer);
-// }
-
-// bool Client::is_send_rdy() const
-// {
-// 	return send_rdy;
-// }
 
 int Client::status(void) const
 {
@@ -74,7 +56,6 @@ void Client::set_response(void)
 	_done_send = 0;
 	send_offset = 0;
 
-
 	if (req && _status != 4)
 	{
 		delete req;
@@ -82,10 +63,6 @@ void Client::set_response(void)
 	}
 	if (_status != 4)
 		req = new Request(rec_buffer);
-
-	// if ()
-	// DEBUG("Content Length is " << req->get_s_header("Content-Length"))
-
 	rec_buffer.clear();
 
 	//Function that allows later calls to get the data
@@ -102,7 +79,6 @@ void Client::set_response(void)
 		else
 			_status = 1;
 	}
-
 
 	unsigned int ctlen = atoi(req->get_s_header("Content-Length").c_str());
 	DEBUG("CTLEN IS " << ctlen);
@@ -138,19 +114,15 @@ void Client::set_response(void)
 	{
 		string tmp;
 		req->get_auto_index(tmp);
-
 		send_buffer = req->get_header(tmp.size(), true);
 		send_buffer += tmp;
-
 		_status = 1;
-
 	}
 	else if (operation_status == 2)
 	{
 		DEBUG("CODE B4 IS " << req->get_code());
 		string tmp;
 		req->launch_cgi(tmp, _file_fd);
-
 		send_buffer = req->get_header(tmp.size(), true);
 		send_buffer += tmp;
 		_status = 1;
@@ -171,13 +143,11 @@ bool Client::is_done_send(void) const
 	return _done_send;
 }
 
-
 int Client::receive(void)
 {
 	char buff[BUFF_S];
 
 	_done_recv = 0;
-
 	int len = recv(_fd, buff, BUFF_S, 0);
 	DEBUG("received");
 	if (len <= 0)
@@ -186,7 +156,6 @@ int Client::receive(void)
 		_done_recv = 1;
 		return (-1);
 	}
-
 	if (req != 0)
 		req->get_s_header("Body") += string(buff, len); //todo: tu peux m'expliquer ca Dingzo pls ?
 	else
@@ -194,7 +163,6 @@ int Client::receive(void)
 
 	if (len < BUFF_S)
 		_done_recv = 1;
-
 	return (_done_recv);
 }
 
@@ -204,11 +172,8 @@ void Client::send_header(void)
 
 	if (send_offset + actual > send_buffer.size())
 		actual = send_buffer.size() - send_offset;
-
 	::send(_fd, send_buffer.c_str() + send_offset, actual, 0);
-
 	send_offset += actual;
-
 	if (send_offset == send_buffer.size())
 	{
 		DEBUG("HEADER IS " << send_buffer);
@@ -267,6 +232,7 @@ void Client::set_fd(const int fd)
 {
 	_fd = fd;
 }
+
 int Client::get_fd(void) const
 {
 	return _fd;

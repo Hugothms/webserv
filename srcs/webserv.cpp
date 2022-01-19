@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 14:09:36 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 10:35:14 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ Webserv::~Webserv()
 
 void	Webserv::push_back_server(Server *server)
 {
-	// DEBUG("PUSHING");
 	_servers.push_back(server);
 }
 
@@ -74,11 +73,8 @@ void	Webserv::parse_config(const string config_file)
 			Server *server = parse_server(config, &line_count);
 			if (server && conflict_ip_address_port_server_names(server->get_ip_address(), server->get_port(), server->get_server_names()))
 				err_parsing_config(server, "ip_address:port/server_names conflict with another server");
-			// DEBUG("PUSHING SERV");
 			push_back_server(server);
 		}
-		// DEBUG("\n**********\nline_count       : " << line_count);
-		// DEBUG("config[line_count]:|" << config[line_count] << "|");
 		line_count++;
 	}
 	Log("Config file loaded", GREEN);
@@ -106,22 +102,14 @@ void Webserv::build(void)
 			DEBUG("already_setup, skipping");
 			continue;
 		}
-
 		fd_combo new_fd;
-
-
-
 		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port());
-
 		fd = (*server)->setup();
 
 		new_fd.fd = fd;
 		new_fd.ip_address = (*server)->get_ip_address();
 		new_fd.port = (*server)->get_port();
-
 		fd_list.push_back(new_fd);
-
-
 
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
@@ -138,8 +126,6 @@ void Webserv::accept_new_conn(void)
 			Client *client = new Client((*server)->get_listen_fd(), _servers);
 			// DEBUG("PID OF NEW IS " << client->get_fd());
 			// Log("New client connected", GREEN);
-			// client->server
-			// client->push_back_server(*server);
 			_clients.push_back(client);
 			//TO MOVE
 
@@ -151,10 +137,9 @@ void Webserv::accept_new_conn(void)
 
 void 	Webserv::loop_prep(void) //This can be optimized
 {
+	int tmpfd;
 	lcopy_set = listen_set;
 	wcopy_set = write_set;
-
-	int tmpfd;
 	for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 	{
 		tmpfd = (*client)->get_fd();
@@ -176,7 +161,6 @@ void Webserv::clear_fd(Client *client)
 {
 	FD_CLR(client->get_fd(), &listen_set);
 	FD_CLR(client->get_fd(), &write_set);
-
 	close(client->get_fd());
 	client->set_fd(-1);
 }
@@ -190,7 +174,6 @@ void	Webserv::listen(void)
 		loop_prep();
 		select(high_fd + 1, &lcopy_set, &wcopy_set, NULL, 0);
 		accept_new_conn();
-
 		for (list<Client*>::iterator client = _clients.begin(); client != _clients.end(); client++)
 		{
 			if (FD_ISSET((*client)->get_fd(), &lcopy_set))
@@ -205,7 +188,6 @@ void	Webserv::listen(void)
 			}
 			else if ((*client)->is_done_recv())
 			{
-
 				if ((*client)->status() == 0 ||(*client)->status() == 4 )
 				{
 					DEBUG("SET RESP")

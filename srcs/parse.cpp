@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 21:31:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 10:29:52 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,7 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		{
 			it++;
 			(*line_count)++;
-			// DEBUG("COMMENT");
 			continue;
-			// if (config[*line_count-1] != '\n')
 		}
 		else if (line[0].size() && line[0] != "}")
 			DEBUG("\t\t" << line[0] << ":");
@@ -64,8 +62,6 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 			int type = atoi(line[1].c_str());
 			if (!(type == 300 || type == 301 || type == 302 || type == 303 || type == 304 || type == 307 || type == 308))
 				err_parsing_config(server, "redirection code is invalid");
-			// if (config[*line_count - 1] != ' ')
-			// 	err_parsing_config(server, "redirection not well configured");
 			if (line[1].size())
 			{
 				location.set_HTTP_redirection_type(type);
@@ -100,12 +96,10 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 				DEBUG("\t\t\t" << line[0]);
 			}
 		}
-		else //if (line[0].size())
+		else
 		{
 			DEBUG("\t\t***OTHER_LOCATION: " << line[0]);
 		}
-		// else
-		// 	break;
 		it++;
 		(*line_count)++;
 	}
@@ -131,16 +125,13 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 	vector<string> line = ft_split(config[0], WHITESPACES);
 	if (line[1] != "{")
 		return NULL;
-
 	DEBUG("{");
 	Server *server = new Server();
 	vector<string>::const_iterator it = config.begin() + *line_count;
-	// DEBUG("ouside 1: " << *it);
 	if (it == config.end())
 		return NULL;
 	it++;
 	(*line_count)++;
-	// DEBUG("ouside 2: " << *it);
 	while (it != config.end())
 	{
 		vector<string> line = ft_split(*it, WHITESPACES);
@@ -164,8 +155,6 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			size_t old_line_count = *line_count;
 			server->push_back_location(parse_location(config, line_count, server));
 			it += *line_count - old_line_count;
-			// DEBUG("apres location" << *it);
-			// DEBUG("apres location" << *(it +1));
 			continue;
 		}
 		else if (line[0] == "server_name")
@@ -242,7 +231,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			server->set_max_client_body_size(atoi(line[1].c_str()));
 			DEBUG("\t\t" << server->get_max_client_body_size());
 		}
-		else //if (line.size())
+		else
 		{
 			DEBUG("\t\t***OTHER: " << line[0]);
 		}
@@ -261,11 +250,8 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 		exit(EXIT_FAILURE);
 	}
 	DEBUG("}");
-	// DEBUG("\nline_count           : " << *line_count);
-	// DEBUG("config[*line_count]:|" << config[*line_count] << "|");
 	string error;
 	if (!server->is_valid(error))
 		err_parsing_config(server, error);
-	// (*line_count)++;
 	return server;
 }

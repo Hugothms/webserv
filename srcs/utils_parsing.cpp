@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 13:38:54 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/17 16:51:56 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 10:32:46 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,8 @@ bool is_integer(const string &s)
 string get_content_file(const string &filename)
 {
 	ifstream myfile(filename.c_str());
-
 	string content((istreambuf_iterator<char>(myfile)), istreambuf_iterator<char>());
 	myfile.close();
-	// return content.substr(0, content.length() - 1);
 	return content;
 }
 
@@ -111,7 +109,6 @@ bool is_directory(const string &filename)
 	struct stat st_buf;
 	int status = stat(filename.c_str(), &st_buf);
 	if (status != 0) {
-		// printf ("Error, errno = %d\n", errno);
 		return false;
 	}
 	return (S_ISDIR(st_buf.st_mode) == 1);

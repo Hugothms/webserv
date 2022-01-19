@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/18 21:59:01 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 10:24:50 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,6 +216,7 @@ char *ft_strdup(string msg)
 	ret[i] = 0;
 	return ret;
 }
+
 void trim_tr(string &to_trim)
 {
 	for (std::string::iterator it = to_trim.begin(); it != to_trim.end(); it++)
@@ -226,7 +227,6 @@ void trim_tr(string &to_trim)
 			--it;
 		}
 	}
-	// return to_trim;
 }
 
 char **Request::build_cgi_av(string &extention_name)
@@ -245,7 +245,7 @@ char **Request::build_cgi_av(string &extention_name)
 	for (size_t j = 0; j < av.size(); j++)
 	{
 		_av[j] = ft_strdup(av[j]);
-		DEBUG("a"<<j << ":" << av[j]<<"|");
+		DEBUG("a"<< j << ":" << av[j] <<"|");
 	}
 	_av[av.size()] = 0;
 	return _av;
@@ -276,16 +276,12 @@ char **Request::build_cgi_env(string &extention_name)
 	}
 	else if (type == "POST")
 	{
-		//Are you fucking with me ?
 		trim_tr(content_type);
-
 		ev.push_back("CONTENT_TYPE=" + content_type);
-
 		if (code == 413)
 			ev.push_back("CONTENT_LENGTH=0");
 		else
 			ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
-
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
@@ -298,13 +294,10 @@ char **Request::build_cgi_env(string &extention_name)
 	return _ev;
 }
 
-
 void	Request::launch_cgi(string &body, const int pos)
 {
 	DEBUG("launch_cgi");
-
 	string extention_name = filepath.substr(pos);
-
 	int out_pipe[2];
 	int in_pipe[2];
 
@@ -325,9 +318,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		Log("cgi: pipe failed", RED);
 		exit(EXIT_FAILURE);
 	}
-
 	pid_t pid = fork();
-
 	if (pid < 0)
 	{
 		Log("cgi: fork failed",RED);
@@ -353,7 +344,6 @@ void	Request::launch_cgi(string &body, const int pos)
 			Log("cgi: dup2 error",RED);
 			exit(EXIT_FAILURE);
 		}
-
 		if (execve(_av[0], _av, _ev) < 0)
 		{
 			Log("Execve error",RED);
@@ -396,14 +386,8 @@ void	Request::get_auto_index(string &body)
 		while ((ent = readdir (dir)) != NULL)
 		{
 			string name = ent->d_name;
-			// ifstream file(name.c_str(), ofstream::in);
-			// if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
-			// {
-			// 	// todo exit ?
-			// }
 			if (is_directory(filepath + name))
 				name += '/';
-			// file.close();
 			auto_index << "<p><a href=\"" << name << "\" class=\"active\">" << name << "</a></p>\n";
 		}
 		closedir (dir);
@@ -432,17 +416,18 @@ bool Request::body_size_ok(unsigned int size)
 	return true;
 }
 
-
 int Request::get_max_body() const
 {
 	if (server)
 		return (int)server->get_max_client_body_size();
 	return -1;
 }
+
 string	Request::get_filepath(void)
 {
 	return filepath;
 }
+
 void	Request::set_filepath(void)
 {
 	if (type == "DELETE")
@@ -453,8 +438,8 @@ void	Request::set_filepath(void)
 	}
 	// if (code == 413)
 	// {
-	//	// filepath = server->get_error_pages().find(413)->second;
-	// 	// DEBUG("FILEPATH IS "<<  filepath );
+	// 	filepath = server->get_error_pages().find(413)->second;
+	// 	DEBUG("FILEPATH IS "<<  filepath );
 	// }
 	if (!server || !location)
 	{
@@ -661,7 +646,7 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-//Pas sur de la complete utilité de cette fonction
+// todo: Pas sur de la complete utilité de cette fonction
 void Request::prep_response(const list<Server*> &servers)
 {
 	if (!select_server(servers) || !select_location() || !method_allow())
