@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 15:09:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:48:51 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,15 +103,8 @@ void Webserv::build(void)
 			DEBUG("already_setup, skipping " << (*server)->get_ip_address() << ":" << (*server)->get_port());
 			continue;
 		}
-		fd_combo new_fd;
 		DEBUG("Runing on " << (*server)->get_ip_address() << ":" << (*server)->get_port());
 		fd = (*server)->setup();
-
-		new_fd.fd = fd;
-		new_fd.ip_address = (*server)->get_ip_address();
-		new_fd.port = (*server)->get_port();
-		fd_list.push_back(new_fd);
-
 		FD_SET(fd, &listen_set);
 		if (fd > high_fd)
 			high_fd = fd;

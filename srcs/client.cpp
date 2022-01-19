@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 15:35:41 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/19 15:48:27 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void Client::set_response(void)
 
 
 	req->body_size_ok(ctlen);
+	// todo:
 	// if (req && ctlen > req->get_max_body() )
 	// {
 	// 	DEBUG("DATA IS TOO BIG");
@@ -98,9 +99,7 @@ void Client::set_response(void)
 	// DEBUG("MAX BODY OK");
 	// if (req->get_s_header("Content-Length"))
 
-
 	req->set_filepath();
-
 	int operation_status = req->get_file_status(_file_fd);
 	DEBUG("OPSTAT IS " << operation_status);
 	DEBUG("FILEPATH IS " << req->get_filepath());
@@ -226,13 +225,18 @@ void Client::send_fd(void)
 
 void Client::smart_send(void)
 {
-	if (_status == 1)
-		this->send_header();
-	else if (_status == 2)
+	switch (_status)
 	{
-		Log("Sending file");
-		this->send_fd();
-		Log("Done");
+		case 1:
+			this->send_header();
+			break;
+		case 2:
+			Log("Sending file");
+			this->send_fd();
+			Log("Done");
+			break;
+		default:
+			break;
 	}
 }
 
