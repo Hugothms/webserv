@@ -6,11 +6,12 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 15:54:13 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 16:56:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
+#include <fcntl.h>
 
 Server::Server()
 : max_client_body_size(0), listen_fd(0)
@@ -67,6 +68,7 @@ int Server::setup(void)
 
 bool	Server::is_valid(string &error) const
 {
+	int	fd;
 	if (get_ip_address() == "")
 		error = "ip_address is not set";
 	if (get_port() == 0)
@@ -77,6 +79,22 @@ bool	Server::is_valid(string &error) const
 		error = "index is not set";
 	if (get_max_client_body_size() == 0)
 		error = "max_client_body_size is not set";
+	map<string, string> cgis = get_cgis();
+	for (map<string, string>::iterator cgi = cgis.begin(); cgi != cgis.end(); cgi++)
+	{
+		fd = ::open(cgi->second.c_str(), O_RDONLY);
+		if (fd <= 0)
+			error = "cgi " + cgi->second + " is unavailable";
+		close(fd);
+	}
+	map<unsigned int, string> error_pages = get_error_pages();
+	for (map<unsigned int, string>::iterator error_page = error_pages.begin(); error_page != error_pages.end(); error_page++)
+	{
+		fd = ::open((get_root() + error_page->second).c_str(), O_RDONLY);
+		if (fd <= 0)
+			error = "error_page " + get_root() + error_page->second + " is unavailable";
+		close(fd);
+	}
 	list<Location> locations = get_locations();
 	if (!locations.size())
 		error = "location is not set";
