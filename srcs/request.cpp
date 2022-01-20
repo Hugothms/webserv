@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 09:12:39 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 09:34:44 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -463,40 +463,22 @@ void	Request::set_filepath(void)
 	if (target.compare("/") == 0)
 	{
 		if (location->get_index().length())
-		{
-			if (filepath[filepath.length() - 1] != '/')
-				target += '/';
-			target += location->get_index();
-		}
+			target += '/' + location->get_index();
 		else
-		{
-
-			if (filepath[filepath.length() - 1] != '/')
-				target += '/';
-			target += server->get_index();
-		}
+			target += '/' + server->get_index();
 	}
 	if (target.find(location->get_path()) == 0)
-	{
-		size_t pos = location->get_path().length();
-		// if (target[target.length() - 1] == '/' && target.length() > pos && target[pos - 1] == '/')
-		// 	pos++;
-		string tmp = target.substr(pos);
-		filepath += location->get_location_root();
-		if (filepath[filepath.length() - 1] != '/')
-			filepath += '/';
-		filepath += tmp;
-	}
+		filepath += location->get_location_root() + '/' + target.substr(location->get_path().length());
 	else
 		filepath += target;
 	if (filepath[filepath.length() - 1] == '/')
 	{
 		DEBUG("Target is a DIRECTORY !");
-		if (filepath[filepath.length() - 2] == '/')
-			filepath.resize(filepath.length() - 1);
 		if (location->get_index().length())
 			filepath += location->get_index();
 	}
+	while (filepath.find("//") != string::npos)
+		filepath.replace(filepath.find("//"), 2, "/");
 	DEBUG("filepath: " << filepath);
 }
 
