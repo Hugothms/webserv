@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 22:24:53 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/20 09:19:15 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,11 @@ class Request
 		int	get_file_status(int &nfd);
 		void	delete_rq(void);
 		bool	body_size_ok(unsigned int size);
+		string& give_head(string header);
 
 		int		get_max_body() const;
 		string	get_type(void) const;
 		int		get_code(void) const;
-		string& give_head(string header);
 
 };
 

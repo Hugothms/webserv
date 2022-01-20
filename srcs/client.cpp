@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 22:32:57 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/20 09:20:38 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void Client::set_response(void)
 	// 	req = new Request(rec_buffer);
 	// 	rec_buffer.clear();
 	// }
-	
+
 
 	//Function that allows later calls to get the data
 	req->prep_response(servers);
@@ -101,7 +101,6 @@ void Client::set_response(void)
 	// 	DEBUG("DATA IS TOO BIG");
 	// 	r
 	// 	req->code = 413;
-
 
 	// 	// exit(0);
 	// }
@@ -193,14 +192,11 @@ int Client::receive(void)
 	{
 		// status = 1
 		DEBUG("WE DONE RCV");
-
 		if (req == NULL)
 		{
 			req = new Request(rec_buffer);
-
 		}
 		rec_buffer.clear();
-
 		_done_recv = 1;
 	}
 	return (_done_recv);
