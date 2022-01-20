@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/20 09:20:38 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 09:56:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ int Client::receive(void)
 	if (req != NULL)
 	{
 		// DEBUG("BUFF|"<< string(buff, len)<<"|");
-		req->give_head("Body") += string(buff, len); //todo: tu peux m'expliquer ca Dingzo pls ?
+		req->give_head("Body") += string(buff, len);
 		// DEBUG("BODY IS " << req->get_s_header("Body"));
 	}
 	else

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 09:54:21 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 09:57:04 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -451,11 +451,11 @@ void	Request::set_filepath(void)
 		filepath = "";
 		return;
 	}
-	// todo:
-	// if (code == 413)
-	// {
-	// 	filepath = server->get_error_pages().find(413)->second;
-	// }
+	if (code == 413)
+	{
+		filepath = server->get_error_pages().find(413)->second;
+		return;
+	}
 	if (!server || !location)
 	{
 		DEBUG("RETURNING EMPTY PATH");
