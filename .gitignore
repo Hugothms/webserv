@@ -41,5 +41,5 @@ log
 err
 test
 *.DS_Store
-website/tmp/*
+www/tmp/*
 webserv_correc.pdf
