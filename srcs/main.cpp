@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/08 14:55:13 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 15:51:09 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 14:37:36 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	signal(SIGPIPE, SIG_IGN);
 	// signal(SIGSTOP, &stop);
 	signal(SIGINT, &stop);
-	signal(SIGKILL, &stop);
+	// signal(SIGKILL, &stop);
 
 	webserv.listen();
 	return 0;

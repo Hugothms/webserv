@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 14:23:55 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/20 15:05:31 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ string	Request::error_page(const int error_code)
 	if (server && server->get_error_pages().size() && server->get_error_pages().find(error_code) != server->get_error_pages().end() && server->get_error_pages()[error_code].size())
 	{
 		string error_page_filename = server->get_root() + '/' + server->get_error_pages()[error_code];
-		DEBUG("TMP IS :" << error_page_filename);
+		// DEBUG("TMP IS :" << error_page_filename);
 		ifstream file(error_page_filename.c_str(), ofstream::in);
 		if (!file || !file.is_open() || !file.good() || file.fail() || file.bad())
 		{
@@ -496,6 +496,7 @@ void	Request::set_filepath(void)
 		DEBUG("Target is a DIRECTORY !");
 		if (location->get_index().length())
 			filepath += location->get_index();
+		DEBUG("filepath build is " << filepath);
 	}
 	while (filepath.find("//") != string::npos)
 		filepath.replace(filepath.find("//"), 2, "/");
