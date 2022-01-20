@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 15:05:31 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:25:53 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,15 +412,19 @@ void	Request::get_auto_index(string &body)
 	struct dirent *ent;
 	if ((dir = opendir(filepath.c_str())) != NULL)
 	{
-		while ((ent = readdir (dir)) != NULL)
+		while ((ent = readdir(dir)) != NULL)
 		{
-			string name = ent->d_name;
-			if (is_directory(filepath + name))
-				name += '/';
-			string base = target;
+			string link = ent->d_name;
+			// DEBUG("link: " << link);
+			// DEBUG("filepath+link: " << filepath+link);
+			if (is_directory(filepath + '/' + link))
+			{
+				// DEBUG("is dir");
+				link += '/';
+			}
 			if (is_directory(target))
-				base += '/';
-			auto_index << "<p><a href=\"" << base + name << "\" class=\"active\">" << name << "</a></p>\n";
+				target += '/';
+			auto_index << "<p><a href=\"" << target + ent->d_name << "\" class=\"active\">" << link << "</a></p>\n";
 		}
 		closedir (dir);
 	}
@@ -462,6 +466,12 @@ string	Request::get_filepath(void)
 
 void	Request::set_filepath(void)
 {
+	if (target.find("//") != string::npos)
+	{
+		code = 404;
+		filepath = error_page(404);
+		return;
+	}
 	if (type == "DELETE")
 	{
 		code = 200;
@@ -470,7 +480,7 @@ void	Request::set_filepath(void)
 	}
 	if (code == 413)
 	{
-		filepath = server->get_error_pages().find(413)->second;
+		filepath = error_page(413);
 		return;
 	}
 	if (!server || !location)
@@ -491,12 +501,20 @@ void	Request::set_filepath(void)
 		filepath += location->get_location_root() + '/' + target.substr(location->get_path().length());
 	else
 		filepath += target;
-	if (filepath[filepath.length() - 1] == '/')
+	DEBUG("filepath: " << filepath);
+	if (is_directory(filepath) && filepath[filepath.length() - 1] == '/')
 	{
 		DEBUG("Target is a DIRECTORY !");
+		string index;
 		if (location->get_index().length())
-			filepath += location->get_index();
-		DEBUG("filepath build is " << filepath);
+			index = location->get_index();
+		else
+			index = server->get_index();
+		DEBUG("test filepath build is " << filepath + index);
+		int tmp_fd;
+		if ((tmp_fd = open(static_cast<const char *>((filepath + index).c_str()), O_RDONLY)) > 0)
+			filepath += index;
+		close(tmp_fd);
 	}
 	while (filepath.find("//") != string::npos)
 		filepath.replace(filepath.find("//"), 2, "/");
@@ -517,10 +535,9 @@ int Request::get_file_status(int &nfd)
 {
 	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
 
-	if (code == 400 || code == 403)
+	if (code == 400 || code == 403 || code == 404 || code == 413)
 	{
 		filepath = error_page(code);
-		// DEBUG("error 400, filepath: " << filepath);
 		nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 		return 0;
 	}
