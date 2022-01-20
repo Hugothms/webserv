@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 22:31:00 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/20 09:12:39 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -514,20 +514,13 @@ int Request::get_file_status(int &nfd)
 {
 	string t_filepath = filepath.substr(0, filepath.find_first_of('?'));
 
-	if (code == 400)
+	if (code == 400 || code == 403)
 	{
-		filepath = error_page(400);
+		filepath = error_page(code);
 		// DEBUG("error 400, filepath: " << filepath);
 		nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
 		return 0;
 	}
-	// todo:
-	// else if (code == 413)
-	// {
-	// 	// filepath = error_page(413);
-	// 	nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
-	// 	return 0;
-	// }
 	if (code == 0)
 		code = 200;
 	DEBUG("CODE IS " << code);
@@ -549,8 +542,7 @@ int Request::get_file_status(int &nfd)
 		{
 			code = 403;
 			filepath = error_page(403);
-			nfd = open(static_cast<const char *>(filepath.c_str()), O_RDONLY);
-			return 0;
+			// passed_cgi = true
 		}
 	}
 	else
