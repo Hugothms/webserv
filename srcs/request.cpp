@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 09:34:44 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 09:54:21 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -400,7 +400,10 @@ void	Request::get_auto_index(string &body)
 			string name = ent->d_name;
 			if (is_directory(filepath + name))
 				name += '/';
-			auto_index << "<p><a href=\"" << name << "\" class=\"active\">" << name << "</a></p>\n";
+			string base = target;
+			if (is_directory(target))
+				base += '/';
+			auto_index << "<p><a href=\"" << base + name << "\" class=\"active\">" << name << "</a></p>\n";
 		}
 		closedir (dir);
 	}
