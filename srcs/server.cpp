@@ -6,15 +6,14 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/20 16:56:12 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 18:24:12 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 #include <fcntl.h>
-
 Server::Server()
-: max_client_body_size(0), listen_fd(0)
+: max_client_body_size(4096), listen_fd(0)
 {}
 
 Server::~Server()
@@ -24,13 +23,6 @@ Server::~Server()
 	DEBUG("KILLED");
 }
 
-string to_string_customa(const int &error_code)
-{
-	stringstream ret;
-	ret << error_code;
-	return ret.str();
-
-}
 int Server::setup(void)
 {
 	listen_fd = socket(AF_INET, SOCK_STREAM , 0);
@@ -40,7 +32,7 @@ int Server::setup(void)
 		perror("socket");
 		exit(1);
 	}
-	Log("Listening socket created on port: " + to_string_customa(port), GREEN);
+	Log("Listening socket created on port: " + to_string_custom(port), GREEN);
 
 	hint.sin_family = AF_INET;
 	hint.sin_port = htons(port);
@@ -68,7 +60,7 @@ int Server::setup(void)
 
 bool	Server::is_valid(string &error) const
 {
-	int	fd;
+	int fd;
 	if (get_ip_address() == "")
 		error = "ip_address is not set";
 	if (get_port() == 0)
@@ -146,7 +138,7 @@ string			Server::get_index() const
 	return index;
 }
 
-unsigned int	Server::get_max_client_body_size() const
+long long		Server::get_max_client_body_size() const
 {
 	return max_client_body_size;
 }
@@ -217,7 +209,7 @@ void	Server::set_index(const string index)
 	this->index = index;
 }
 
-void	Server::set_max_client_body_size(const unsigned int max_client_body_size)
+void	Server::set_max_client_body_size(const long long max_client_body_size)
 {
 	this->max_client_body_size = max_client_body_size;
 }

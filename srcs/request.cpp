@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 16:25:53 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 19:19:17 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -442,7 +442,6 @@ void	Request::get_auto_index(string &body)
 
 bool Request::body_size_ok(unsigned int size)
 {
-	// todo: i just added "get_max_body() != -1 &&" to this condition
 	if (get_max_body() != -1 && (int) size > get_max_body())
 	{
 		DEBUG("data is too big, max is " << get_max_body());
@@ -452,10 +451,10 @@ bool Request::body_size_ok(unsigned int size)
 	return true;
 }
 
-int Request::get_max_body() const
+long long Request::get_max_body() const
 {
 	if (server)
-		return (int)server->get_max_client_body_size();
+		return server->get_max_client_body_size();
 	return -1;
 }
 
@@ -469,10 +468,9 @@ void	Request::set_filepath(void)
 	if (target.find("//") != string::npos)
 	{
 		code = 404;
-		filepath = error_page(404);
 		return;
 	}
-	if (type == "DELETE")
+	if (type == "DELETE" && code != 403)
 	{
 		code = 200;
 		filepath = "";
@@ -480,7 +478,6 @@ void	Request::set_filepath(void)
 	}
 	if (code == 413)
 	{
-		filepath = error_page(413);
 		return;
 	}
 	if (!server || !location)
@@ -498,23 +495,19 @@ void	Request::set_filepath(void)
 			target += '/' + server->get_index();
 	}
 	if (target.find(location->get_path()) == 0)
-		filepath += location->get_location_root() + '/' + target.substr(location->get_path().length());
+	{
+		string tmp = target.substr(location->get_path().length());
+		filepath += location->get_location_root();
+		if (tmp.size())
+			filepath += '/' + tmp;
+	}
 	else
 		filepath += target;
-	DEBUG("filepath: " << filepath);
-	if (is_directory(filepath) && filepath[filepath.length() - 1] == '/')
+	if (filepath[filepath.length() - 1] == '/')
 	{
 		DEBUG("Target is a DIRECTORY !");
-		string index;
 		if (location->get_index().length())
-			index = location->get_index();
-		else
-			index = server->get_index();
-		DEBUG("test filepath build is " << filepath + index);
-		int tmp_fd;
-		if ((tmp_fd = open(static_cast<const char *>((filepath + index).c_str()), O_RDONLY)) > 0)
-			filepath += index;
-		close(tmp_fd);
+			filepath += location->get_index();
 	}
 	while (filepath.find("//") != string::npos)
 		filepath.replace(filepath.find("//"), 2, "/");
@@ -525,7 +518,21 @@ void Request::delete_rq(void)
 {
 	string path;
 
-	path += "./" + server->get_root() + target;
+	
+	// DEBUG("INT PATH " << path);
+	path = "./" + server->get_root();
+	if (target.find(location->get_path()) == 0)
+	{
+		string tmp = target.substr(location->get_path().length());
+		path += location->get_location_root();
+		if (tmp.size())
+			path += '/' + tmp;
+	}
+	else
+		path += target;
+	DEBUG("DELETING " << path);
+	while (filepath.find("//") != string::npos)
+		filepath.replace(filepath.find("//"), 2, "/");
 	code = 200;
 	if (remove(path.c_str()) == -1)
 		code = 404;
@@ -672,7 +679,7 @@ string Request::get_header(size_t fileSize, const bool already_calculated)
 	if (location && location->get_HTTP_redirection_type() > 0)
 		header << "Location: " << location->get_HTTP_redirection() << endl;
 	header << endl;
-	DEBUG("RET HEADER");
+	DEBUG("RET HEADER :" << header.str());
 	return (header.str());
 }
 
@@ -691,23 +698,31 @@ bool	Request::method_allow(void)
 // todo: Pas sur de la complete utilité de cette fonction
 void Request::prep_response(const list<Server*> &servers)
 {
-	if (!select_server(servers) || !select_location() || !method_allow())
+	if (!select_server(servers))
 	{
 		DEBUG("EARLY RETURN");
 		return ;
 	}
-	if (((unsigned int) atoi(headers["Content-Length"].c_str())) > server->get_max_client_body_size())
+	else if (!select_location())
 	{
-		DEBUG("THIS IS TOO BIG");
+		DEBUG("EARLY RETURN2");
+		return ;
+	}
+	else if (!method_allow())
+	{
+		DEBUG("EARLY RETURN3");
+		code = 403;
+		return ;
+	}
+	if (server->get_max_client_body_size() != -1 && atoll(headers["Content-Length"].c_str()) > server->get_max_client_body_size())
+	{
+		// DEBUG("THIS IS TOO BIG");
 		code = 413;
 	}
 	if (location->get_HTTP_redirection_type() > 0)
 		code = location->get_HTTP_redirection_type();
 	else if (type == "DELETE")
 	{
-		//TODO
-		string delete_file = server->get_root() + target;
-		Log("Trying to delete " + delete_file, BLUE);
 		code = 200;
 	}
 }

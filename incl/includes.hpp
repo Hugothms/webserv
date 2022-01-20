@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   includes.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/17 16:29:50 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/20 16:53:25 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 16:52:27 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 # include <sstream>
 # include <string>
 # include <cstdlib>
-# include <stdio.h>
 # include <unistd.h>
 # include <ctime>
 # include <sys/stat.h> // mkdir
@@ -65,5 +64,7 @@ bool			file_is_empty(ifstream &file);
 bool			is_directory(const string &filename);
 void			err_parsing_config(const Server *server, const string error);
 vector<string>	ft_split(const string &str, const string &charset);
+string 			to_string_custom(const int &error_code);
+
 
 #endif

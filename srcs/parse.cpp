@@ -6,20 +6,16 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 16:30:27 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 18:05:02 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
-       #include <sys/types.h>
-       #include <sys/stat.h>
-       #include <fcntl.h>
 
 Location	parse_location(const vector<string> &config, size_t *line_count, Server *server)
 {
 	Location	location;
 	vector<string> line = ft_split(config[*line_count], WHITESPACES);
-
 	if (line.size() != 3)
 		err_parsing_config(server, "expecting a directory and '{' after 'location'");
 	string tmp = line[1];
@@ -37,6 +33,12 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 	while (it != config.end())
 	{
 		vector<string> line = ft_split(*it, WHITESPACES);
+		if (!line.size() || !line[0].size())
+		{
+			it++;
+			(*line_count)++;
+			continue;
+		}
 		if (line[0][0] == '#')
 		{
 			it++;
@@ -45,7 +47,6 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		}
 		else if (line[0].size() && line[0] != "}")
 			DEBUG("\t\t" << line[0] << ":");
-
 		if (line[0] == "}")
 			break;
 		else if (line[0] == "allow")
@@ -126,7 +127,6 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 Server	*parse_server(const vector<string> config, size_t *line_count)
 {
 	DEBUG("!!!!!!!!!! SERVER !!!!!!!!!!!");
-
 	vector<string> line = ft_split(config[0], WHITESPACES);
 	if (line[1] != "{")
 		return NULL;
@@ -141,7 +141,11 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 	{
 		vector<string> line = ft_split(*it, WHITESPACES);
 		if (!line.size() || !line[0].size())
-			break;
+		{
+			it++;
+			(*line_count)++;
+			continue;
+		}
 		if (line[0][0] == '#')
 		{
 			it++;
@@ -185,6 +189,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			if (line.size() != 3)
 				err_parsing_config(server, "expecting 2 arguments after 'cgi'");
 			server->push_back_cgi(line[1], line[2]);
+		
 			DEBUG("\t\t" << line[1] << " " << line[2]);
 		}
 		else if (line[0] == "listen")
@@ -238,7 +243,7 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 				err_parsing_config(server, "expecting 1 argument after 'max_client_body_size'");
 			if (!is_integer(line[1]))
 				err_parsing_config(server, "expecting positive integer after 'max_client_body_size'");
-			server->set_max_client_body_size(atoi(line[1].c_str()));
+			server->set_max_client_body_size(atoll(line[1].c_str()));
 			DEBUG("\t\t" << server->get_max_client_body_size());
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/03 14:24:05 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/20 09:19:15 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 17:55:48 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,12 @@ class Request
 		string	get_filepath(void);
 		bool	method_allow(void);
 		string	error_page(const int error_code);
-		int	get_file_status(int &nfd);
+		int		get_file_status(int &nfd);
 		void	delete_rq(void);
 		bool	body_size_ok(unsigned int size);
 		string& give_head(string header);
 
-		int		get_max_body() const;
+		long long	get_max_body() const;
 		string	get_type(void) const;
 		int		get_code(void) const;
 

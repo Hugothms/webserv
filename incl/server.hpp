@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:47:21 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 15:38:29 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 17:53:58 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Server
 		string						index; // file served when "/" is requested
 		string						ip_address;
 		unsigned int				port; // port to listen and send on ("listen" in config file)
-		unsigned int				max_client_body_size;
+		long long					max_client_body_size;
 
 		// * FOR INTERNAL USE *
 		int						listen_fd;
@@ -64,8 +64,8 @@ class Server
 		unsigned int				get_port(void) const;
 		string						get_root(void) const;
 		string						get_index(void) const;
-		unsigned int				get_max_client_body_size(void) const;
-		int						get_listen_fd(void) const;
+		long long					get_max_client_body_size(void) const;
+		int							get_listen_fd(void) const;
 
 		void						set_locations(const list<Location> locations);
 		void						push_back_location(const Location location);
@@ -79,7 +79,7 @@ class Server
 		void						set_port(const unsigned int port);
 		void						set_root(const string root);
 		void						set_index(const string index);
-		void						set_max_client_body_size(const unsigned int max_client_body_size);
+		void						set_max_client_body_size(const long long max_client_body_size);
 };
 
 #endif
