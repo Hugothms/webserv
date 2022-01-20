@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 15:24:41 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 14:23:29 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
+       #include <sys/types.h>
+       #include <sys/stat.h>
+       #include <fcntl.h>
 
 Location	parse_location(const vector<string> &config, size_t *line_count, Server *server)
 {
@@ -182,6 +185,13 @@ Server	*parse_server(const vector<string> config, size_t *line_count)
 			if (line.size() != 3)
 				err_parsing_config(server, "expecting 2 arguments after 'cgi'");
 			server->push_back_cgi(line[1], line[2]);
+			int fd = ::open(line[2].c_str(), O_RDONLY);
+			if (fd <= 0)
+			{
+				close(fd);
+				err_parsing_config(server, "cgi target is unavailable");
+			}
+			close(fd);
 			DEBUG("\t\t" << line[1] << " " << line[2]);
 		}
 		else if (line[0] == "listen")

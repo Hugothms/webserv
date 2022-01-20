@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 09:57:04 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/20 14:23:55 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ Request::Request(const string &buffer)
 	// If there is content length, then we are in post mode, add Body header;
 	if (headers.count("Content-Length") > 0 && content_type.find("multipart") == string::npos)
 	{
-		unsigned int t = ::atoi(headers["Content-Length"].c_str());
+		// unsigned int t = ::atoi(headers["Content-Length"].c_str());
 		headers.insert(pair<string, string>("Body", request.back()));//string(buffer, pos, t)));
 	}
 	DEBUG("----------------------------");
@@ -249,6 +249,16 @@ char **Request::build_cgi_av(string &extention_name)
 	string bin_path;
 	if (server->get_cgis().find(extention_name) != server->get_cgis().end())
 		bin_path = server->get_cgis().find(extention_name)->second;
+	DEBUG("BIN PATH IS " << bin_path);
+
+	int fd = ::open(bin_path.c_str(), O_RDONLY);
+	if (fd <= 0)
+	{
+
+		DEBUG("CGI OPEN ERROR");
+		return 0;
+	}
+
 	av.push_back(bin_path);
 	av.push_back(server_root + "/" + filepath.substr(0, filepath.find_first_of('?', 0)));
 
@@ -305,6 +315,12 @@ char **Request::build_cgi_env(string &extention_name)
 	return _ev;
 }
 
+
+// bool Request::check_bin()
+// {
+
+// }
+
 void	Request::launch_cgi(string &body, const int pos)
 {
 	DEBUG("launch_cgi");
@@ -317,6 +333,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		Log("cgi: pipe failed", RED);
 		exit(EXIT_FAILURE);
 	}
+	// if (open())
 
 	// todo:
 	// We probably shouldn't assume that
