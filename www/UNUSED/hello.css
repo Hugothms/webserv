@@ -1,0 +1,32 @@
+body {
+  /*margin: 25px;*/
+  background-color: orange;
+  color: red;
+  border: 200px;
+  /*font-family: arial, sans-serif;*/
+  /*font-size: 14px;*/
+}
+div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+/* Applies to all <h1>...</h1> elements. */
+/* h1 {
+  font-size: 35px;
+  font-weight: bold;
+  margin-top: 5px;
+} */
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Applies to all elements with <... class="someclass"> specified. */
+/*.someclass { color: red; }*/
+
+/* Applies to the element with <... id="someid"> specified. */
+/*#someid { color: green; }*/
