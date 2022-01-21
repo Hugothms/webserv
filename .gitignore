@@ -43,3 +43,4 @@ test
 *.DS_Store
 www/tmp/*
 webserv_correc.pdf
+cgis/*
