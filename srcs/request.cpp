@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 19:19:17 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/21 17:46:00 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ bool	Request::select_server(const list<Server*> &servers)
 				if ((*server_name == "0.0.0.0" || *server_name == host) && (port == 0 || (*server)->get_port() == port))
 				{
 					this->server = *server;
-					DEBUG("Return good server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
+					DEBUG("Return good server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << ((*server)->get_server_names().size() ? (*server)->get_server_names().front() : "NO NAME") << ") for server " << host << ":" << port);
 					return true;
 				}
 			}
@@ -210,7 +210,7 @@ bool	Request::select_server(const list<Server*> &servers)
 		DEBUG("NO SERVER FOUND");
 		return false;
 	}
-	DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << this->server->get_server_names().front() << ") for server " << host << ":" << port);
+	DEBUG("Return default server " << this->server->get_ip_address() << ":" << this->server->get_port() << "(" << ((*server).get_server_names().size() ? server->get_server_names().front() : "NO NAME") << ") for server " << host << ":" << port);
 	return true;
 }
 
@@ -254,7 +254,6 @@ char **Request::build_cgi_av(string &extention_name)
 	int fd = ::open(bin_path.c_str(), O_RDONLY);
 	if (fd <= 0)
 	{
-
 		DEBUG("CGI OPEN ERROR");
 		return 0;
 	}
@@ -315,12 +314,6 @@ char **Request::build_cgi_env(string &extention_name)
 	return _ev;
 }
 
-
-// bool Request::check_bin()
-// {
-
-// }
-
 void	Request::launch_cgi(string &body, const int pos)
 {
 	DEBUG("launch_cgi");
@@ -333,13 +326,8 @@ void	Request::launch_cgi(string &body, const int pos)
 		Log("cgi: pipe failed", RED);
 		exit(EXIT_FAILURE);
 	}
-	// if (open())
 
-	// todo:
-	// We probably shouldn't assume that
 	code = (code == 413) ? 413 : 200;
-	// if (code != 413)
-	// 	code = 200;
 
 	//We need to trim and write the body to stdin
 	if (type == "POST" && pipe(in_pipe) == -1)
@@ -422,9 +410,10 @@ void	Request::get_auto_index(string &body)
 				// DEBUG("is dir");
 				link += '/';
 			}
-			if (is_directory(target))
+			DEBUG("target: " << target);
+			if (is_directory(target) && target[target.size() - 1] != '/')
 				target += '/';
-			auto_index << "<p><a href=\"" << target + ent->d_name << "\" class=\"active\">" << link << "</a></p>\n";
+			auto_index << "<p><a href=\"" << link << "\" class=\"active\">" << link << "</a></p>\n";
 		}
 		closedir (dir);
 	}
@@ -465,6 +454,7 @@ string	Request::get_filepath(void)
 
 void	Request::set_filepath(void)
 {
+	DEBUG("start filepath target: " << target);
 	if (target.find("//") != string::npos)
 	{
 		code = 404;
@@ -486,45 +476,74 @@ void	Request::set_filepath(void)
 		filepath = "";
 		return;
 	}
+	string tmp_target = target;
 	filepath = server->get_root();
+	// DEBUG("\nfilepath: " << filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("tmp_target: " << tmp_target);
 	if (target.compare("/") == 0)
 	{
 		if (location->get_index().length())
-			target += '/' + location->get_index();
+			tmp_target += '/' + location->get_index();
 		else
-			target += '/' + server->get_index();
+			tmp_target += '/' + server->get_index();
 	}
-	if (target.find(location->get_path()) == 0)
+	// DEBUG("\nfilepath: " << filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("tmp_target: " << tmp_target);
+	if (tmp_target.find(location->get_path()) == 0)
 	{
-		string tmp = target.substr(location->get_path().length());
-		filepath += location->get_location_root();
-		if (tmp.size())
-			filepath += '/' + tmp;
+		tmp_target = tmp_target.substr(location->get_path().length());
+		filepath += location->get_root();
+	}
+	string tmp_filepath ;
+	if (is_directory(filepath + tmp_target))
+		tmp_filepath = filepath + tmp_target;
+	else
+		tmp_filepath = filepath + '/' + tmp_target;
+	// DEBUG("\nfilepath: " << filepath);
+	// DEBUG("tmp_filepath: " << tmp_filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("tmp_target: " << tmp_target);
+	if (tmp_filepath[tmp_filepath.length() - 1] == '/')
+	{
+		// DEBUG("Target is a DIRECTORY !");
+		if (location->get_index().length())
+			tmp_filepath += location->get_index();
+	}
+	// DEBUG("\nfilepath: " << filepath);
+	// DEBUG("tmp_filepath: " << tmp_filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("tmp_target: " << tmp_target);
+	int fd = ::open(tmp_filepath.c_str(), O_RDONLY);
+	if (target[target.size() - 1] == '/' && fd <= 0 && location->get_autoindex())
+	{
+		// DEBUG("autoindex enabled & tmp_filepath does not exists");
+		filepath = server->get_root() + '/';
 	}
 	else
-		filepath += target;
-	if (filepath[filepath.length() - 1] == '/')
-	{
-		DEBUG("Target is a DIRECTORY !");
-		if (location->get_index().length())
-			filepath += location->get_index();
-	}
+		filepath = tmp_filepath;
+	// DEBUG("\nfilepath: " << filepath);
+	// DEBUG("tmp_filepath: " << tmp_filepath);
+	// DEBUG("target: " << target);
+	// DEBUG("tmp_target: " << tmp_target);
+	close(fd);
 	while (filepath.find("//") != string::npos)
 		filepath.replace(filepath.find("//"), 2, "/");
-	DEBUG("filepath: " << filepath);
+	DEBUG("end of set_filepath filepath: " << filepath << "\n\n");
 }
 
 void Request::delete_rq(void)
 {
 	string path;
 
-	
+
 	// DEBUG("INT PATH " << path);
 	path = "./" + server->get_root();
 	if (target.find(location->get_path()) == 0)
 	{
 		string tmp = target.substr(location->get_path().length());
-		path += location->get_location_root();
+		path += location->get_root();
 		if (tmp.size())
 			path += '/' + tmp;
 	}
@@ -695,22 +714,21 @@ bool	Request::method_allow(void)
 	return false;
 }
 
-// todo: Pas sur de la complete utilité de cette fonction
 void Request::prep_response(const list<Server*> &servers)
 {
 	if (!select_server(servers))
 	{
-		DEBUG("EARLY RETURN");
+		// DEBUG("EARLY RETURN");
 		return ;
 	}
 	else if (!select_location())
 	{
-		DEBUG("EARLY RETURN2");
+		// DEBUG("EARLY RETURN2");
 		return ;
 	}
 	else if (!method_allow())
 	{
-		DEBUG("EARLY RETURN3");
+		// DEBUG("EARLY RETURN3");
 		code = 403;
 		return ;
 	}

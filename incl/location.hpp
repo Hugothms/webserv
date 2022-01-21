@@ -40,7 +40,7 @@ class Location
 		string			get_path(void) const;
 		unsigned int	get_HTTP_redirection_type(void) const;
 		string			get_HTTP_redirection(void) const;
-		string			get_location_root(void) const;
+		string			get_root(void) const;
 		string			get_index(void) const;
 		bool			get_autoindex(void) const;
 
@@ -50,7 +50,7 @@ class Location
 		void			set_path(const string location);
 		void			set_HTTP_redirection_type(const unsigned int type);
 		void			set_HTTP_redirection(const string HTTP_redirection);
-		void			set_location_root(const string location_root);
+		void			set_root(const string location_root);
 		void			set_index(const string index);
 		void			set_autoindex(const bool autoindex);
 };

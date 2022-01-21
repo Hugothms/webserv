@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 12:07:35 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/20 14:57:24 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/21 17:41:57 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,16 +73,9 @@ void Client::set_response(void)
 
 	if (req && req->get_type() == "POST" && req->get_s_header("Content-Type").find("multipart") != string::npos)
 	{
-		// DEBUG("We  are in the mode");
-		// DEBUG("|" << req->get_s_header("Body")<< "|");
 		if (req->get_s_header("Body").size() != static_cast<unsigned int>(atoi(req->get_s_header("Content-Length").c_str())))
 		{
-			// DEBUG("rcb is " << rec_buffer);
-			// req->get_s_header("Body") += rec_buffer;
-			// rec_buffer.clear();
-			// Log("NEED TO GET MORE DATA");
 			_status = 4;
-			// DEBUG("We  are in the WTF");
 			return;
 		}
 		else
@@ -90,23 +83,9 @@ void Client::set_response(void)
 	}
 
 	unsigned int ctlen = atoi(req->get_s_header("Content-Length").c_str());
-	// DEBUG("CTLEN IS " << ctlen);
-	// DEBUG("CODE IS " << req->get_code());
 
 
 	req->body_size_ok(ctlen);
-	// todo:
-	// if (req && ctlen > req->get_max_body() )
-	// {
-	// 	DEBUG("DATA IS TOO BIG");
-	// 	r
-	// 	req->code = 413;
-
-	// 	// exit(0);
-	// }
-	// DEBUG("MAX BODY OK");
-	// if (req->get_s_header("Content-Length"))
-
 	req->set_filepath();
 	int operation_status = req->get_file_status(_file_fd);
 	DEBUG("OPSTAT IS " << operation_status);

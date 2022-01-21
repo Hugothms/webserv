@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 14:04:40 by edal--ce          #+#    #+#             */
-/*   Updated: 2022/01/19 15:50:08 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/21 16:15:37 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ bool	Location::is_valid(string &error) const
 	list<string> allow = get_allow();
 	if (allow.size() == 0)
 		error = (get_path() + " location: allowed method(s) are not set");
-	if (get_location_root() == "")
+	if (get_root() == "")
 		error = (get_path() + " location: location_root is not set");
 	return (error.length() == 0);
 }
@@ -58,7 +58,7 @@ string			Location::get_HTTP_redirection() const
 	return (this->HTTP_redirection);
 }
 
-string			Location::get_location_root() const
+string			Location::get_root() const
 {
 	return (this->location_root);
 }
@@ -102,7 +102,7 @@ void Location::set_HTTP_redirection(const string HTTP_redirection)
 	this->HTTP_redirection = HTTP_redirection;
 }
 
-void Location::set_location_root(const string location_root)
+void Location::set_root(const string location_root)
 {
 	this->location_root = location_root;
 }

@@ -6,7 +6,7 @@
 /*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 11:55:53 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/19 22:31:29 by edal--ce         ###   ########.fr       */
+/*   Updated: 2022/01/21 17:42:21 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void Webserv::accept_new_conn(void)
 	}
 }
 
-void 	Webserv::loop_prep(void) // todo: This can be optimized
+void 	Webserv::loop_prep(void)
 {
 	int tmpfd;
 	lcopy_set = listen_set;

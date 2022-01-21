@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/05 16:55:59 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/20 18:05:02 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/21 16:15:37 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 				tmp = '/' + tmp;
 			if (tmp.size() > 1 && tmp[tmp.size() - 1] == '/')
 				tmp.resize(tmp.size() - 1);
-			location.set_location_root(tmp);
+			location.set_root(tmp);
 			DEBUG("\t\t\t" << tmp);
 		}
 		else if (line[0] == "index")
@@ -118,8 +118,8 @@ Location	parse_location(const vector<string> &config, size_t *line_count, Server
 		exit(EXIT_FAILURE);
 	}
 	DEBUG("\t}");
-	if (location.get_location_root().size() == 0)
-		location.set_location_root(location.get_path());
+	if (location.get_root().size() == 0)
+		location.set_root(location.get_path());
 	location.set_server(server);
 	return location;
 }
