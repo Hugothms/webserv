@@ -4,7 +4,7 @@
 	<h1>Passing form data to PHP-CGI</h1>
 
 
-<?php 
+<?php
 
 	if(isset($_GET["s1"]) || isset($_GET["s2"]))
 	{
@@ -21,14 +21,14 @@
 ?>
 
 	<h2>Post mode</h2>
-<form action="/one/form.php" method="post">
+<form action="./form.php" method="post">
  	<p>s1: <input type="text" name="s1" /></p>
  	<p>s2: <input type="text" name="s2" /></p>
  	<p><input type="submit" /></p>
 </form>
 
  	<h2>Get mode</h2>
- <form action="/one/form.php" method="get">
+ <form action="./form.php" method="get">
  	<p>s1: <input type="text" name="s1" /></p>
  	<p>s2: <input type="text" name="s2" /></p>
  	<p><input type="submit" /></p>
