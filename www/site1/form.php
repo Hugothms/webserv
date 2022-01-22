@@ -5,7 +5,6 @@
 
 
 <?php
-
 	if(isset($_GET["s1"]) || isset($_GET["s2"]))
 	{
 		echo "Using the GET method to pass data<br/>";

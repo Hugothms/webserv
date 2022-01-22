@@ -38,15 +38,16 @@ SRC			=	main.cpp			\
 OBJ			=	$(SRC:.cpp=.o)
 OBJS		=	$(OBJ:%=$(OBJD)/%)
 
-CFLAGS		=	-Wall -Wextra -std=c++98 -g3 #-fsanitize=address #-Werror -Ofast
+CFLAGS		=	-Wall -Wextra -Werror -std=c++98# -g3 -fsanitize=address -Ofast
 CC			=	clang++
 RM			=	rm -rf
 
-DEBUG		=	1
+DEBUG		=	0
 
 
 $(NAME)		:	$(OBJD) $(OBJS) $(INCLUDEF)
 				$(CC) -I ./$(INCLUDE) $(CFLAGS) $(OBJS) -o $(NAME)
+				@mkdir -p www/uploads
 
 $(OBJD)		:
 				@mkdir $(OBJD)
