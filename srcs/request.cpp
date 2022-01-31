@@ -6,7 +6,7 @@
 /*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/21 17:46:00 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/01/31 16:25:31 by hthomas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,8 +290,8 @@ char **Request::build_cgi_env(string &extention_name)
 
 	if (type == "GET")
 	{
-		ev.push_back("QUERY_STRING="+ filepath.substr(filepath.find_first_of('?') + 1));
-		ev.push_back("CONTENT_LENGTH=0");//+ to_string(headers["Body"].length()) );
+		ev.push_back("QUERY_STRING=" + filepath.substr(filepath.find_first_of('?') + 1));
+		ev.push_back("CONTENT_LENGTH=0");
 		extention_name = extention_name.substr(0, extention_name.find_first_of('?'));
 	}
 	else if (type == "POST")
@@ -301,7 +301,7 @@ char **Request::build_cgi_env(string &extention_name)
 		if (code == 413)
 			ev.push_back("CONTENT_LENGTH=0");
 		else
-			ev.push_back("CONTENT_LENGTH="+ to_string_custom(headers["Body"].length()));//(data_buff->length()) );
+			ev.push_back("CONTENT_LENGTH=" + to_string_custom(headers["Body"].length()));//(data_buff->length()) );
 	}
 
 	char **_ev = static_cast<char**>(malloc(sizeof(char *) * (ev.size() + 1)));
