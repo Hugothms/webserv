@@ -1,6 +1,8 @@
 # Webserv
 The objective of this project is to create a fully functional HTTP web server.
 
+[![hthomas's 42 webserv Score](https://badge42.vercel.app/api/v2/cl1m0540e000609mon8jcubug/project/2195730)](https://github.com/JaeSeoKim/badge42)
+
 ## Usage
 	make && ./webserv base.conf
 or more conveniently:
