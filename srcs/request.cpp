@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hthomas <hthomas@student.42.fr>            +#+  +:+       +#+        */
+/*   By: edal--ce <edal--ce@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/15 17:21:43 by hthomas           #+#    #+#             */
-/*   Updated: 2022/01/31 16:25:31 by hthomas          ###   ########.fr       */
+/*   Updated: 2022/07/13 01:50:04 by edal--ce         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,7 +327,7 @@ void	Request::launch_cgi(string &body, const int pos)
 		exit(EXIT_FAILURE);
 	}
 
-	code = (code == 413) ? 413 : 200;
+	code = 200;//(code == 413) ? 413 : 200;
 
 	//We need to trim and write the body to stdin
 	if (type == "POST" && pipe(in_pipe) == -1)

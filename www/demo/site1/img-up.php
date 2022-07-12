@@ -36,7 +36,7 @@
       
       if(empty($errors)==true)
       {
-         $path = "./uploads/".$file_name ;
+         $path = "./".$file_name ;
 
          // echo "Path is ".$path ;
          move_uploaded_file($file_tmp,$path);
